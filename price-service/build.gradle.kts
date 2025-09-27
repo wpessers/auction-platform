@@ -5,19 +5,8 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 }
 
-group = "wpessers"
 version = "0.0.1-SNAPSHOT"
 description = "AI Price Service"
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
-}
-
-repositories {
-	mavenCentral()
-}
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
@@ -33,8 +22,4 @@ kotlin {
 	compilerOptions {
 		freeCompilerArgs.addAll("-Xjsr305=strict")
 	}
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
 }

@@ -7,19 +7,8 @@ plugins {
 	id("com.google.protobuf") version "0.9.4"
 }
 
-group = "wpessers"
 version = "0.0.1-SNAPSHOT"
 description = "Demo project for Spring Boot"
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
-}
-
-repositories {
-	mavenCentral()
-}
 
 extra["springGrpcVersion"] = "0.11.0"
 
@@ -61,8 +50,4 @@ protobuf {
 			}
 		}
 	}
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
 }
