@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: price-service
+  profiles:
+    active: dev

@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+#    TODO: Add H2 in memory db
+
+pricing-service:
+  host: localhost
+  port: 50051
