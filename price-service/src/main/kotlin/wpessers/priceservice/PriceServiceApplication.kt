@@ -1,11 +1,11 @@
-package wpessers.price
+package wpessers.priceservice
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class PriceApplication
+class PriceServiceApplication
 
 fun main(args: Array<String>) {
-	runApplication<PriceApplication>(*args)
+	runApplication<PriceServiceApplication>(*args)
 }
