@@ -4,6 +4,6 @@ import wpessers.auctionservice.domain.Auction;
 
 public interface AuctionStoragePort {
 
-    void createAuction(Auction auction);
+    void save(Auction auction);
 
 }

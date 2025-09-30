@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,15 +35,16 @@ class AuctionServiceTests {
             Instant.parse("2025-01-01T01:00:00Z"));
 
         // When
-        auctionService.createAuction(command);
+        UUID auctionId = auctionService.createAuction(command);
 
         // Then
         ArgumentCaptor<Auction> captor = ArgumentCaptor.forClass(Auction.class);
-        verify(auctionStoragePort).createAuction(captor.capture());
+        verify(auctionStoragePort).save(captor.capture());
 
         Auction saved = captor.getValue();
         assertThat(saved.getName()).isEqualTo(command.name());
         assertThat(saved.getDescription()).isEqualTo(command.description());
         assertThat(saved.getEndTime()).isEqualTo(command.endTime());
+        assertThat(auctionId).isNotNull();
     }
 }

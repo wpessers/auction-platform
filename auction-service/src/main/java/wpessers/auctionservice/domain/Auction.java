@@ -1,7 +1,5 @@
 package wpessers.auctionservice.domain;
 
-import static java.util.UUID.randomUUID;
-
 import java.time.Instant;
 import java.util.UUID;
 
@@ -12,8 +10,8 @@ public class Auction {
     private final String description;
     private final Instant endTime;
 
-    public Auction(String name, String description, Instant endTime) {
-        this.id = randomUUID();
+    public Auction(UUID id, String name, String description, Instant endTime) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.endTime = endTime;
