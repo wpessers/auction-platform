@@ -21,7 +21,7 @@ public class AuctionService {
 
     public UUID createAuction(CreateAuctionCommand command) {
         UUID id = randomUUID();
-        Auction auction = new Auction(
+        Auction auction = Auction.create(
             id,
             command.name(),
             command.description(),

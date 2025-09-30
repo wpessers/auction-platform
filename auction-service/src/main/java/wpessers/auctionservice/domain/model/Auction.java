@@ -14,22 +14,16 @@ public class Auction {
     private final UUID id;
     private final String name;
     private final String description;
+    // TODO: Refactor into an auction window value object
     private final Instant endTime;
     private final Instant startTime;
 
-    public Auction(UUID id, String name, String description, Instant startTime, Instant endTime) {
+    private Auction(UUID id, String name, String description, Instant startTime, Instant endTime) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.startTime = startTime;
-        if (isNull(endTime)) {
-            this.endTime = startTime.plus(DEFAULT_AUCTION_DURATION_DAYS, DAYS);
-        } else {
-            if (endTime.isBefore(startTime)) {
-                throw new InvalidEndTimeException("End time cannot be before start time");
-            }
-            this.endTime = endTime;
-        }
+        this.endTime = endTime;
     }
 
     public UUID getId() {
@@ -50,5 +44,21 @@ public class Auction {
 
     public Instant getEndTime() {
         return endTime;
+    }
+
+    public static Auction create(
+        UUID id,
+        String name,
+        String description,
+        Instant startTime,
+        Instant endTime
+    ) {
+        Instant effectiveEndTime = isNull(endTime)
+            ? startTime.plus(DEFAULT_AUCTION_DURATION_DAYS, DAYS)
+            : endTime;
+        if (effectiveEndTime.isBefore(startTime)) {
+            throw new InvalidEndTimeException("End time cannot be before start time");
+        }
+        return new Auction(id, name, description, startTime, effectiveEndTime);
     }
 }

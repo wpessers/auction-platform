@@ -12,7 +12,7 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class AuctionTest {
+class AuctionTests {
 
     @Test
     @DisplayName("Should default end time to 5 days after start time, if no end time is given")
@@ -21,7 +21,7 @@ class AuctionTest {
         Instant startTime = Instant.parse("2025-01-01T01:00:00Z");
 
         // When
-        Auction auction = new Auction(
+        Auction auction = Auction.create(
             randomUUID(),
             "Mona Lisa",
             "16th Century painting by Leonardo da Vinci",
@@ -47,7 +47,7 @@ class AuctionTest {
 
         // When / Then
         assertThrows(InvalidEndTimeException.class, () ->
-            new Auction(id, name, description, startTime, endTime)
+            Auction.create(id, name, description, startTime, endTime)
         );
     }
 }
