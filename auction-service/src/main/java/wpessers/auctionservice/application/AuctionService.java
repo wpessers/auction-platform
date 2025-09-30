@@ -9,13 +9,18 @@ import wpessers.auctionservice.domain.Auction;
 @Service
 public class AuctionService {
 
-    private AuctionStoragePort auctionStoragePort;
+    private final AuctionStoragePort auctionStoragePort;
 
     public AuctionService(AuctionStoragePort auctionStoragePort) {
         this.auctionStoragePort = auctionStoragePort;
     }
 
-    public void createAuction(CreateAuctionCommand createAuctionCommand) {
-        auctionStoragePort.createAuction(new Auction("", "", "", "", 0));
+    public void createAuction(CreateAuctionCommand command) {
+        Auction auction = new Auction(
+            command.name(),
+            command.description(),
+            command.endTime().get()
+        );
+        auctionStoragePort.createAuction(auction);
     }
 }
