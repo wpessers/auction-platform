@@ -10,13 +10,12 @@ import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
 import wpessers.auctionservice.application.port.out.AuctionStoragePort;
-import wpessers.auctionservice.domain.Auction;
+import wpessers.auctionservice.domain.model.Auction;
 
 @ExtendWith(MockitoExtension.class)
 class AuctionServiceTests {
@@ -28,13 +27,13 @@ class AuctionServiceTests {
     private AuctionService auctionService;
 
     @Test
-    @DisplayName("Should create auction with fields given through command")
-    void shouldCreateAuction() {
+    @DisplayName("Should save auction with fields given through command")
+    void shouldSaveAuction() {
         // Given
         CreateAuctionCommand command = new CreateAuctionCommand(
             "Mona Lisa",
             "16th Century painting by Leonardo da Vinci",
-            Instant.parse("2025-01-01T01:00:00Z")
+            Instant.now().plusSeconds(60)
         );
 
         // When

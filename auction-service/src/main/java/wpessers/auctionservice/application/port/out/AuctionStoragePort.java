@@ -1,6 +1,6 @@
 package wpessers.auctionservice.application.port.out;
 
-import wpessers.auctionservice.domain.Auction;
+import wpessers.auctionservice.domain.model.Auction;
 
 public interface AuctionStoragePort {
 
