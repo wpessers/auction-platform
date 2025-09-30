@@ -19,7 +19,7 @@ public class AuctionService {
         Auction auction = new Auction(
             command.name(),
             command.description(),
-            command.endTime().get()
+            command.endTime()
         );
         auctionStoragePort.createAuction(auction);
     }

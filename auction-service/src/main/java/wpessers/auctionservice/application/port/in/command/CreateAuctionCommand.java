@@ -6,7 +6,7 @@ import java.util.Optional;
 public record CreateAuctionCommand(
     String name,
     String description,
-    Optional<Instant> endTime
+    Instant endTime
 ) {
 
 }

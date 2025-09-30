@@ -4,7 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 import java.time.Instant;
-import java.util.Optional;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -25,20 +26,23 @@ class AuctionServiceTests {
     private AuctionService auctionService;
 
     @Test
-    void Create_Auction() {
+    @DisplayName("Should create auction with fields given through command")
+    void shouldCreateAuction() {
         // Given
-        CreateAuctionCommand createAuctionCommand = new CreateAuctionCommand("Mona Lisa",
+        CreateAuctionCommand command = new CreateAuctionCommand("Mona Lisa",
             "16th Century painting by Leonardo da Vinci",
-            Optional.of(Instant.parse("2025-01-01T01:00:00Z")));
+            Instant.parse("2025-01-01T01:00:00Z"));
 
         // When
-        auctionService.createAuction(createAuctionCommand);
+        auctionService.createAuction(command);
 
         // Then
         ArgumentCaptor<Auction> captor = ArgumentCaptor.forClass(Auction.class);
         verify(auctionStoragePort).createAuction(captor.capture());
-        assertThat(captor.getValue().getName()).isEqualTo(createAuctionCommand.name());
-        assertThat(captor.getValue().getDescription()).isEqualTo(createAuctionCommand.description());
-        assertThat(captor.getValue().getEndTime()).isEqualTo(createAuctionCommand.endTime().get());
+
+        Auction saved = captor.getValue();
+        assertThat(saved.getName()).isEqualTo(command.name());
+        assertThat(saved.getDescription()).isEqualTo(command.description());
+        assertThat(saved.getEndTime()).isEqualTo(command.endTime());
     }
 }
