@@ -10,7 +10,7 @@ public class Auction {
     private final String description;
     private final AuctionWindow auctionWindow;
     private final Money startingPrice;
-    private AuctionState state;
+    private AuctionStatus status;
 
     private Auction(
         UUID id,
@@ -18,14 +18,14 @@ public class Auction {
         String description,
         AuctionWindow auctionWindow,
         Money startingPrice,
-        AuctionState state
+        AuctionStatus status
     ) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.auctionWindow = auctionWindow;
         this.startingPrice = startingPrice;
-        this.state = state;
+        this.status = status;
     }
 
     public static Auction create(
@@ -45,7 +45,35 @@ public class Auction {
             description,
             auctionWindow,
             startingPrice,
-            AuctionState.ACTIVE
+            AuctionStatus.ACTIVE
         );
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public AuctionWindow getAuctionWindow() {
+        return auctionWindow;
+    }
+
+    public Money getStartingPrice() {
+        return startingPrice;
+    }
+
+    public AuctionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AuctionStatus status) {
+        this.status = status;
     }
 }
