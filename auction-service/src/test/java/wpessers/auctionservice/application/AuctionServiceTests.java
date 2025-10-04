@@ -33,7 +33,8 @@ class AuctionServiceTests {
         CreateAuctionCommand command = new CreateAuctionCommand(
             "Mona Lisa",
             "16th Century painting by Leonardo da Vinci",
-            Instant.now().plusSeconds(60)
+            Instant.now().plusSeconds(60),
+            10
         );
 
         // When
