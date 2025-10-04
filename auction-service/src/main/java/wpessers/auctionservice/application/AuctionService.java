@@ -10,7 +10,6 @@ import wpessers.auctionservice.domain.AuctionWindow;
 import wpessers.auctionservice.domain.Money;
 import java.util.UUID;
 
-
 @Service
 public class AuctionService {
 

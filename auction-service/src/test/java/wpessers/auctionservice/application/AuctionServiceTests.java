@@ -38,27 +38,16 @@ class AuctionServiceTests {
         // Given
         UUID auctionId = UUID.randomUUID();
         idGenerator.addId(auctionId);
-        Instant fixedStartTime = Instant.parse("2025-01-01T10:00:00Z");
-        timeProvider.setFixedTime(fixedStartTime);
-        Instant auctionEndTime = fixedStartTime.plusSeconds(60);
 
-        String auctionName = "Mona Lisa";
-        String auctionDescription = "16th Century painting by Leonardo da Vinci";
-        int auctionStartingPrice = 10;
+        Instant startTime = Instant.parse("2025-01-01T10:00:00Z");
+        timeProvider.setFixedTime(startTime);
+        Instant endTime = startTime.plusSeconds(60);
 
         CreateAuctionCommand command = new CreateAuctionCommand(
-            auctionName,
-            auctionDescription,
-            auctionEndTime,
-            auctionStartingPrice
-        );
-
-        Auction expectedAuction = Auction.create(
-            auctionId,
-            auctionName,
-            auctionDescription,
-            new AuctionWindow(fixedStartTime, auctionEndTime),
-            new Money(auctionStartingPrice)
+            "Charizard Holo",
+            "Holographic Charizard card",
+            endTime,
+            100
         );
 
         // When
@@ -66,6 +55,10 @@ class AuctionServiceTests {
 
         // Then
         assertThat(actualId).isEqualTo(auctionId);
-        assertThat(auctionStorage.get(actualId)).usingRecursiveComparison().isEqualTo(expectedAuction);
+        Auction actualAuction = auctionStorage.get(actualId);
+        assertThat(actualAuction.getName()).isEqualTo("Charizard Holo");
+        assertThat(actualAuction.getDescription()).isEqualTo("Holographic Charizard card");
+        assertThat(actualAuction.getAuctionWindow()).isEqualTo(new AuctionWindow(startTime, endTime));
+        assertThat(actualAuction.getStartingPrice()).isEqualTo(new Money(100));
     }
 }

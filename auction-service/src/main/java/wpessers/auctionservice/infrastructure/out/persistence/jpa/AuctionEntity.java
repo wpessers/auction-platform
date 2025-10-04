@@ -24,6 +24,7 @@ public class AuctionEntity {
     @Size(max = 100)
     private String name;
 
+    @NotNull
     @Size(max = 400)
     private String description;
 
