@@ -1,15 +1,15 @@
-package wpessers.auctionservice.infrastructure.out.persistence;
+package wpessers.auctionservice.infrastructure.out.persistence.jpa;
 
 import org.springframework.stereotype.Service;
-import wpessers.auctionservice.application.port.out.AuctionStoragePort;
+import wpessers.auctionservice.application.port.out.AuctionStorage;
 import wpessers.auctionservice.domain.Auction;
 
 @Service
-public class AuctionJpaAdapter implements AuctionStoragePort {
+public class JpaAuctionStorage implements AuctionStorage {
 
     private final AuctionRepository auctionRepository;
 
-    public AuctionJpaAdapter(AuctionRepository auctionRepository) {
+    public JpaAuctionStorage(AuctionRepository auctionRepository) {
         this.auctionRepository = auctionRepository;
     }
 

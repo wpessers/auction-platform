@@ -1,4 +1,4 @@
-package wpessers.auctionservice.infrastructure.out.persistence;
+package wpessers.auctionservice.infrastructure.out.persistence.jpa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

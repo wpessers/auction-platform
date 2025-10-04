@@ -1,29 +1,36 @@
 package wpessers.auctionservice.application;
 
 import org.springframework.stereotype.Service;
+import wpessers.auctionservice.application.port.out.TimeProvider;
 import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
-import wpessers.auctionservice.application.port.out.AuctionStoragePort;
+import wpessers.auctionservice.application.port.out.AuctionStorage;
+import wpessers.auctionservice.application.port.out.AuctionIdGenerator;
 import wpessers.auctionservice.domain.Auction;
 import wpessers.auctionservice.domain.AuctionWindow;
 import wpessers.auctionservice.domain.Money;
-import java.time.Instant;
 import java.util.UUID;
-
-import static java.util.UUID.randomUUID;
 
 
 @Service
 public class AuctionService {
 
-    private final AuctionStoragePort auctionStoragePort;
+    private final AuctionIdGenerator auctionIdGenerator;
+    private final AuctionStorage auctionStorage;
+    private final TimeProvider timeProvider;
 
-    public AuctionService(AuctionStoragePort auctionStoragePort) {
-        this.auctionStoragePort = auctionStoragePort;
+    public AuctionService(
+        AuctionIdGenerator auctionIdGenerator,
+        AuctionStorage auctionStorage,
+        TimeProvider timeProvider
+    ) {
+        this.auctionIdGenerator = auctionIdGenerator;
+        this.auctionStorage = auctionStorage;
+        this.timeProvider = timeProvider;
     }
 
     public UUID createAuction(CreateAuctionCommand command) {
-        UUID id = randomUUID();
-        AuctionWindow auctionWindow = new AuctionWindow(Instant.now(), command.endTime());
+        UUID id = auctionIdGenerator.generateId();
+        AuctionWindow auctionWindow = new AuctionWindow(timeProvider.now(), command.endTime());
         Money startingPrice = new Money(command.startingPrice());
 
         Auction auction = Auction.create(
@@ -33,7 +40,7 @@ public class AuctionService {
             auctionWindow,
             startingPrice
         );
-        auctionStoragePort.save(auction);
+        auctionStorage.save(auction);
         return id;
     }
 }
