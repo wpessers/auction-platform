@@ -10,16 +10,22 @@ public class Auction {
     private final String description;
     private final AuctionWindow auctionWindow;
     private final Money startingPrice;
+    private AuctionState state;
 
     private Auction(
-        UUID id, String name, String description,
-        AuctionWindow auctionWindow, Money startingPrice
+        UUID id,
+        String name,
+        String description,
+        AuctionWindow auctionWindow,
+        Money startingPrice,
+        AuctionState state
     ) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.auctionWindow = auctionWindow;
         this.startingPrice = startingPrice;
+        this.state = state;
     }
 
     public static Auction create(
@@ -32,6 +38,14 @@ public class Auction {
         if (startingPrice.isNegative()) {
             throw new InvalidStartingPriceException("Starting price cannot be negative");
         }
-        return new Auction(id, name, description, auctionWindow, startingPrice);
+
+        return new Auction(
+            id,
+            name,
+            description,
+            auctionWindow,
+            startingPrice,
+            AuctionState.ACTIVE
+        );
     }
 }
