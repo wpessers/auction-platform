@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
 import wpessers.auctionservice.application.port.out.AuctionStoragePort;
-import wpessers.auctionservice.domain.model.Auction;
+import wpessers.auctionservice.domain.Auction;
 
 @ExtendWith(MockitoExtension.class)
 class AuctionServiceTests {

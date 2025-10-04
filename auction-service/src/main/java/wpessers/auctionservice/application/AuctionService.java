@@ -3,8 +3,9 @@ package wpessers.auctionservice.application;
 import org.springframework.stereotype.Service;
 import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
 import wpessers.auctionservice.application.port.out.AuctionStoragePort;
-import wpessers.auctionservice.domain.model.Auction;
-import wpessers.auctionservice.domain.model.Money;
+import wpessers.auctionservice.domain.Auction;
+import wpessers.auctionservice.domain.AuctionWindow;
+import wpessers.auctionservice.domain.Money;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -22,13 +23,15 @@ public class AuctionService {
 
     public UUID createAuction(CreateAuctionCommand command) {
         UUID id = randomUUID();
+        AuctionWindow auctionWindow = new AuctionWindow(Instant.now(), command.endTime());
+        Money startingPrice = new Money(command.startingPrice());
+
         Auction auction = Auction.create(
             id,
             command.name(),
             command.description(),
-            Instant.now(),
-            command.endTime(),
-            new Money(command.startingPrice())
+            auctionWindow,
+            startingPrice
         );
         auctionStoragePort.save(auction);
         return id;

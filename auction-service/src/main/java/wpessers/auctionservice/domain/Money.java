@@ -1,4 +1,4 @@
-package wpessers.auctionservice.domain.model;
+package wpessers.auctionservice.domain;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
