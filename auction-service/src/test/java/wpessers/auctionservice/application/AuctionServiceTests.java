@@ -3,6 +3,8 @@ package wpessers.auctionservice.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -10,8 +12,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
 import wpessers.auctionservice.domain.Auction;
+import wpessers.auctionservice.domain.AuctionStatus;
 import wpessers.auctionservice.domain.AuctionWindow;
 import wpessers.auctionservice.domain.Money;
+import wpessers.auctionservice.fixtures.AuctionTestDataBuilder;
 import wpessers.auctionservice.infrastructure.out.generation.fixed.StubAuctionIdGeneratorAdapter;
 import wpessers.auctionservice.infrastructure.out.persistence.inmemory.FakeAuctionStorageAdapter;
 import wpessers.auctionservice.infrastructure.out.time.fixed.StubTimeProviderAdapter;
@@ -58,7 +62,40 @@ class AuctionServiceTests {
         Auction actualAuction = auctionStorage.get(actualId);
         assertThat(actualAuction.getName()).isEqualTo("Charizard Holo");
         assertThat(actualAuction.getDescription()).isEqualTo("Holographic Charizard card");
-        assertThat(actualAuction.getAuctionWindow()).isEqualTo(new AuctionWindow(startTime, endTime));
+        assertThat(actualAuction.getAuctionWindow()).isEqualTo(
+            new AuctionWindow(startTime, endTime));
         assertThat(actualAuction.getStartingPrice()).isEqualTo(new Money(100));
+    }
+
+    @Test
+    @DisplayName("Should return active auctions")
+    void shouldReturnActiveAuctions() {
+        // Given
+        UUID activeAuctionId1 = UUID.randomUUID();
+        UUID activeAuctionId2 = UUID.randomUUID();
+        UUID endedAuctionId = UUID.randomUUID();
+
+        Auction activeAuction1 = new AuctionTestDataBuilder()
+            .withId(activeAuctionId1)
+            .withStatus(AuctionStatus.ACTIVE)
+            .build();
+        Auction activeAuction2 = new AuctionTestDataBuilder()
+            .withId(activeAuctionId2)
+            .withStatus(AuctionStatus.ACTIVE)
+            .build();
+        Auction endedAuction = new AuctionTestDataBuilder()
+            .withId(endedAuctionId)
+            .withStatus(AuctionStatus.ENDED)
+            .build();
+
+        auctionStorage.save(activeAuction1);
+        auctionStorage.save(activeAuction2);
+        auctionStorage.save(endedAuction);
+
+        // When
+        List<Auction> auctions = auctionService.getActiveAuctions();
+
+        // Then
+        assertThat(auctions).containsExactly(activeAuction1, activeAuction2);
     }
 }

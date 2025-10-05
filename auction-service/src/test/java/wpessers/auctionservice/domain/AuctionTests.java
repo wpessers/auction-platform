@@ -7,7 +7,6 @@ import wpessers.auctionservice.domain.exception.InvalidStartingPriceException;
 import java.time.Instant;
 import java.util.UUID;
 
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AuctionTests {
@@ -16,9 +15,9 @@ class AuctionTests {
     @DisplayName("Should throw exception when starting price is negative")
     void shouldThrowOnInvalidStartingPrice() {
         // Given
-        UUID id = randomUUID();
-        String name = "Mona Lisa";
-        String description = "16th Century painting by Leonardo da Vinci";
+        UUID id = UUID.randomUUID();
+        String name = "Charizard Holo";
+        String description = "Holographic Charizard card";
         Instant startTime = Instant.parse("2025-01-02T01:00:00Z");
         Instant endTime = Instant.parse("2025-01-02T02:00:00Z");
         AuctionWindow auctionWindow = new AuctionWindow(startTime, endTime);

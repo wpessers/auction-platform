@@ -8,6 +8,7 @@ import wpessers.auctionservice.application.port.out.AuctionIdGenerator;
 import wpessers.auctionservice.domain.Auction;
 import wpessers.auctionservice.domain.AuctionWindow;
 import wpessers.auctionservice.domain.Money;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -41,5 +42,9 @@ public class AuctionService {
         );
         auctionStorage.save(auction);
         return id;
+    }
+
+    public List<Auction> getActiveAuctions() {
+        return auctionStorage.getActiveAuctions();
     }
 }

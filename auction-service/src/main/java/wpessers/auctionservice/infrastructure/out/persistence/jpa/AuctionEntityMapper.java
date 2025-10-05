@@ -2,6 +2,8 @@ package wpessers.auctionservice.infrastructure.out.persistence.jpa;
 
 import org.springframework.stereotype.Component;
 import wpessers.auctionservice.domain.Auction;
+import wpessers.auctionservice.domain.AuctionWindow;
+import wpessers.auctionservice.domain.Money;
 
 @Component
 public class AuctionEntityMapper {
@@ -16,5 +18,18 @@ public class AuctionEntityMapper {
         entity.setStartingPrice(auction.getStartingPrice().amount());
         entity.setStatus(auction.getStatus());
         return entity;
+    }
+
+    public Auction toDomain(AuctionEntity entity) {
+        return Auction.create(
+            entity.getId(),
+            entity.getName(),
+            entity.getDescription(),
+            new AuctionWindow(
+                entity.getStartTime(),
+                entity.getEndTime()
+            ),
+            new Money(entity.getStartingPrice())
+        );
     }
 }
