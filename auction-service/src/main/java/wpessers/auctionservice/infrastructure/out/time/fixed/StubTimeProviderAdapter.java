@@ -1,7 +1,7 @@
 package wpessers.auctionservice.infrastructure.out.time.fixed;
 
-import wpessers.auctionservice.application.port.out.TimeProvider;
 import java.time.Instant;
+import wpessers.auctionservice.application.port.out.TimeProvider;
 
 public class StubTimeProviderAdapter implements TimeProvider {
 

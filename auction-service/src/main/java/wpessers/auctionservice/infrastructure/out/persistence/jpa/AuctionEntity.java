@@ -8,10 +8,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import wpessers.auctionservice.domain.AuctionStatus;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
+import wpessers.auctionservice.domain.AuctionStatus;
 
 @Entity
 @Table(name = "auctions")

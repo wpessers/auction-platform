@@ -1,20 +1,21 @@
 package wpessers.auctionservice.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
+import wpessers.auctionservice.application.port.in.query.AuctionResponse;
 import wpessers.auctionservice.domain.Auction;
 import wpessers.auctionservice.domain.AuctionStatus;
 import wpessers.auctionservice.domain.AuctionWindow;
 import wpessers.auctionservice.domain.Money;
+import wpessers.auctionservice.domain.exception.AuctionNotFoundException;
 import wpessers.auctionservice.fixtures.AuctionTestDataBuilder;
 import wpessers.auctionservice.infrastructure.out.generation.fixed.StubAuctionIdGeneratorAdapter;
 import wpessers.auctionservice.infrastructure.out.persistence.inmemory.FakeAuctionStorageAdapter;
@@ -27,13 +28,15 @@ class AuctionServiceTests {
     private FakeAuctionStorageAdapter auctionStorage;
     private StubTimeProviderAdapter timeProvider;
     private AuctionService auctionService;
+    private AuctionMapper mapper;
 
     @BeforeEach
     void setUp() {
         this.idGenerator = new StubAuctionIdGeneratorAdapter();
         this.auctionStorage = new FakeAuctionStorageAdapter();
         this.timeProvider = new StubTimeProviderAdapter();
-        this.auctionService = new AuctionService(idGenerator, auctionStorage, timeProvider);
+        this.mapper = new AuctionMapper();
+        this.auctionService = new AuctionService(idGenerator, auctionStorage, timeProvider, mapper);
     }
 
     @Test
@@ -68,6 +71,21 @@ class AuctionServiceTests {
     }
 
     @Test
+    @DisplayName("Should return auction details")
+    void shouldReturnAuctionDetails() {
+        // Given
+        UUID auctionId = UUID.randomUUID();
+        Auction auction = new AuctionTestDataBuilder().withId(auctionId).build();
+        auctionStorage.save(auction);
+
+        // When
+        AuctionResponse auctionResponse = auctionService.findAuction(auctionId);
+
+        // Then
+        assertThat(auctionResponse.id()).isEqualTo(auctionId);
+    }
+
+    @Test
     @DisplayName("Should return active auctions")
     void shouldReturnActiveAuctions() {
         // Given
@@ -93,9 +111,23 @@ class AuctionServiceTests {
         auctionStorage.save(endedAuction);
 
         // When
-        List<Auction> auctions = auctionService.getActiveAuctions();
+        List<AuctionResponse> auctions = auctionService.getActiveAuctions();
 
         // Then
-        assertThat(auctions).containsExactly(activeAuction1, activeAuction2);
+        assertThat(auctions).hasSize(2);
+        assertThat(auctions).extracting(AuctionResponse::id)
+            .containsExactlyInAnyOrder(activeAuctionId1, activeAuctionId2);
     }
+
+    @Test
+    @DisplayName("Should throw exception when auction not found")
+    void shouldThrowAuctionNotFoundException() {
+        // Given
+        UUID nonExistentAuctionId = UUID.randomUUID();
+
+        // When / Then
+        assertThrows(AuctionNotFoundException.class,
+            () -> auctionService.findAuction(nonExistentAuctionId));
+    }
+
 }

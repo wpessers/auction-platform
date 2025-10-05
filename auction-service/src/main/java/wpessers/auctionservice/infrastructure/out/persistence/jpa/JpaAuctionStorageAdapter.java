@@ -1,10 +1,12 @@
 package wpessers.auctionservice.infrastructure.out.persistence.jpa;
 
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 import wpessers.auctionservice.application.port.out.AuctionStorage;
 import wpessers.auctionservice.domain.Auction;
 import wpessers.auctionservice.domain.AuctionStatus;
-import java.util.List;
 
 @Component
 public class JpaAuctionStorageAdapter implements AuctionStorage {
@@ -27,9 +29,13 @@ public class JpaAuctionStorageAdapter implements AuctionStorage {
     }
 
     @Override
-    public List<Auction> getActiveAuctions() {
-        return auctionRepository.getAuctionEntitiesByStatusIs(AuctionStatus.ACTIVE).stream()
-            .map(mapper::toDomain)
-            .toList();
+    public Optional<Auction> findById(UUID auctionId) {
+        return auctionRepository.findById(auctionId).map(mapper::toDomain);
+    }
+
+    @Override
+    public Stream<Auction> getActiveAuctions() {
+        return auctionRepository.getAuctionEntitiesByStatusIs(AuctionStatus.ACTIVE)
+            .map(mapper::toDomain);
     }
 }

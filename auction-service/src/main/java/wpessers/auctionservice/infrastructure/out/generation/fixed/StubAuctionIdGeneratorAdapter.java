@@ -1,9 +1,9 @@
 package wpessers.auctionservice.infrastructure.out.generation.fixed;
 
-import wpessers.auctionservice.application.port.out.AuctionIdGenerator;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.UUID;
+import wpessers.auctionservice.application.port.out.AuctionIdGenerator;
 
 public class StubAuctionIdGeneratorAdapter implements AuctionIdGenerator {
 

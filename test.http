@@ -1,0 +1,13 @@
+###
+POST http://localhost:8080/api/auctions
+Content-Type: application/json
+
+{
+  "name": "Vintage Clock",
+  "description": "A beautiful vintage clock from the 1950s.",
+  "endTime": "2025-12-31T23:59:59Z",
+  "startingPrice": 100.00
+}
+
+###
+GET http://localhost:8080/api/auctions/active

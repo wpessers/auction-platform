@@ -1,7 +1,7 @@
 package wpessers.auctionservice.domain;
 
-import wpessers.auctionservice.domain.exception.InvalidAuctionWindowException;
 import java.time.Instant;
+import wpessers.auctionservice.domain.exception.InvalidAuctionWindowException;
 
 public record AuctionWindow(Instant startTime, Instant endTime) {
 

@@ -1,11 +1,11 @@
 package wpessers.auctionservice.fixtures;
 
+import java.time.Instant;
+import java.util.UUID;
 import wpessers.auctionservice.domain.Auction;
 import wpessers.auctionservice.domain.AuctionStatus;
 import wpessers.auctionservice.domain.AuctionWindow;
 import wpessers.auctionservice.domain.Money;
-import java.time.Instant;
-import java.util.UUID;
 
 public class AuctionTestDataBuilder {
 

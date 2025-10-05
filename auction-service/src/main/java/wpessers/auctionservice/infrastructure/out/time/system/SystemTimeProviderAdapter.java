@@ -1,8 +1,8 @@
 package wpessers.auctionservice.infrastructure.out.time.system;
 
+import java.time.Instant;
 import org.springframework.stereotype.Component;
 import wpessers.auctionservice.application.port.out.TimeProvider;
-import java.time.Instant;
 
 @Component
 public class SystemTimeProviderAdapter implements TimeProvider {

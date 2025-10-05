@@ -1,11 +1,11 @@
 package wpessers.auctionservice.domain;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import wpessers.auctionservice.domain.exception.InvalidAuctionWindowException;
-import java.time.Instant;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AuctionWindowTests {
 

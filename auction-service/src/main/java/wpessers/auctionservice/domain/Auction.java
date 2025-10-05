@@ -1,7 +1,7 @@
 package wpessers.auctionservice.domain;
 
-import wpessers.auctionservice.domain.exception.InvalidStartingPriceException;
 import java.util.UUID;
+import wpessers.auctionservice.domain.exception.InvalidStartingPriceException;
 
 public class Auction {
 

@@ -1,13 +1,12 @@
 package wpessers.auctionservice.domain;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import wpessers.auctionservice.domain.exception.InvalidStartingPriceException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Instant;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import wpessers.auctionservice.domain.exception.InvalidStartingPriceException;
 
 class AuctionTests {
 

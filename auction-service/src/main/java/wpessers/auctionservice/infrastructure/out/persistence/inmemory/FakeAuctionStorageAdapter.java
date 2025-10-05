@@ -1,11 +1,12 @@
 package wpessers.auctionservice.infrastructure.out.persistence.inmemory;
 
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
 import wpessers.auctionservice.application.port.out.AuctionStorage;
 import wpessers.auctionservice.domain.Auction;
 import wpessers.auctionservice.domain.AuctionStatus;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 
 public class FakeAuctionStorageAdapter implements AuctionStorage {
 
@@ -21,10 +22,14 @@ public class FakeAuctionStorageAdapter implements AuctionStorage {
     }
 
     @Override
-    public List<Auction> getActiveAuctions() {
+    public Optional<Auction> findById(UUID auctionId) {
+        return Optional.ofNullable(auctions.get(auctionId));
+    }
+
+    @Override
+    public Stream<Auction> getActiveAuctions() {
         return auctions.values().stream()
-            .filter((auction) -> auction.getStatus() == AuctionStatus.ACTIVE)
-            .toList();
+            .filter((auction) -> auction.getStatus() == AuctionStatus.ACTIVE);
     }
 
     public Auction get(UUID auctionId) {
