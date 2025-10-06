@@ -153,7 +153,7 @@ class AuctionServiceTests {
         // Given
         UUID nonExistentAuctionId = UUID.randomUUID();
 
-        // When / Then
+        // When & Then
         assertThrows(AuctionNotFoundException.class,
             () -> auctionService.findAuction(nonExistentAuctionId));
     }

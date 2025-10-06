@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 public record CreateAuctionRequest(
@@ -18,8 +19,8 @@ public record CreateAuctionRequest(
     Instant endTime,
 
     @NotNull(message = "Starting price is required")
-    @PositiveOrZero(message = "Starting price can not be negative")
-    Double startingPrice
+    @PositiveOrZero(message = "Starting price cannot be negative")
+    BigDecimal startingPrice
 ) {
 
 }

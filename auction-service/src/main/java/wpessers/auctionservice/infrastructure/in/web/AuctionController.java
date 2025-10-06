@@ -1,5 +1,6 @@
 package wpessers.auctionservice.infrastructure.in.web;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -25,17 +26,17 @@ public class AuctionController {
     }
 
     @PostMapping
-    public ResponseEntity<UUID> createAuction(@RequestBody CreateAuctionRequest request) {
+    public ResponseEntity<UUID> createAuction(@RequestBody @Valid CreateAuctionRequest request) {
         CreateAuctionCommand createAuctionCommand = new CreateAuctionCommand(
             request.name(),
             request.description(),
             null,
             request.endTime(),
-            request.startingPrice()
+            request.startingPrice().doubleValue()
         );
 
-        UUID auction = auctionService.createAuction(createAuctionCommand);
-        return ResponseEntity.status(HttpStatus.CREATED).body(auction);
+        UUID auctionId = auctionService.createAuction(createAuctionCommand);
+        return ResponseEntity.status(HttpStatus.CREATED).body(auctionId);
     }
 
     @GetMapping("/{id}")

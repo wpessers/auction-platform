@@ -16,7 +16,7 @@ class AuctionWindowTests {
         Instant startTime = Instant.parse("2025-01-02T01:00:00Z");
         Instant endTime = startTime.minusSeconds(1L);
 
-        // When / Then
+        // When & Then
         assertThrows(InvalidAuctionWindowException.class,
             () -> new AuctionWindow(startTime, endTime));
     }
@@ -27,7 +27,7 @@ class AuctionWindowTests {
         // Given
         Instant sameTime = Instant.parse("2025-01-02T01:00:00Z");
 
-        // When / Then
+        // When & Then
         assertThrows(InvalidAuctionWindowException.class,
             () -> new AuctionWindow(sameTime, sameTime));
     }

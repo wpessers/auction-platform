@@ -27,7 +27,7 @@ class AuctionTests {
         AuctionWindow auctionWindow = new AuctionWindow(startTime, endTime);
         Money startingPrice = new Money(-10);
 
-        // When / Then
+        // When & Then
         assertThrows(InvalidStartingPriceException.class,
             () -> new Auction(id, name, description, auctionWindow, startingPrice,
                 AuctionStatus.OPEN));
@@ -54,7 +54,7 @@ class AuctionTests {
         // Given
         Auction auction = new AuctionBuilder().withStatus(status).build();
 
-        // When / Then
+        // When & Then
         assertThrows(InvalidStateTransitionException.class, auction::start);
     }
 
@@ -78,7 +78,7 @@ class AuctionTests {
         // Given
         Auction auction = new AuctionBuilder().withStatus(AuctionStatus.CLOSED).build();
 
-        // When / Then
+        // When & Then
         assertThrows(InvalidStateTransitionException.class, auction::end);
     }
 }
