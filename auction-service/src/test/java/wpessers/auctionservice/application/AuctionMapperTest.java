@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import wpessers.auctionservice.application.port.in.query.AuctionResponse;
 import wpessers.auctionservice.domain.Auction;
-import wpessers.auctionservice.fixtures.AuctionTestDataBuilder;
+import wpessers.auctionservice.fixtures.AuctionBuilder;
 
 class AuctionMapperTest {
 
@@ -16,7 +16,7 @@ class AuctionMapperTest {
     @DisplayName("Should map Auction domain object to AuctionResponse")
     void shouldMapAuctionToResponse() {
         // Given
-        Auction auction = new AuctionTestDataBuilder().build();
+        Auction auction = new AuctionBuilder().build();
 
         // When
         AuctionResponse response = mapper.toResponse(auction);

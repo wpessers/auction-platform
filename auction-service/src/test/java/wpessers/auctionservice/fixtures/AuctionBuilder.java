@@ -7,56 +7,55 @@ import wpessers.auctionservice.domain.AuctionStatus;
 import wpessers.auctionservice.domain.AuctionWindow;
 import wpessers.auctionservice.domain.Money;
 
-public class AuctionTestDataBuilder {
+public class AuctionBuilder {
 
     private UUID id = UUID.randomUUID();
     private String name = "Default auction name";
     private String description = "Default description";
     private Instant startTime = Instant.parse("2025-01-01T00:00:00Z");
     private Instant endTime = Instant.parse("2025-01-02T00:00:00Z");
-    private double price = 100.0;
-    private AuctionStatus status = AuctionStatus.ACTIVE;
+    private double startingPrice = 100.0;
+    private AuctionStatus status = AuctionStatus.OPEN;
 
-    public AuctionTestDataBuilder withId(UUID id) {
+    public AuctionBuilder withId(UUID id) {
         this.id = id;
         return this;
     }
 
-    public AuctionTestDataBuilder withName(String name) {
+    public AuctionBuilder withName(String name) {
         this.name = name;
         return this;
     }
 
-    public AuctionTestDataBuilder withDescription(String description) {
+    public AuctionBuilder withDescription(String description) {
         this.description = description;
         return this;
     }
 
-    public AuctionTestDataBuilder withTimeWindow(Instant startTime, Instant endTime) {
+    public AuctionBuilder withTimeWindow(Instant startTime, Instant endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
         return this;
     }
 
-    public AuctionTestDataBuilder withPrice(double amount) {
-        this.price = amount;
+    public AuctionBuilder withStartingPrice(double startingPrice) {
+        this.startingPrice = startingPrice;
         return this;
     }
 
-    public AuctionTestDataBuilder withStatus(AuctionStatus status) {
+    public AuctionBuilder withStatus(AuctionStatus status) {
         this.status = status;
         return this;
     }
 
     public Auction build() {
-        Auction auction = Auction.create(
+        return new Auction(
             id,
             name,
             description,
             new AuctionWindow(startTime, endTime),
-            new Money(price)
+            new Money(startingPrice),
+            status
         );
-        auction.setStatus(status);
-        return auction;
     }
 }

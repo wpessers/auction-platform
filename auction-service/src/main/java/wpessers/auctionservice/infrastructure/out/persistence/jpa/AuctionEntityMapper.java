@@ -21,7 +21,7 @@ public class AuctionEntityMapper {
     }
 
     public Auction toDomain(AuctionEntity entity) {
-        return Auction.create(
+        return new Auction(
             entity.getId(),
             entity.getName(),
             entity.getDescription(),
@@ -29,7 +29,8 @@ public class AuctionEntityMapper {
                 entity.getStartTime(),
                 entity.getEndTime()
             ),
-            new Money(entity.getStartingPrice())
+            new Money(entity.getStartingPrice()),
+            entity.getStatus()
         );
     }
 }

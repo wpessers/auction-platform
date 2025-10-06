@@ -29,6 +29,7 @@ public class AuctionController {
         CreateAuctionCommand createAuctionCommand = new CreateAuctionCommand(
             request.name(),
             request.description(),
+            null,
             request.endTime(),
             request.startingPrice()
         );

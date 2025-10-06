@@ -2,6 +2,7 @@ package wpessers.auctionservice.domain;
 
 import java.util.UUID;
 import wpessers.auctionservice.domain.exception.InvalidStartingPriceException;
+import wpessers.auctionservice.domain.exception.InvalidStateTransitionException;
 
 public class Auction {
 
@@ -12,7 +13,7 @@ public class Auction {
     private final Money startingPrice;
     private AuctionStatus status;
 
-    private Auction(
+    public Auction(
         UUID id,
         String name,
         String description,
@@ -20,33 +21,16 @@ public class Auction {
         Money startingPrice,
         AuctionStatus status
     ) {
+        if (startingPrice.isNegative()) {
+            throw new InvalidStartingPriceException("Starting price cannot be negative");
+        }
+
         this.id = id;
         this.name = name;
         this.description = description;
         this.auctionWindow = auctionWindow;
         this.startingPrice = startingPrice;
         this.status = status;
-    }
-
-    public static Auction create(
-        UUID id,
-        String name,
-        String description,
-        AuctionWindow auctionWindow,
-        Money startingPrice
-    ) {
-        if (startingPrice.isNegative()) {
-            throw new InvalidStartingPriceException("Starting price cannot be negative");
-        }
-
-        return new Auction(
-            id,
-            name,
-            description,
-            auctionWindow,
-            startingPrice,
-            AuctionStatus.ACTIVE
-        );
     }
 
     public UUID getId() {
@@ -73,7 +57,28 @@ public class Auction {
         return status;
     }
 
-    public void setStatus(AuctionStatus status) {
-        this.status = status;
+    public boolean isOpen() {
+        return status.equals(AuctionStatus.OPEN);
+    }
+
+    public boolean isClosed() {
+        return status.equals(AuctionStatus.CLOSED);
+    }
+
+    public void start() {
+        if (isOpen()) {
+            throw new InvalidStateTransitionException("Auction is already open");
+        }
+        if (isClosed()) {
+            throw new InvalidStateTransitionException("Cannot start a closed auction");
+        }
+        status = AuctionStatus.OPEN;
+    }
+
+    public void end() {
+        if (isClosed()) {
+            throw new InvalidStateTransitionException("Auction is already closed");
+        }
+        status = AuctionStatus.CLOSED;
     }
 }

@@ -36,7 +36,7 @@ public class JpaAuctionStorageAdapter implements AuctionStorage {
 
     @Override
     public Stream<Auction> getActiveAuctions() {
-        return auctionRepository.getAuctionEntitiesByStatusIs(AuctionStatus.ACTIVE)
+        return auctionRepository.getAuctionEntitiesByStatusIs(AuctionStatus.OPEN)
             .stream()
             .map(mapper::toDomain);
     }

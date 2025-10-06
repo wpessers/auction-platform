@@ -21,7 +21,7 @@ class AuctionEntityMapperTest {
     void shouldMapDomainToEntity() {
         // Given
         UUID auctionId = UUID.randomUUID();
-        Auction auction = Auction.create(
+        Auction auction = new Auction(
             auctionId,
             "Charizard Holo",
             "Holographic Charizard card",
@@ -29,7 +29,8 @@ class AuctionEntityMapperTest {
                 Instant.parse("2025-01-01T00:00:00Z"),
                 Instant.parse("2025-01-02T00:00:00Z")
             ),
-            new Money(BigDecimal.ONE)
+            new Money(BigDecimal.ONE),
+            AuctionStatus.OPEN
         );
 
         // When
@@ -42,7 +43,7 @@ class AuctionEntityMapperTest {
         assertThat(entity.getStartTime()).isEqualTo(Instant.parse("2025-01-01T00:00:00Z"));
         assertThat(entity.getEndTime()).isEqualTo(Instant.parse("2025-01-02T00:00:00Z"));
         assertThat(entity.getStartingPrice()).isEqualTo(BigDecimal.ONE.setScale(2));
-        assertThat(entity.getStatus()).isEqualTo(AuctionStatus.ACTIVE);
+        assertThat(entity.getStatus()).isEqualTo(AuctionStatus.OPEN);
     }
 
     @Test
@@ -57,7 +58,7 @@ class AuctionEntityMapperTest {
         auctionEntity.setStartTime(Instant.parse("2025-01-01T00:00:00Z"));
         auctionEntity.setEndTime(Instant.parse("2025-01-02T00:00:00Z"));
         auctionEntity.setStartingPrice(BigDecimal.ONE);
-        auctionEntity.setStatus(AuctionStatus.ACTIVE);
+        auctionEntity.setStatus(AuctionStatus.OPEN);
 
         // When
         Auction domain = mapper.toDomain(auctionEntity);
@@ -71,6 +72,6 @@ class AuctionEntityMapperTest {
             Instant.parse("2025-01-02T00:00:00Z")
         ));
         assertThat(domain.getStartingPrice()).isEqualTo(new Money(BigDecimal.ONE));
-        assertThat(domain.getStatus()).isEqualTo(AuctionStatus.ACTIVE);
+        assertThat(domain.getStatus()).isEqualTo(AuctionStatus.OPEN);
     }
 }
