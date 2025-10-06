@@ -29,7 +29,7 @@ public class FakeAuctionStorageAdapter implements AuctionStorage {
     @Override
     public Stream<Auction> getActiveAuctions() {
         return auctions.values().stream()
-            .filter((auction) -> auction.getStatus() == AuctionStatus.OPEN);
+            .filter((auction) -> auction.getStatus() == AuctionStatus.ACTIVE);
     }
 
     public Auction get(UUID auctionId) {

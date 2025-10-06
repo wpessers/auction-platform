@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import wpessers.auctionservice.application.AuctionService;
+import wpessers.auctionservice.application.auction.AuctionService;
 import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
 import wpessers.auctionservice.application.port.in.query.AuctionResponse;
 
@@ -32,7 +32,7 @@ public class AuctionController {
             request.description(),
             null,
             request.endTime(),
-            request.startingPrice().doubleValue()
+            request.startingPrice()
         );
 
         UUID auctionId = auctionService.createAuction(createAuctionCommand);

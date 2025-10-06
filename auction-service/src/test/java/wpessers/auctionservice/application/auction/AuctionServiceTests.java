@@ -1,8 +1,9 @@
-package wpessers.auctionservice.application;
+package wpessers.auctionservice.application.auction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -56,7 +57,7 @@ class AuctionServiceTests {
             .withDescription("Holographic Charizard card")
             .withStartTime(null)
             .withEndTime(endTime)
-            .withStartingPrice(100)
+            .withStartingPrice(BigDecimal.ONE)
             .build();
 
         // When
@@ -70,8 +71,8 @@ class AuctionServiceTests {
         assertThat(actualAuction.getAuctionWindow()).isEqualTo(
             new AuctionWindow(currentTime, endTime)
         );
-        assertThat(actualAuction.getStartingPrice()).isEqualTo(new Money(100));
-        assertThat(actualAuction.getStatus()).isEqualTo(AuctionStatus.OPEN);
+        assertThat(actualAuction.getStartingPrice()).isEqualTo(new Money(1));
+        assertThat(actualAuction.getStatus()).isEqualTo(AuctionStatus.ACTIVE);
     }
 
     @Test
@@ -129,7 +130,7 @@ class AuctionServiceTests {
         assertThat(actualAuction.getAuctionWindow()).isEqualTo(
             new AuctionWindow(currentTime, endTime)
         );
-        assertThat(actualAuction.getStatus()).isEqualTo(AuctionStatus.OPEN);
+        assertThat(actualAuction.getStatus()).isEqualTo(AuctionStatus.ACTIVE);
     }
 
     @Test
@@ -168,11 +169,11 @@ class AuctionServiceTests {
 
         Auction activeAuction1 = new AuctionBuilder()
             .withId(activeAuctionId1)
-            .withStatus(AuctionStatus.OPEN)
+            .withStatus(AuctionStatus.ACTIVE)
             .build();
         Auction activeAuction2 = new AuctionBuilder()
             .withId(activeAuctionId2)
-            .withStatus(AuctionStatus.OPEN)
+            .withStatus(AuctionStatus.ACTIVE)
             .build();
         Auction endedAuction = new AuctionBuilder()
             .withId(endedAuctionId)

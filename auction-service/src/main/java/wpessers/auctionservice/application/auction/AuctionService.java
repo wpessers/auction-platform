@@ -1,8 +1,7 @@
-package wpessers.auctionservice.application;
+package wpessers.auctionservice.application.auction;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
@@ -39,7 +38,7 @@ public class AuctionService {
         UUID id = auctionIdGenerator.generateId();
 
         Instant startTime = timeProvider.now();
-        AuctionStatus status = AuctionStatus.OPEN;
+        AuctionStatus status = AuctionStatus.ACTIVE;
         if (command.startTime() != null && !command.startTime().isBefore(startTime)) {
             startTime = command.startTime();
             status = AuctionStatus.SCHEDULED;

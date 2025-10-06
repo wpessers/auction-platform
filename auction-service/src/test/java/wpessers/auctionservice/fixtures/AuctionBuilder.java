@@ -1,5 +1,6 @@
 package wpessers.auctionservice.fixtures;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 import wpessers.auctionservice.domain.Auction;
@@ -14,8 +15,8 @@ public class AuctionBuilder {
     private String description = "Default description";
     private Instant startTime = Instant.parse("2025-01-01T00:00:00Z");
     private Instant endTime = Instant.parse("2025-01-02T00:00:00Z");
-    private double startingPrice = 100.0;
-    private AuctionStatus status = AuctionStatus.OPEN;
+    private BigDecimal startingPrice = BigDecimal.valueOf(100);
+    private AuctionStatus status = AuctionStatus.ACTIVE;
 
     public AuctionBuilder withId(UUID id) {
         this.id = id;
@@ -38,7 +39,7 @@ public class AuctionBuilder {
         return this;
     }
 
-    public AuctionBuilder withStartingPrice(double startingPrice) {
+    public AuctionBuilder withStartingPrice(BigDecimal startingPrice) {
         this.startingPrice = startingPrice;
         return this;
     }

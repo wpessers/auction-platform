@@ -1,5 +1,6 @@
 package wpessers.auctionservice.fixtures;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
 
@@ -9,7 +10,7 @@ public class CreateAuctionCommandBuilder {
     private String description = "Default description";
     private Instant startTime = Instant.parse("2025-01-01T00:00:00Z");
     private Instant endTime = Instant.parse("2025-01-02T00:00:00Z");
-    private double startingPrice = 100.0;
+    private BigDecimal startingPrice = BigDecimal.valueOf(100);
 
     public CreateAuctionCommandBuilder withName(String name) {
         this.name = name;
@@ -31,7 +32,7 @@ public class CreateAuctionCommandBuilder {
         return this;
     }
 
-    public CreateAuctionCommandBuilder withStartingPrice(double startingPrice) {
+    public CreateAuctionCommandBuilder withStartingPrice(BigDecimal startingPrice) {
         this.startingPrice = startingPrice;
         return this;
     }

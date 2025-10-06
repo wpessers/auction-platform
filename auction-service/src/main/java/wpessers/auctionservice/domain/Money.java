@@ -15,6 +15,6 @@ public record Money(BigDecimal amount) {
     }
 
     public boolean isNegative() {
-        return amount.compareTo(BigDecimal.ZERO) < 0;
+        return amount.signum() < 0;
     }
 }

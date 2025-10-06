@@ -1,5 +1,6 @@
 package wpessers.auctionservice.application.port.in.command;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 public record CreateAuctionCommand(
@@ -7,7 +8,7 @@ public record CreateAuctionCommand(
     String description,
     Instant startTime,
     Instant endTime,
-    double startingPrice
+    BigDecimal startingPrice
 ) {
 
 }

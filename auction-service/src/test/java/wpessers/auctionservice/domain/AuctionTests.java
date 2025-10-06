@@ -30,7 +30,7 @@ class AuctionTests {
         // When & Then
         assertThrows(InvalidStartingPriceException.class,
             () -> new Auction(id, name, description, auctionWindow, startingPrice,
-                AuctionStatus.OPEN));
+                AuctionStatus.ACTIVE));
     }
 
     @Test
@@ -43,12 +43,12 @@ class AuctionTests {
         auction.start();
 
         // Then
-        assertThat(auction.isOpen()).isTrue();
+        assertThat(auction.isActive()).isTrue();
     }
 
 
     @ParameterizedTest
-    @EnumSource(names = {"OPEN", "CLOSED"})
+    @EnumSource(names = {"ACTIVE", "CLOSED"})
     @DisplayName("Should throw exception when starting a non-SCHEDULED auction")
     void shouldThrowWhenStartingNonScheduledAuction(AuctionStatus status) {
         // Given
@@ -59,7 +59,7 @@ class AuctionTests {
     }
 
     @ParameterizedTest
-    @EnumSource(names = {"OPEN", "SCHEDULED"})
+    @EnumSource(names = {"ACTIVE", "SCHEDULED"})
     @DisplayName("Should transition status to CLOSED when ending an auction")
     void shouldCloseAuction(AuctionStatus status) {
         // Given

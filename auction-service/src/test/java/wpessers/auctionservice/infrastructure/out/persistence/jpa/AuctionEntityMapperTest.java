@@ -30,7 +30,7 @@ class AuctionEntityMapperTest {
                 Instant.parse("2025-01-02T00:00:00Z")
             ),
             new Money(BigDecimal.ONE),
-            AuctionStatus.OPEN
+            AuctionStatus.ACTIVE
         );
 
         // When
@@ -43,7 +43,7 @@ class AuctionEntityMapperTest {
         assertThat(entity.getStartTime()).isEqualTo(Instant.parse("2025-01-01T00:00:00Z"));
         assertThat(entity.getEndTime()).isEqualTo(Instant.parse("2025-01-02T00:00:00Z"));
         assertThat(entity.getStartingPrice()).isEqualTo(BigDecimal.ONE.setScale(2));
-        assertThat(entity.getStatus()).isEqualTo(AuctionStatus.OPEN);
+        assertThat(entity.getStatus()).isEqualTo(AuctionStatus.ACTIVE);
     }
 
     @Test
@@ -58,7 +58,7 @@ class AuctionEntityMapperTest {
         auctionEntity.setStartTime(Instant.parse("2025-01-01T00:00:00Z"));
         auctionEntity.setEndTime(Instant.parse("2025-01-02T00:00:00Z"));
         auctionEntity.setStartingPrice(BigDecimal.ONE);
-        auctionEntity.setStatus(AuctionStatus.OPEN);
+        auctionEntity.setStatus(AuctionStatus.ACTIVE);
 
         // When
         Auction domain = mapper.toDomain(auctionEntity);
@@ -72,6 +72,6 @@ class AuctionEntityMapperTest {
             Instant.parse("2025-01-02T00:00:00Z")
         ));
         assertThat(domain.getStartingPrice()).isEqualTo(new Money(BigDecimal.ONE));
-        assertThat(domain.getStatus()).isEqualTo(AuctionStatus.OPEN);
+        assertThat(domain.getStatus()).isEqualTo(AuctionStatus.ACTIVE);
     }
 }

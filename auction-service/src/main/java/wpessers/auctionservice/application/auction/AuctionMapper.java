@@ -1,4 +1,4 @@
-package wpessers.auctionservice.application;
+package wpessers.auctionservice.application.auction;
 
 import org.springframework.stereotype.Component;
 import wpessers.auctionservice.application.port.in.query.AuctionResponse;

@@ -1,4 +1,4 @@
-package wpessers.auctionservice.application;
+package wpessers.auctionservice.application.auction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

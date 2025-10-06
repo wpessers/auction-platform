@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import wpessers.auctionservice.application.port.out.AuctionStorage;
 import wpessers.auctionservice.domain.Auction;
 import wpessers.auctionservice.domain.AuctionStatus;
@@ -36,7 +35,7 @@ public class JpaAuctionStorageAdapter implements AuctionStorage {
 
     @Override
     public Stream<Auction> getActiveAuctions() {
-        return auctionRepository.getAuctionEntitiesByStatusIs(AuctionStatus.OPEN)
+        return auctionRepository.getAuctionEntitiesByStatusIs(AuctionStatus.ACTIVE)
             .stream()
             .map(mapper::toDomain);
     }

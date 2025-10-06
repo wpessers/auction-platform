@@ -57,8 +57,8 @@ public class Auction {
         return status;
     }
 
-    public boolean isOpen() {
-        return status.equals(AuctionStatus.OPEN);
+    public boolean isActive() {
+        return status.equals(AuctionStatus.ACTIVE);
     }
 
     public boolean isClosed() {
@@ -66,13 +66,13 @@ public class Auction {
     }
 
     public void start() {
-        if (isOpen()) {
+        if (isActive()) {
             throw new InvalidStateTransitionException("Auction is already open");
         }
         if (isClosed()) {
             throw new InvalidStateTransitionException("Cannot start a closed auction");
         }
-        status = AuctionStatus.OPEN;
+        status = AuctionStatus.ACTIVE;
     }
 
     public void end() {

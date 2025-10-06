@@ -2,6 +2,6 @@ package wpessers.auctionservice.domain;
 
 public enum AuctionStatus {
     SCHEDULED,
-    OPEN,
+    ACTIVE,
     CLOSED
 }
