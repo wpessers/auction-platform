@@ -1,4 +1,4 @@
-package wpessers.auctionservice.infrastructure.out.persistence.jpa;
+package wpessers.auctionservice.infrastructure.out.persistence.jpa.auction;
 
 import org.springframework.stereotype.Component;
 import wpessers.auctionservice.domain.Auction;

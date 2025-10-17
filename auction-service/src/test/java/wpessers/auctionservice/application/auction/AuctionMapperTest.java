@@ -15,13 +15,10 @@ class AuctionMapperTest {
     @Test
     @DisplayName("Should map Auction domain object to AuctionResponse")
     void shouldMapAuctionToResponse() {
-        // Given
         Auction auction = new AuctionBuilder().build();
 
-        // When
         AuctionResponse response = mapper.toResponse(auction);
 
-        // Then
         assertThat(response.id()).isEqualTo(auction.getId());
         assertThat(response.name()).isEqualTo(auction.getName());
         assertThat(response.description()).isEqualTo(auction.getDescription());

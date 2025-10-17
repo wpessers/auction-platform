@@ -3,13 +3,13 @@ package wpessers.auctionservice.infrastructure.out.generation.fixed;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.UUID;
-import wpessers.auctionservice.application.port.out.AuctionIdGenerator;
+import wpessers.auctionservice.application.port.out.IdGenerator;
 
-public class StubAuctionIdGeneratorAdapter implements AuctionIdGenerator {
+public class StubIdGeneratorAdapter implements IdGenerator {
 
     private final Queue<UUID> ids;
 
-    public StubAuctionIdGeneratorAdapter() {
+    public StubIdGeneratorAdapter() {
         this.ids = new ArrayDeque<>();
     }
 

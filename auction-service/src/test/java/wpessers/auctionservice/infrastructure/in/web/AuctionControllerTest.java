@@ -40,7 +40,6 @@ class AuctionControllerTest {
     @Test
     @DisplayName("Should create auction and return CREATED status with auction id")
     void shouldCreateAuction() throws Exception {
-        // Given
         CreateAuctionRequest request = new CreateAuctionRequest(
             "name",
             "desc",
@@ -50,7 +49,6 @@ class AuctionControllerTest {
         UUID createdId = UUID.randomUUID();
         when(auctionService.createAuction(any(CreateAuctionCommand.class))).thenReturn(createdId);
 
-        // When & Then
         mockMvc.perform(post("/api/auctions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -61,7 +59,6 @@ class AuctionControllerTest {
     @Test
     @DisplayName("Should return OK status with auction details")
     void shouldReturnDetails() throws Exception {
-        // Given
         UUID id = UUID.randomUUID();
         AuctionResponse auctionResponse = new AuctionResponse(
             id,
@@ -73,7 +70,6 @@ class AuctionControllerTest {
         );
         when(auctionService.findAuction(id)).thenReturn(auctionResponse);
 
-        // When & Then
         mockMvc.perform(get("/api/auctions/{id}", id))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(auctionResponse)));
@@ -82,10 +78,8 @@ class AuctionControllerTest {
     @Test
     @DisplayName("Should return NOT_FOUND status when auction does not exist")
     void shouldReturnNotFound() throws Exception {
-        // Given
         when(auctionService.findAuction(any(UUID.class))).thenThrow(AuctionNotFoundException.class);
 
-        // When & Then
         mockMvc.perform(get("/api/auctions/{id}", UUID.randomUUID()))
             .andExpect(status().isNotFound());
     }
@@ -93,7 +87,6 @@ class AuctionControllerTest {
     @Test
     @DisplayName("Should return OK status with active auctions")
     void shouldReturnActiveAuctions() throws Exception {
-        // Given
         UUID id = UUID.randomUUID();
         List<AuctionResponse> response = List.of(new AuctionResponse(
             id,
@@ -105,7 +98,6 @@ class AuctionControllerTest {
         ));
         when(auctionService.getActiveAuctions()).thenReturn(response);
 
-        // When & Then
         mockMvc.perform(get("/api/auctions/active", id))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(response)));

@@ -1,4 +1,4 @@
-package wpessers.auctionservice.infrastructure.out.persistence.jpa;
+package wpessers.auctionservice.infrastructure.out.persistence.jpa.auction;
 
 import java.util.List;
 import java.util.UUID;

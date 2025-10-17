@@ -3,6 +3,7 @@ package wpessers.auctionservice.infrastructure.out.persistence.jpa;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,8 @@ import wpessers.auctionservice.domain.Auction;
 import wpessers.auctionservice.domain.AuctionStatus;
 import wpessers.auctionservice.domain.AuctionWindow;
 import wpessers.auctionservice.domain.Money;
+import wpessers.auctionservice.infrastructure.out.persistence.jpa.auction.AuctionEntity;
+import wpessers.auctionservice.infrastructure.out.persistence.jpa.auction.AuctionEntityMapper;
 
 class AuctionEntityMapperTest {
 
@@ -19,7 +22,6 @@ class AuctionEntityMapperTest {
     @Test
     @DisplayName("Should map domain object to jpa entity")
     void shouldMapDomainToEntity() {
-        // Given
         UUID auctionId = UUID.randomUUID();
         Auction auction = new Auction(
             auctionId,
@@ -33,23 +35,21 @@ class AuctionEntityMapperTest {
             AuctionStatus.ACTIVE
         );
 
-        // When
         AuctionEntity entity = mapper.toEntity(auction);
 
-        // Then
         assertThat(entity.getId()).isEqualTo(auctionId);
         assertThat(entity.getName()).isEqualTo("Charizard Holo");
         assertThat(entity.getDescription()).isEqualTo("Holographic Charizard card");
         assertThat(entity.getStartTime()).isEqualTo(Instant.parse("2025-01-01T00:00:00Z"));
         assertThat(entity.getEndTime()).isEqualTo(Instant.parse("2025-01-02T00:00:00Z"));
-        assertThat(entity.getStartingPrice()).isEqualTo(BigDecimal.ONE.setScale(2));
+        assertThat(entity.getStartingPrice()).isEqualTo(
+            BigDecimal.ONE.setScale(2, RoundingMode.HALF_UP));
         assertThat(entity.getStatus()).isEqualTo(AuctionStatus.ACTIVE);
     }
 
     @Test
     @DisplayName("Should map domain object to jpa entity")
     void shouldMapEntityToDomain() {
-        // Given
         UUID auctionId = UUID.randomUUID();
         AuctionEntity auctionEntity = new AuctionEntity();
         auctionEntity.setId(auctionId);
@@ -60,10 +60,8 @@ class AuctionEntityMapperTest {
         auctionEntity.setStartingPrice(BigDecimal.ONE);
         auctionEntity.setStatus(AuctionStatus.ACTIVE);
 
-        // When
         Auction domain = mapper.toDomain(auctionEntity);
 
-        // Then
         assertThat(domain.getId()).isEqualTo(auctionId);
         assertThat(domain.getName()).isEqualTo("Charizard Holo");
         assertThat(domain.getDescription()).isEqualTo("Holographic Charizard card");

@@ -19,14 +19,14 @@ import wpessers.auctionservice.domain.Money;
 import wpessers.auctionservice.domain.exception.AuctionNotFoundException;
 import wpessers.auctionservice.fixtures.AuctionBuilder;
 import wpessers.auctionservice.fixtures.CreateAuctionCommandBuilder;
-import wpessers.auctionservice.infrastructure.out.generation.fixed.StubAuctionIdGeneratorAdapter;
+import wpessers.auctionservice.infrastructure.out.generation.fixed.StubIdGeneratorAdapter;
 import wpessers.auctionservice.infrastructure.out.persistence.inmemory.FakeAuctionStorageAdapter;
 import wpessers.auctionservice.infrastructure.out.time.fixed.StubTimeProviderAdapter;
 
 
 class AuctionServiceTests {
 
-    private StubAuctionIdGeneratorAdapter idGenerator;
+    private StubIdGeneratorAdapter idGenerator;
     private FakeAuctionStorageAdapter auctionStorage;
     private StubTimeProviderAdapter timeProvider;
     private AuctionService auctionService;
@@ -35,7 +35,7 @@ class AuctionServiceTests {
 
     @BeforeEach
     void setUp() {
-        this.idGenerator = new StubAuctionIdGeneratorAdapter();
+        this.idGenerator = new StubIdGeneratorAdapter();
         this.auctionStorage = new FakeAuctionStorageAdapter();
         this.timeProvider = new StubTimeProviderAdapter();
         this.auctionService = new AuctionService(idGenerator, auctionStorage, timeProvider, mapper);
@@ -44,7 +44,6 @@ class AuctionServiceTests {
     @Test
     @DisplayName("Should create open auction when no start time is given, with details given in command")
     void shouldCreateAuction() {
-        // Given
         UUID auctionId = UUID.randomUUID();
         idGenerator.addId(auctionId);
 
@@ -60,10 +59,8 @@ class AuctionServiceTests {
             .withStartingPrice(BigDecimal.ONE)
             .build();
 
-        // When
         UUID actualId = auctionService.createAuction(command);
 
-        // Then
         assertThat(actualId).isEqualTo(auctionId);
         Auction actualAuction = auctionStorage.get(actualId);
         assertThat(actualAuction.getName()).isEqualTo("Charizard Holo");
@@ -78,7 +75,6 @@ class AuctionServiceTests {
     @Test
     @DisplayName("Should create scheduled auction when start time is in the future")
     void shouldCreateScheduledAuction() {
-        // Given
         UUID auctionId = UUID.randomUUID();
         idGenerator.addId(auctionId);
 
@@ -92,10 +88,8 @@ class AuctionServiceTests {
             .withEndTime(endTime)
             .build();
 
-        // When
         UUID actualId = auctionService.createAuction(command);
 
-        // Then
         assertThat(actualId).isEqualTo(auctionId);
         Auction actualAuction = auctionStorage.get(actualId);
         assertThat(actualAuction.getAuctionWindow()).isEqualTo(
@@ -107,7 +101,6 @@ class AuctionServiceTests {
     @Test
     @DisplayName("Should create open auction with start time now when given start time is in the past")
     void shouldDefaultPastStartTime() {
-        // Given
         UUID auctionId = UUID.randomUUID();
         idGenerator.addId(auctionId);
 
@@ -121,10 +114,8 @@ class AuctionServiceTests {
             .withEndTime(endTime)
             .build();
 
-        // When
         UUID actualId = auctionService.createAuction(command);
 
-        // Then
         assertThat(actualId).isEqualTo(auctionId);
         Auction actualAuction = auctionStorage.get(actualId);
         assertThat(actualAuction.getAuctionWindow()).isEqualTo(
@@ -136,25 +127,20 @@ class AuctionServiceTests {
     @Test
     @DisplayName("Should return auction details")
     void shouldReturnAuctionDetails() {
-        // Given
         UUID auctionId = UUID.randomUUID();
         Auction auction = new AuctionBuilder().withId(auctionId).build();
         auctionStorage.save(auction);
 
-        // When
         AuctionResponse auctionResponse = auctionService.findAuction(auctionId);
 
-        // Then
         assertThat(auctionResponse.id()).isEqualTo(auctionId);
     }
 
     @Test
     @DisplayName("Should throw exception when auction not found")
     void shouldThrowOnAuctionNotFound() {
-        // Given
         UUID nonExistentAuctionId = UUID.randomUUID();
 
-        // When & Then
         assertThrows(AuctionNotFoundException.class,
             () -> auctionService.findAuction(nonExistentAuctionId));
     }
@@ -162,7 +148,6 @@ class AuctionServiceTests {
     @Test
     @DisplayName("Should return active auctions")
     void shouldReturnActiveAuctions() {
-        // Given
         UUID activeAuctionId1 = UUID.randomUUID();
         UUID activeAuctionId2 = UUID.randomUUID();
         UUID endedAuctionId = UUID.randomUUID();
@@ -184,10 +169,8 @@ class AuctionServiceTests {
         auctionStorage.save(activeAuction2);
         auctionStorage.save(endedAuction);
 
-        // When
         List<AuctionResponse> auctions = auctionService.getActiveAuctions();
 
-        // Then
         assertThat(auctions).hasSize(2);
         assertThat(auctions).extracting(AuctionResponse::id)
             .containsExactlyInAnyOrder(activeAuctionId1, activeAuctionId2);

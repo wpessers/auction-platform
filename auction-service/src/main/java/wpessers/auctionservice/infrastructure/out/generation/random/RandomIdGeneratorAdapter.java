@@ -2,10 +2,10 @@ package wpessers.auctionservice.infrastructure.out.generation.random;
 
 import java.util.UUID;
 import org.springframework.stereotype.Component;
-import wpessers.auctionservice.application.port.out.AuctionIdGenerator;
+import wpessers.auctionservice.application.port.out.IdGenerator;
 
 @Component
-public class RandomAuctionIdGeneratorAdapter implements AuctionIdGenerator {
+public class RandomIdGeneratorAdapter implements IdGenerator {
 
     @Override
     public UUID generateId() {

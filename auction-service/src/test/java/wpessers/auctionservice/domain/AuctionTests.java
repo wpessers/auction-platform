@@ -18,7 +18,6 @@ class AuctionTests {
     @Test
     @DisplayName("Should throw exception when starting price is negative")
     void shouldThrowOnInvalidStartingPrice() {
-        // Given
         UUID id = UUID.randomUUID();
         String name = "Charizard Holo";
         String description = "Holographic Charizard card";
@@ -27,7 +26,6 @@ class AuctionTests {
         AuctionWindow auctionWindow = new AuctionWindow(startTime, endTime);
         Money startingPrice = new Money(-10);
 
-        // When & Then
         assertThrows(InvalidStartingPriceException.class,
             () -> new Auction(id, name, description, auctionWindow, startingPrice,
                 AuctionStatus.ACTIVE));
@@ -36,13 +34,10 @@ class AuctionTests {
     @Test
     @DisplayName("Should transition status to OPEN when starting a SCHEDULED auction")
     void shouldOpenAuction() {
-        // Given
         Auction auction = new AuctionBuilder().withStatus(AuctionStatus.SCHEDULED).build();
 
-        // When
         auction.start();
 
-        // Then
         assertThat(auction.isActive()).isTrue();
     }
 
@@ -51,10 +46,8 @@ class AuctionTests {
     @EnumSource(names = {"ACTIVE", "CLOSED"})
     @DisplayName("Should throw exception when starting a non-SCHEDULED auction")
     void shouldThrowWhenStartingNonScheduledAuction(AuctionStatus status) {
-        // Given
         Auction auction = new AuctionBuilder().withStatus(status).build();
 
-        // When & Then
         assertThrows(InvalidStateTransitionException.class, auction::start);
     }
 
@@ -62,23 +55,18 @@ class AuctionTests {
     @EnumSource(names = {"ACTIVE", "SCHEDULED"})
     @DisplayName("Should transition status to CLOSED when ending an auction")
     void shouldCloseAuction(AuctionStatus status) {
-        // Given
         Auction auction = new AuctionBuilder().withStatus(status).build();
 
-        // When
         auction.end();
 
-        // Then
         assertThat(auction.isClosed()).isTrue();
     }
 
     @Test
     @DisplayName("Should throw exception when ending a CLOSED auction")
     void shouldThrowWhenEndingClosedAuction() {
-        // Given
         Auction auction = new AuctionBuilder().withStatus(AuctionStatus.CLOSED).build();
 
-        // When & Then
         assertThrows(InvalidStateTransitionException.class, auction::end);
     }
 }

@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
 import wpessers.auctionservice.application.port.in.query.AuctionResponse;
-import wpessers.auctionservice.application.port.out.AuctionIdGenerator;
+import wpessers.auctionservice.application.port.out.IdGenerator;
 import wpessers.auctionservice.application.port.out.AuctionStorage;
 import wpessers.auctionservice.application.port.out.TimeProvider;
 import wpessers.auctionservice.domain.Auction;
@@ -18,24 +18,24 @@ import wpessers.auctionservice.domain.exception.AuctionNotFoundException;
 @Service
 public class AuctionService {
 
-    private final AuctionIdGenerator auctionIdGenerator;
+    private final IdGenerator idGenerator;
     private final AuctionStorage auctionStorage;
     private final TimeProvider timeProvider;
     private final AuctionMapper mapper;
 
     public AuctionService(
-        AuctionIdGenerator auctionIdGenerator,
+        IdGenerator idGenerator,
         AuctionStorage auctionStorage,
         TimeProvider timeProvider, AuctionMapper mapper
     ) {
-        this.auctionIdGenerator = auctionIdGenerator;
+        this.idGenerator = idGenerator;
         this.auctionStorage = auctionStorage;
         this.timeProvider = timeProvider;
         this.mapper = mapper;
     }
 
     public UUID createAuction(CreateAuctionCommand command) {
-        UUID id = auctionIdGenerator.generateId();
+        UUID id = idGenerator.generateId();
 
         Instant startTime = timeProvider.now();
         AuctionStatus status = AuctionStatus.ACTIVE;
