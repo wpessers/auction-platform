@@ -1,7 +1,7 @@
 package wpessers.auctionservice.application.port.out;
 
-import wpessers.auctionservice.domain.User;
 import java.util.Optional;
+import wpessers.auctionservice.domain.User;
 
 public interface UserStorage {
 

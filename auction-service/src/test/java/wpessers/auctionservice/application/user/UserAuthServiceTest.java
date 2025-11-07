@@ -1,5 +1,9 @@
 package wpessers.auctionservice.application.user;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,11 +14,6 @@ import wpessers.auctionservice.domain.exception.InvalidUsernameException;
 import wpessers.auctionservice.infrastructure.out.generation.fixed.StubIdGeneratorAdapter;
 import wpessers.auctionservice.infrastructure.out.generation.fixed.StubTokenGeneratorAdapter;
 import wpessers.auctionservice.infrastructure.out.persistence.inmemory.FakeUserStorageAdapter;
-
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserAuthServiceTest {
 

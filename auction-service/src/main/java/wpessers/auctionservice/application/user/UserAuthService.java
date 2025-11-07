@@ -1,5 +1,6 @@
 package wpessers.auctionservice.application.user;
 
+import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import wpessers.auctionservice.application.port.out.IdGenerator;
@@ -7,7 +8,6 @@ import wpessers.auctionservice.application.port.out.TokenGenerator;
 import wpessers.auctionservice.application.port.out.UserStorage;
 import wpessers.auctionservice.domain.User;
 import wpessers.auctionservice.domain.exception.InvalidUsernameException;
-import java.util.UUID;
 
 @Service
 public class UserAuthService {

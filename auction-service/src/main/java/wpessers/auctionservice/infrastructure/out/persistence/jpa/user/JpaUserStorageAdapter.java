@@ -1,9 +1,9 @@
 package wpessers.auctionservice.infrastructure.out.persistence.jpa.user;
 
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import wpessers.auctionservice.application.port.out.UserStorage;
 import wpessers.auctionservice.domain.User;
-import java.util.Optional;
 
 @Component
 public class JpaUserStorageAdapter implements UserStorage {

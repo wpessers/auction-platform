@@ -1,11 +1,9 @@
 package wpessers.auctionservice.infrastructure.out.persistence.inmemory;
 
-import ch.qos.logback.classic.util.LogbackMDCAdapterSimple;
-import wpessers.auctionservice.application.port.out.UserStorage;
-import wpessers.auctionservice.domain.User;
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.UUID;
+import wpessers.auctionservice.application.port.out.UserStorage;
+import wpessers.auctionservice.domain.User;
 
 public class FakeUserStorageAdapter implements UserStorage {
 
