@@ -11,21 +11,20 @@ import wpessers.auctionservice.domain.AuctionStatus;
 @Component
 public class JpaAuctionStorageAdapter implements AuctionStorage {
 
-    private final AuctionEntityMapper mapper;
     private final AuctionRepository auctionRepository;
+    private final AuctionEntityMapper mapper;
 
     public JpaAuctionStorageAdapter(
-        AuctionEntityMapper mapper,
-        AuctionRepository auctionRepository
+        AuctionRepository auctionRepository,
+        AuctionEntityMapper mapper
     ) {
-        this.mapper = mapper;
         this.auctionRepository = auctionRepository;
+        this.mapper = mapper;
     }
 
     @Override
     public void save(Auction auction) {
-        AuctionEntity entity = mapper.toEntity(auction);
-        auctionRepository.save(entity);
+        auctionRepository.save(mapper.toEntity(auction));
     }
 
     @Override

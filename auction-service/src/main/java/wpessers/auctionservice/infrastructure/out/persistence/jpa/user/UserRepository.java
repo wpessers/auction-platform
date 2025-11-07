@@ -1,5 +1,12 @@
 package wpessers.auctionservice.infrastructure.out.persistence.jpa.user;
 
-public interface UserRepository {
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
 
+public interface UserRepository extends JpaRepository<UserEntity, UUID> {
+
+    Optional<UserEntity> findUserEntityByUsername(String username);
+
+    boolean existsByUsername(String username);
 }
