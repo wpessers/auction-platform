@@ -2,7 +2,7 @@ CREATE TABLE auctions
 (
   id             UUID           NOT NULL,
   name           VARCHAR(100)   NOT NULL,
-  description    VARCHAR(400),
+  description    VARCHAR(400)   NOT NULL,
   start_time     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   end_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   starting_price DECIMAL(10, 2) NOT NULL,
