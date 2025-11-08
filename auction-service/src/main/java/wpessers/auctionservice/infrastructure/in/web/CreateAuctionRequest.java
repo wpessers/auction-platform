@@ -1,6 +1,7 @@
 package wpessers.auctionservice.infrastructure.in.web;
 
 import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -13,6 +14,9 @@ public record CreateAuctionRequest(
 
     @NotNull(message = "Auction description is required")
     String description,
+
+    @FutureOrPresent(message = "Auction start time cannot be in the past")
+    Instant startTime,
 
     @NotNull(message = "Auction end time is required")
     @Future(message = "Auction end time must be in the future")

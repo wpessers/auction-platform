@@ -30,7 +30,7 @@ public class AuctionController {
         CreateAuctionCommand createAuctionCommand = new CreateAuctionCommand(
             request.name(),
             request.description(),
-            null,
+            request.startTime(),
             request.endTime(),
             request.startingPrice()
         );

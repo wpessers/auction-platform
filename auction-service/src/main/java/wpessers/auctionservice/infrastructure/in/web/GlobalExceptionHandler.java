@@ -11,6 +11,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import wpessers.auctionservice.domain.exception.AuctionNotFoundException;
+import wpessers.auctionservice.domain.exception.InvalidAuctionWindowException;
+import wpessers.auctionservice.domain.exception.InvalidEmailException;
+import wpessers.auctionservice.domain.exception.InvalidStartingPriceException;
+import wpessers.auctionservice.domain.exception.InvalidUsernameException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -34,6 +38,38 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ProblemDetail handleAuctionNotFoundException(AuctionNotFoundException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,
+            ex.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleInvalidStartingPriceException(InvalidStartingPriceException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+            ex.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleInvalidAuctionWindowException(InvalidAuctionWindowException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+            ex.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleInvalidUsernameException(InvalidUsernameException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+            ex.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleInvalidEmailException(InvalidEmailException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
             ex.getMessage());
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;

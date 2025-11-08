@@ -26,6 +26,7 @@ import wpessers.auctionservice.application.auction.AuctionService;
 import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
 import wpessers.auctionservice.application.port.in.query.AuctionResponse;
 import wpessers.auctionservice.domain.exception.AuctionNotFoundException;
+import wpessers.auctionservice.domain.exception.InvalidStartingPriceException;
 import wpessers.auctionservice.infrastructure.in.web.config.SecurityConfig;
 
 @Import(SecurityConfig.class)
@@ -48,6 +49,7 @@ class AuctionControllerTest {
         CreateAuctionRequest request = new CreateAuctionRequest(
             "name",
             "desc",
+            null,
             Instant.now().plusSeconds(60),
             BigDecimal.valueOf(100)
         );
@@ -81,15 +83,6 @@ class AuctionControllerTest {
     }
 
     @Test
-    @DisplayName("Should return NOT_FOUND status when auction does not exist")
-    void shouldReturnNotFound() throws Exception {
-        when(auctionService.findAuction(any(UUID.class))).thenThrow(AuctionNotFoundException.class);
-
-        mockMvc.perform(get("/api/auctions/{id}", UUID.randomUUID()))
-            .andExpect(status().isNotFound());
-    }
-
-    @Test
     @DisplayName("Should return OK status with active auctions")
     void shouldReturnActiveAuctions() throws Exception {
         UUID id = UUID.randomUUID();
@@ -106,5 +99,52 @@ class AuctionControllerTest {
         mockMvc.perform(get("/api/auctions/active", id))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(response)));
+    }
+
+    @Test
+    @DisplayName("Should return NOT_FOUND status when auction does not exist")
+    void shouldReturnNotFound() throws Exception {
+        when(auctionService.findAuction(any(UUID.class))).thenThrow(AuctionNotFoundException.class);
+
+        mockMvc.perform(get("/api/auctions/{id}", UUID.randomUUID()))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Should return BAD_REQUEST status when auction starting price is negative")
+    void shouldReturnBadRequestOnInvalidStartingPrice() throws Exception {
+        CreateAuctionRequest request = new CreateAuctionRequest("name", "desc",
+            null,
+            Instant.now().plusSeconds(60),
+            BigDecimal.valueOf(-10)
+        );
+
+        when(auctionService.createAuction(any(CreateAuctionCommand.class))).thenThrow(
+            InvalidStartingPriceException.class);
+
+        mockMvc.perform(post("/api/auctions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Should return BAD_REQUEST status when auction window is invalid")
+    void shouldReturnBadRequestOnInvalidAuctionWindow() throws Exception {
+        CreateAuctionRequest request = new CreateAuctionRequest("name", "desc",
+            null,
+            Instant.now().plusSeconds(60),
+            BigDecimal.valueOf(100)
+        );
+
+        when(auctionService.createAuction(any(CreateAuctionCommand.class))).thenThrow(
+            InvalidStartingPriceException.class);
+
+        mockMvc.perform(post("/api/auctions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
     }
 }
