@@ -7,6 +7,7 @@ import wpessers.auctionservice.application.port.out.IdGenerator;
 import wpessers.auctionservice.application.port.out.TokenGenerator;
 import wpessers.auctionservice.application.port.out.UserStorage;
 import wpessers.auctionservice.domain.User;
+import wpessers.auctionservice.domain.exception.InvalidEmailException;
 import wpessers.auctionservice.domain.exception.InvalidUsernameException;
 
 @Service
@@ -30,8 +31,11 @@ public class UserAuthService {
     }
 
     public void register(String username, String password, String email) {
-        if (userStorage.exists(username)) {
+        if (userStorage.usernameExists(username)) {
             throw new InvalidUsernameException("Username already exists: " + username);
+        }
+        if (userStorage.emailExists(email)) {
+            throw new InvalidEmailException("Email already exists: " + email);
         }
 
         UUID id = idGenerator.generateId();
@@ -47,6 +51,6 @@ public class UserAuthService {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
-        return tokenGenerator.generateToken(user.id());
+        return tokenGenerator.generateToken(user.username());
     }
 }

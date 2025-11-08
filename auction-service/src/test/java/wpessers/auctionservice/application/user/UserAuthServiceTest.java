@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import wpessers.auctionservice.domain.User;
+import wpessers.auctionservice.domain.exception.InvalidEmailException;
 import wpessers.auctionservice.domain.exception.InvalidUsernameException;
 import wpessers.auctionservice.infrastructure.out.generation.fixed.StubIdGeneratorAdapter;
 import wpessers.auctionservice.infrastructure.out.generation.fixed.StubTokenGeneratorAdapter;
@@ -56,6 +57,17 @@ class UserAuthServiceTest {
 
         assertThrows(InvalidUsernameException.class,
             () -> userAuthService.register("username", "password", "test.user@email.com"));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when registering with an email that is already used")
+    void shouldThrowOnDuplicateEmail() {
+        User existingUser = new User(UUID.randomUUID(), "username", "password", "email");
+        userStorage.save(existingUser);
+        idGenerator.addId(UUID.randomUUID());
+
+        assertThrows(InvalidEmailException.class,
+            () -> userAuthService.register("otheruser", "password", "email"));
     }
 
     @Test

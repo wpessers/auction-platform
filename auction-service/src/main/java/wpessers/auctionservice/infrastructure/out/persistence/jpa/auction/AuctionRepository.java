@@ -7,5 +7,5 @@ import wpessers.auctionservice.domain.AuctionStatus;
 
 public interface AuctionRepository extends JpaRepository<AuctionEntity, UUID> {
 
-    List<AuctionEntity> getAuctionEntitiesByStatusIs(AuctionStatus status);
+    List<AuctionEntity> findByStatus(AuctionStatus status);
 }

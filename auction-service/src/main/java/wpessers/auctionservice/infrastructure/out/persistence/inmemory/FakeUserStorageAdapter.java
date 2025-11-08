@@ -24,7 +24,12 @@ public class FakeUserStorageAdapter implements UserStorage {
     }
 
     @Override
-    public boolean exists(String username) {
+    public boolean usernameExists(String username) {
         return users.containsKey(username);
+    }
+
+    @Override
+    public boolean emailExists(String email) {
+        return users.values().stream().anyMatch((user) -> user.email().equals(email));
     }
 }

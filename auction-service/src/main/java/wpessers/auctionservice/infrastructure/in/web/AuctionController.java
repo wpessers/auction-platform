@@ -48,5 +48,4 @@ public class AuctionController {
     public ResponseEntity<List<AuctionResponse>> getActiveAuctions() {
         return ResponseEntity.ok(auctionService.getActiveAuctions());
     }
-
 }

@@ -58,11 +58,11 @@ public class Auction {
     }
 
     public boolean isActive() {
-        return status.equals(AuctionStatus.ACTIVE);
+        return AuctionStatus.ACTIVE.equals(status);
     }
 
     public boolean isClosed() {
-        return status.equals(AuctionStatus.CLOSED);
+        return AuctionStatus.CLOSED.equals(status);
     }
 
     public void start() {

@@ -39,7 +39,7 @@ public class AuctionService {
 
         Instant startTime = timeProvider.now();
         AuctionStatus status = AuctionStatus.ACTIVE;
-        if (command.startTime() != null && !command.startTime().isBefore(startTime)) {
+        if (command.startTime() != null && command.startTime().isAfter(startTime)) {
             startTime = command.startTime();
             status = AuctionStatus.SCHEDULED;
         }

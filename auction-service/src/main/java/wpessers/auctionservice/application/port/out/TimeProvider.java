@@ -4,5 +4,5 @@ import java.time.Instant;
 
 public interface TimeProvider {
 
-    public Instant now();
+    Instant now();
 }

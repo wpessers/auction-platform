@@ -1,0 +1,65 @@
+package wpessers.auctionservice.infrastructure.in.web;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import wpessers.auctionservice.application.user.UserAuthService;
+import wpessers.auctionservice.infrastructure.in.web.config.SecurityConfig;
+
+@Import(SecurityConfig.class)
+@WebMvcTest(UserAuthController.class)
+class UserAuthControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private UserAuthService userAuthService;
+
+    @Test
+    @DisplayName("Should register user and return CREATED status")
+    void shouldRegisterUser() throws Exception {
+        RegisterUserRequest request = new RegisterUserRequest(
+            "username",
+            "password",
+            "email@test.com"
+        );
+
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("Should login user and return OK status")
+    void shouldLoginUser() throws Exception {
+        LoginUserRequest request = new LoginUserRequest(
+            "username",
+            "password"
+        );
+        String mockToken = "mock-jwt-token";
+        when(userAuthService.login("username", "password")).thenReturn(mockToken);
+
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").value(mockToken));
+    }
+}

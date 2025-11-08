@@ -23,11 +23,16 @@ public class JpaUserStorageAdapter implements UserStorage {
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return userRepository.findUserEntityByUsername(username).map(mapper::toDomain);
+        return userRepository.findByUsername(username).map(mapper::toDomain);
     }
 
     @Override
-    public boolean exists(String username) {
+    public boolean usernameExists(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public boolean emailExists(String email) {
+        return userRepository.existsByEmail(email);
     }
 }

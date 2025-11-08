@@ -9,5 +9,7 @@ public interface UserStorage {
 
     Optional<User> findByUsername(String username);
 
-    boolean exists(String username);
+    boolean usernameExists(String username);
+
+    boolean emailExists(String email);
 }
