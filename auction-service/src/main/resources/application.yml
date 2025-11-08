@@ -1,3 +1,7 @@
 spring:
   application:
     name: auction-service
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-ms: 86400000
