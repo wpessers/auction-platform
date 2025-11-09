@@ -15,7 +15,7 @@ public class AuctionBuilder {
     private String description = "Default description";
     private Instant startTime = Instant.parse("2025-01-01T00:00:00Z");
     private Instant endTime = Instant.parse("2025-01-02T00:00:00Z");
-    private BigDecimal startingPrice = BigDecimal.valueOf(100);
+    private BigDecimal startingPrice = BigDecimal.valueOf(0);
     private AuctionStatus status = AuctionStatus.ACTIVE;
 
     public AuctionBuilder withId(UUID id) {

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import wpessers.auctionservice.shared.application.port.out.IdGenerator;
 
 @Component
-public class RandomIdGeneratorAdapter implements IdGenerator {
+public class UUIDv4IdGeneratorAdapter implements IdGenerator {
 
     @Override
     public UUID generateId() {

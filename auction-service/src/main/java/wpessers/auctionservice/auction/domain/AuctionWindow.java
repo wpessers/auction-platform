@@ -10,4 +10,8 @@ public record AuctionWindow(Instant startTime, Instant endTime) {
             throw new InvalidAuctionWindowException("End time must be after start time");
         }
     }
+
+    public boolean isWithinWindow(Instant timestamp) {
+        return !(timestamp.isBefore(startTime) || timestamp.isAfter(endTime));
+    }
 }

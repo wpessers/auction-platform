@@ -2,6 +2,9 @@ package wpessers.auctionservice.auction.domain;
 
 import java.time.Instant;
 import java.util.UUID;
+import wpessers.auctionservice.auction.domain.bidresult.AuctionNotActive;
+import wpessers.auctionservice.auction.domain.bidresult.BidResult;
+import wpessers.auctionservice.auction.domain.bidresult.Success;
 import wpessers.auctionservice.auction.domain.exception.InvalidStartingPriceException;
 import wpessers.auctionservice.auction.domain.exception.InvalidStateTransitionException;
 import wpessers.auctionservice.shared.domain.Money;
@@ -14,6 +17,9 @@ public class Auction {
     private final AuctionWindow auctionWindow;
     private final Money startingPrice;
     private AuctionStatus status;
+    private Money highestBid;
+    private UUID currentWinnerId;
+    private long bidVersion;
 
     public Auction(
         UUID id,
@@ -33,6 +39,7 @@ public class Auction {
         this.auctionWindow = auctionWindow;
         this.startingPrice = startingPrice;
         this.status = status;
+        this.bidVersion = 0L;
     }
 
     public UUID getId() {
@@ -57,6 +64,18 @@ public class Auction {
 
     public AuctionStatus getStatus() {
         return status;
+    }
+
+    public Money getHighestBid() {
+        return highestBid;
+    }
+
+    public UUID getCurrentWinnerId() {
+        return currentWinnerId;
+    }
+
+    public long getBidVersion() {
+        return bidVersion;
     }
 
     public boolean isActive() {
@@ -85,6 +104,16 @@ public class Auction {
     }
 
     public BidResult placeBid(UUID bidderId, Money bidAmount, Instant timestamp) {
-        return null;
+        if (!isActive() || !auctionWindow.isWithinWindow(timestamp)) {
+            return new AuctionNotActive();
+        }
+
+        UUID previousBidderId = this.currentWinnerId;
+        Money previousAmount = this.highestBid;
+
+        this.currentWinnerId = bidderId;
+        this.highestBid = bidAmount;
+        this.bidVersion++;
+        return new Success(previousAmount, bidAmount, previousBidderId);
     }
 }
