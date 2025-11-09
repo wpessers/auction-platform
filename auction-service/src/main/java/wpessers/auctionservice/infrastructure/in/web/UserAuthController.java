@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import wpessers.auctionservice.application.port.in.command.RegisterUserCommand;
 import wpessers.auctionservice.application.user.UserAuthService;
 
 @RestController
@@ -21,11 +22,14 @@ public class UserAuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterUserRequest request) {
-        userAuthService.register(
+        RegisterUserCommand registerUserCommand = new RegisterUserCommand(
             request.username(),
             request.password(),
             request.email()
         );
+
+        userAuthService.register(
+            registerUserCommand);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import wpessers.auctionservice.application.port.in.command.RegisterUserCommand;
 import wpessers.auctionservice.domain.User;
 import wpessers.auctionservice.domain.exception.InvalidEmailException;
 import wpessers.auctionservice.domain.exception.InvalidUsernameException;
@@ -42,8 +43,13 @@ class UserAuthServiceTest {
     @DisplayName("Should register a new user")
     void shouldRegister() {
         idGenerator.addId(UUID.randomUUID());
+        RegisterUserCommand registerUserCommand = new RegisterUserCommand(
+            "username",
+            "password",
+            "test.user@email.com"
+        );
 
-        userAuthService.register("username", "password", "test.user@email.com");
+        userAuthService.register(registerUserCommand);
 
         assertThat(userStorage.findByUsername("username")).isPresent();
     }
@@ -55,8 +61,13 @@ class UserAuthServiceTest {
         userStorage.save(existingUser);
         idGenerator.addId(UUID.randomUUID());
 
+        RegisterUserCommand registerUserCommand = new RegisterUserCommand(
+            "username",
+            "password",
+            "email"
+        );
         assertThrows(InvalidUsernameException.class,
-            () -> userAuthService.register("username", "password", "test.user@email.com"));
+            () -> userAuthService.register(registerUserCommand));
     }
 
     @Test
@@ -66,8 +77,13 @@ class UserAuthServiceTest {
         userStorage.save(existingUser);
         idGenerator.addId(UUID.randomUUID());
 
+        RegisterUserCommand registerUserCommand = new RegisterUserCommand(
+            "other-username",
+            "password",
+            "email"
+        );
         assertThrows(InvalidEmailException.class,
-            () -> userAuthService.register("otheruser", "password", "email"));
+            () -> userAuthService.register(registerUserCommand));
     }
 
     @Test

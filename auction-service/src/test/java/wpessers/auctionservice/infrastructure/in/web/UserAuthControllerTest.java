@@ -1,6 +1,6 @@
 package wpessers.auctionservice.infrastructure.in.web;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import wpessers.auctionservice.application.port.in.command.RegisterUserCommand;
 import wpessers.auctionservice.application.user.UserAuthService;
 import wpessers.auctionservice.domain.exception.InvalidEmailException;
 import wpessers.auctionservice.domain.exception.InvalidUsernameException;
@@ -74,8 +75,8 @@ class UserAuthControllerTest {
             "password",
             "email@test.com"
         );
-        doThrow(InvalidUsernameException.class).when(userAuthService)
-            .register(anyString(), anyString(), anyString());
+        doThrow(InvalidUsernameException.class)
+            .when(userAuthService).register(any(RegisterUserCommand.class));
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -91,8 +92,8 @@ class UserAuthControllerTest {
             "password",
             "duplicate.email@test.com"
         );
-        doThrow(InvalidEmailException.class).when(userAuthService)
-            .register(anyString(), anyString(), anyString());
+        doThrow(InvalidEmailException.class)
+            .when(userAuthService).register(any(RegisterUserCommand.class));
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)

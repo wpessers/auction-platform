@@ -3,6 +3,7 @@ package wpessers.auctionservice.application.user;
 import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import wpessers.auctionservice.application.port.in.command.RegisterUserCommand;
 import wpessers.auctionservice.application.port.out.IdGenerator;
 import wpessers.auctionservice.application.port.out.TokenGenerator;
 import wpessers.auctionservice.application.port.out.UserStorage;
@@ -30,16 +31,21 @@ public class UserAuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void register(String username, String password, String email) {
-        if (userStorage.usernameExists(username)) {
-            throw new InvalidUsernameException("Username already exists: " + username);
+    public void register(RegisterUserCommand command) {
+        if (userStorage.usernameExists(command.username())) {
+            throw new InvalidUsernameException("Username already exists: " + command.username());
         }
-        if (userStorage.emailExists(email)) {
-            throw new InvalidEmailException("Email already exists: " + email);
+        if (userStorage.emailExists(command.email())) {
+            throw new InvalidEmailException("Email already exists: " + command.email());
         }
 
         UUID id = idGenerator.generateId();
-        User user = new User(id, username, passwordEncoder.encode(password), email);
+        User user = new User(
+            id,
+            command.username(),
+            passwordEncoder.encode(command.password()),
+            command.email()
+        );
         userStorage.save(user);
     }
 

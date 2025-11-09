@@ -7,6 +7,9 @@ spring:
     hibernate:
       ddl-auto: validate
 
+jwt:
+  secret: dtiWDTDKJ0hgb9W7fv/9L/l9UYK9bf4ld8nXPVNNXOvq8kG4IJRR06B0qaYIfO6kiFtECJG/pc2msubhVqp0Dw==
+
 pricing-service:
   host: localhost
   port: 50051
