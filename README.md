@@ -1,7 +1,7 @@
 # Auction Platform Demo Project
 
 This project is a sample application to demonstrate some Spring Boot basics,
-as well as explore hexagonal architecture combined with DDD.
+as well as explore hexagonal architecture.
 It is not intended for production use, but more as a learning resource for myself.
 The project will grow over time to incorporate more features / patterns,
 as I get free time to work on it. Currently, it is far from finished.

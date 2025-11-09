@@ -2,7 +2,7 @@ package wpessers.auctionservice.fixtures;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import wpessers.auctionservice.application.port.in.command.CreateAuctionCommand;
+import wpessers.auctionservice.auction.application.port.in.CreateAuctionCommand;
 
 public class CreateAuctionCommandBuilder {
 

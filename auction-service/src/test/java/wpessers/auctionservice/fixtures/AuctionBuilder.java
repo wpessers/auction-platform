@@ -3,10 +3,10 @@ package wpessers.auctionservice.fixtures;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
-import wpessers.auctionservice.domain.Auction;
-import wpessers.auctionservice.domain.AuctionStatus;
-import wpessers.auctionservice.domain.AuctionWindow;
-import wpessers.auctionservice.domain.Money;
+import wpessers.auctionservice.auction.domain.Auction;
+import wpessers.auctionservice.auction.domain.AuctionStatus;
+import wpessers.auctionservice.auction.domain.AuctionWindow;
+import wpessers.auctionservice.shared.domain.Money;
 
 public class AuctionBuilder {
 

@@ -1,0 +1,77 @@
+package wpessers.auctionservice.shared.infrastructure.in.web;
+
+import java.time.Instant;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import wpessers.auctionservice.auction.domain.exception.AuctionNotFoundException;
+import wpessers.auctionservice.auction.domain.exception.InvalidAuctionWindowException;
+import wpessers.auctionservice.auction.domain.exception.InvalidStartingPriceException;
+import wpessers.auctionservice.user.domain.exception.InvalidEmailException;
+import wpessers.auctionservice.user.domain.exception.InvalidUsernameException;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler
+    public ProblemDetail handleValidationExceptions(MethodArgumentNotValidException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+            "Invalid request content");
+
+        problemDetail.setProperty("timestamp", Instant.now());
+        Map<String, String> validationErrors = ex.getBindingResult().getFieldErrors().stream()
+            .collect(Collectors.toMap(
+                FieldError::getField,
+                fieldError -> Optional.ofNullable(fieldError.getDefaultMessage())
+                    .orElse("Invalid value")
+            ));
+        problemDetail.setProperty("validationErrors", validationErrors);
+        return problemDetail;
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleAuctionNotFoundException(AuctionNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,
+            ex.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleInvalidStartingPriceException(InvalidStartingPriceException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+            ex.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleInvalidAuctionWindowException(InvalidAuctionWindowException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+            ex.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleInvalidUsernameException(InvalidUsernameException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+            ex.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleInvalidEmailException(InvalidEmailException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+            ex.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+}
