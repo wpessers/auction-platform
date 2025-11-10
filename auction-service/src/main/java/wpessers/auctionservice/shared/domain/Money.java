@@ -17,4 +17,12 @@ public record Money(BigDecimal amount) {
     public boolean isNegative() {
         return amount.signum() < 0;
     }
+
+    public boolean isLessThanOrEqualTo(Money other) {
+        return this.amount.compareTo(other.amount) <= 0;
+    }
+
+    public boolean isGreaterThanOrEqualTo(Money other) {
+        return this.amount.compareTo(other.amount) >= 0;
+    }
 }

@@ -3,6 +3,7 @@ package wpessers.auctionservice.auction.domain;
 import java.time.Instant;
 import java.util.UUID;
 import wpessers.auctionservice.auction.domain.bidresult.AuctionNotActive;
+import wpessers.auctionservice.auction.domain.bidresult.BidAmountTooLow;
 import wpessers.auctionservice.auction.domain.bidresult.BidResult;
 import wpessers.auctionservice.auction.domain.bidresult.Success;
 import wpessers.auctionservice.auction.domain.exception.InvalidStartingPriceException;
@@ -88,7 +89,7 @@ public class Auction {
 
     public void start() {
         if (isActive()) {
-            throw new InvalidStateTransitionException("Auction is already open");
+            throw new InvalidStateTransitionException("Auction is already active");
         }
         if (isClosed()) {
             throw new InvalidStateTransitionException("Cannot start a closed auction");
@@ -108,12 +109,20 @@ public class Auction {
             return new AuctionNotActive();
         }
 
+        if (isTooLowBidAmount(bidAmount)) {
+            return new BidAmountTooLow();
+        }
+
         UUID previousBidderId = this.currentWinnerId;
         Money previousAmount = this.highestBid;
-
         this.currentWinnerId = bidderId;
         this.highestBid = bidAmount;
         this.bidVersion++;
         return new Success(previousAmount, bidAmount, previousBidderId);
+    }
+
+    private boolean isTooLowBidAmount(Money bidAmount) {
+        return !bidAmount.isGreaterThanOrEqualTo(startingPrice) ||
+            (highestBid != null && bidAmount.isLessThanOrEqualTo(highestBid));
     }
 }

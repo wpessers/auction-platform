@@ -3,6 +3,7 @@ package wpessers.auctionservice.auction.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import wpessers.auctionservice.auction.domain.bidresult.AuctionNotActive;
+import wpessers.auctionservice.auction.domain.bidresult.BidAmountTooLow;
 import wpessers.auctionservice.auction.domain.bidresult.BidResult;
 import wpessers.auctionservice.auction.domain.bidresult.Success;
 import wpessers.auctionservice.auction.domain.exception.InvalidStartingPriceException;
@@ -164,6 +166,46 @@ class AuctionTests {
             // Then an AuctionNotActive result should be returned and auction state remains unchanged
             assertThat(result).isExactlyInstanceOf(AuctionNotActive.class);
             assertAuctionBidState(auction, winnerId, winningBidAmount, 1L);
+        }
+
+        @Test
+        @DisplayName("Bid should not be placed when it is lower than the current highest bid")
+        void shouldNotPlaceBidLowerThanCurrent() {
+            // Given an open auction with an existing bid
+            UUID lastBidderId = UUID.randomUUID();
+            Money lastBidAmount = new Money(10);
+            Instant lastBidTime = Instant.parse("2025-01-01T15:00:00Z");
+            Auction auction = new AuctionBuilder()
+                .withTimeWindow(AUCTION_START, AUCTION_END)
+                .build();
+            auction.placeBid(lastBidderId, lastBidAmount, lastBidTime);
+
+            // When another bid is attempted after the previous one, with a lower amount
+            Instant validTime = lastBidTime.plusSeconds(1L);
+            BidResult result = auction.placeBid(UUID.randomUUID(), new Money(5), validTime);
+
+            // Then a BidAmountTooLow result should be returned and auction state remains unchanged
+            assertThat(result).isExactlyInstanceOf(BidAmountTooLow.class);
+            assertAuctionBidState(auction, lastBidderId, lastBidAmount, 1L);
+        }
+        
+        @Test
+        @DisplayName("Bid should not be placed when it is lower than the starting price")
+        void shouldNotPlaceBidLowerThanStarting() {
+            // Given an auction without any bids
+            Auction auction = new AuctionBuilder()
+                .withTimeWindow(AUCTION_START, AUCTION_END)
+                .withStartingPrice(BigDecimal.valueOf(100))
+                .build();
+
+            // When a bidder places a bid, lower than the starting price
+            UUID bidderId = UUID.randomUUID();
+            Money bidAmount = new Money(10);
+            BidResult result = auction.placeBid(bidderId, bidAmount, DURING_AUCTION);
+
+            // Then a BidAmountTooLow result should be returned and auction state remains unchanged
+            assertThat(result).isExactlyInstanceOf(BidAmountTooLow.class);
+            assertAuctionBidState(auction, null, null, 0L);
         }
 
         private static void assertSuccess(BidResult result, Money expectedPreviousAmount,
