@@ -3,12 +3,18 @@ package wpessers.auctionservice.auction.infrastructure.out.cache.distributed;
 import org.springframework.stereotype.Component;
 import wpessers.auctionservice.auction.application.port.out.AuctionRegistry;
 import wpessers.auctionservice.auction.domain.Auction;
+import java.util.UUID;
 
 @Component
 public class RedisAuctionRegistryAdapter implements AuctionRegistry {
 
     @Override
-    public void registerAuction(Auction auction) {
+    public void register(Auction auction) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public void deregister(UUID auctionId) {
         throw new UnsupportedOperationException("Not implemented");
     }
 }
