@@ -59,7 +59,7 @@ public class AuctionService {
             startingPrice,
             status
         );
-        auctionRegistry.registerAuction(auction);
+        auctionRegistry.register(auction);
         auctionStorage.save(auction);
         return id;
     }

@@ -15,8 +15,13 @@ public class FakeAuctionRegistryAdapter implements AuctionRegistry {
     }
 
     @Override
-    public void registerAuction(Auction auction) {
+    public void register(Auction auction) {
         registeredAuctions.add(auction.getId());
+    }
+
+    @Override
+    public void deregister(UUID auctionId) {
+        registeredAuctions.remove(auctionId);
     }
 
     public boolean isRegistered(UUID auctionId) {
