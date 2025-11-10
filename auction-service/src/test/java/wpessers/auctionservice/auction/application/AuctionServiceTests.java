@@ -16,6 +16,7 @@ import wpessers.auctionservice.auction.domain.Auction;
 import wpessers.auctionservice.auction.domain.AuctionStatus;
 import wpessers.auctionservice.auction.domain.AuctionWindow;
 import wpessers.auctionservice.auction.domain.exception.AuctionNotFoundException;
+import wpessers.auctionservice.auction.infrastructure.out.cache.inmemory.FakeAuctionRegistryAdapter;
 import wpessers.auctionservice.auction.infrastructure.out.persistence.inmemory.FakeAuctionStorageAdapter;
 import wpessers.auctionservice.fixtures.AuctionBuilder;
 import wpessers.auctionservice.fixtures.CreateAuctionCommandBuilder;
@@ -28,9 +29,9 @@ class AuctionServiceTests {
 
     private StubIdGeneratorAdapter idGenerator;
     private FakeAuctionStorageAdapter auctionStorage;
+    private FakeAuctionRegistryAdapter auctionRegistry;
     private StubTimeProviderAdapter timeProvider;
     private AuctionService auctionService;
-
     private final AuctionMapper mapper = new AuctionMapper();
 
     @BeforeEach
@@ -38,7 +39,9 @@ class AuctionServiceTests {
         this.idGenerator = new StubIdGeneratorAdapter();
         this.auctionStorage = new FakeAuctionStorageAdapter();
         this.timeProvider = new StubTimeProviderAdapter();
-        this.auctionService = new AuctionService(idGenerator, auctionStorage, timeProvider, mapper);
+        this.auctionRegistry = new FakeAuctionRegistryAdapter();
+        this.auctionService = new AuctionService(idGenerator, auctionStorage, auctionRegistry,
+            timeProvider, mapper);
     }
 
     @Test
@@ -62,6 +65,7 @@ class AuctionServiceTests {
         UUID actualId = auctionService.createAuction(command);
 
         assertThat(actualId).isEqualTo(auctionId);
+        assertThat(auctionRegistry.isRegistered(actualId)).isTrue();
         Auction actualAuction = auctionStorage.get(actualId);
         assertThat(actualAuction.getName()).isEqualTo("Charizard Holo");
         assertThat(actualAuction.getDescription()).isEqualTo("Holographic Charizard card");

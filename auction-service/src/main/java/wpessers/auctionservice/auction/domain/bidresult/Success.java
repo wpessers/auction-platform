@@ -1,7 +1,7 @@
 package wpessers.auctionservice.auction.domain.bidresult;
 
-import wpessers.auctionservice.shared.domain.Money;
 import java.util.UUID;
+import wpessers.auctionservice.shared.domain.Money;
 
 public record Success(
     Money previousAmount,

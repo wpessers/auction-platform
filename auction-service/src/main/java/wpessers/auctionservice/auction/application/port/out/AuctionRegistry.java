@@ -1,8 +1,8 @@
 package wpessers.auctionservice.auction.application.port.out;
 
-import java.util.UUID;
+import wpessers.auctionservice.auction.domain.Auction;
 
 public interface AuctionRegistry {
 
-    void registerAuction(UUID auctionId);
+    void registerAuction(Auction auction);
 }

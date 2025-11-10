@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import wpessers.auctionservice.auction.application.port.in.AuctionResponse;
 import wpessers.auctionservice.auction.application.port.in.CreateAuctionCommand;
+import wpessers.auctionservice.auction.application.port.out.AuctionRegistry;
 import wpessers.auctionservice.auction.application.port.out.AuctionStorage;
 import wpessers.auctionservice.auction.domain.Auction;
 import wpessers.auctionservice.auction.domain.AuctionStatus;
@@ -20,16 +21,20 @@ public class AuctionService {
 
     private final IdGenerator idGenerator;
     private final AuctionStorage auctionStorage;
+    private final AuctionRegistry auctionRegistry;
     private final TimeProvider timeProvider;
     private final AuctionMapper mapper;
 
     public AuctionService(
         IdGenerator idGenerator,
         AuctionStorage auctionStorage,
-        TimeProvider timeProvider, AuctionMapper mapper
+        AuctionRegistry auctionRegistry,
+        TimeProvider timeProvider,
+        AuctionMapper mapper
     ) {
         this.idGenerator = idGenerator;
         this.auctionStorage = auctionStorage;
+        this.auctionRegistry = auctionRegistry;
         this.timeProvider = timeProvider;
         this.mapper = mapper;
     }
@@ -54,6 +59,7 @@ public class AuctionService {
             startingPrice,
             status
         );
+        auctionRegistry.registerAuction(auction);
         auctionStorage.save(auction);
         return id;
     }
