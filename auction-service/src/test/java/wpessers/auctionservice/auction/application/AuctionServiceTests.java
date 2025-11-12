@@ -31,8 +31,9 @@ class AuctionServiceTests {
     private FakeAuctionStorageAdapter auctionStorage;
     private FakeAuctionRegistryAdapter auctionRegistry;
     private StubTimeProviderAdapter timeProvider;
-    private AuctionService auctionService;
     private final AuctionMapper mapper = new AuctionMapper();
+
+    private AuctionService auctionService;
 
     @BeforeEach
     void setUp() {
@@ -179,5 +180,4 @@ class AuctionServiceTests {
         assertThat(auctions).extracting(AuctionResponse::id)
             .containsExactlyInAnyOrder(activeAuctionId1, activeAuctionId2);
     }
-
 }
