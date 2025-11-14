@@ -6,12 +6,16 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Function;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import wpessers.auctionservice.auction.application.port.out.AuctionRegistry;
 import wpessers.auctionservice.auction.domain.Auction;
 import wpessers.auctionservice.auction.domain.exception.AuctionNotFoundException;
 
 @Component
+@Profile("dev")
 public class InMemoryAuctionRegistry implements AuctionRegistry {
 
     private final ConcurrentMap<UUID, AuctionHolder> auctions;

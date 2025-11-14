@@ -1,20 +1,22 @@
 package wpessers.auctionservice.bid.application;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import wpessers.auctionservice.auction.domain.Auction;
-import wpessers.auctionservice.auction.infrastructure.out.cache.inmemory.FakeAuctionRegistryAdapter;
+import wpessers.auctionservice.auction.infrastructure.out.cache.inmemory.InMemoryAuctionRegistry;
 import wpessers.auctionservice.bid.application.port.in.PlaceBidCommand;
 import wpessers.auctionservice.bid.domain.event.BidPlacedEvent;
 import wpessers.auctionservice.bid.infrastructure.out.FakeBidEventPublisherAdapter;
+import wpessers.auctionservice.bid.infrastructure.out.persistence.inmemory.FakeBidStorageAdapter;
 import wpessers.auctionservice.fixtures.AuctionBuilder;
 import wpessers.auctionservice.shared.domain.Money;
 import wpessers.auctionservice.shared.infrastructure.out.time.StubTimeProviderAdapter;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,7 +26,8 @@ class BidServiceTests {
     private static final Instant AUCTION_END = Instant.parse("2025-01-02T10:00:00Z");
     private static final UUID AUCTION_ID = UUID.randomUUID();
 
-    private FakeAuctionRegistryAdapter auctionRegistry;
+    private InMemoryAuctionRegistry auctionRegistry;
+    private FakeBidStorageAdapter bidStorage;
     private FakeBidEventPublisherAdapter eventPublisher;
     private StubTimeProviderAdapter timeProvider;
     private BidService bidService;
@@ -34,19 +37,20 @@ class BidServiceTests {
         timeProvider = new StubTimeProviderAdapter();
         timeProvider.setFixedTime(AUCTION_START);
 
-        auctionRegistry = new FakeAuctionRegistryAdapter();
+        auctionRegistry = new InMemoryAuctionRegistry();
         Auction auction = new AuctionBuilder()
             .withId(AUCTION_ID)
             .withTimeWindow(AUCTION_START, AUCTION_END).build();
         auctionRegistry.register(auction);
 
+        bidStorage = new FakeBidStorageAdapter();
         eventPublisher = new FakeBidEventPublisherAdapter();
-        bidService = new BidService(auctionRegistry, eventPublisher, timeProvider);
+        bidService = new BidService(auctionRegistry, bidStorage, eventPublisher, timeProvider);
     }
 
     @Test
-    @DisplayName("")
-    void shouldCallPlaceBid() {
+    @DisplayName("Should place a bid on an active auction")
+    void shouldPlaceBid() {
         UUID bidderId = UUID.randomUUID();
         PlaceBidCommand placeBidCommand = new PlaceBidCommand(bidderId, AUCTION_ID,
             BigDecimal.ONE);
@@ -56,5 +60,6 @@ class BidServiceTests {
         assertThat(eventPublisher.getPlacedEvents()).isEqualTo(
             List.of(new BidPlacedEvent(AUCTION_ID, bidderId, null, new Money(BigDecimal.ONE))));
         assertThat(eventPublisher.getRejectedEvents()).isEmpty();
+        assertThat(bidStorage.getBids()).hasSize(1);
     }
 }

@@ -37,11 +37,19 @@ class InMemoryAuctionRegistryTest {
     @DisplayName("Should throw AuctionNotFoundException when auction not registered")
     void shouldThrowOnAuctionNotRegistered() {
         assertThrows(AuctionNotFoundException.class,
-            () -> registry.executeOnAuction(UUID.randomUUID(), auction -> null));
+                () -> registry.executeOnAuction(UUID.randomUUID(), a -> null));
     }
 
     @Test
     @DisplayName("Should deregister auction and throw exception on execute")
     void shouldDeregisterAuction() {
+        UUID auctionId = UUID.randomUUID();
+        Auction auction = new AuctionBuilder().withId(auctionId).withName("Test").build();
+        registry.register(auction);
+
+        registry.deregister(auctionId);
+
+        assertThrows(AuctionNotFoundException.class,
+                () -> registry.executeOnAuction(auctionId, a -> null));
     }
 }

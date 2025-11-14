@@ -18,12 +18,12 @@ public class FakeBidEventPublisherAdapter implements BidEventPublisher {
 
     @Override
     public void publishBidPlacedEvent(BidPlacedEvent event) {
-
+        placedEvents.add(event);
     }
 
     @Override
     public void publishBidRejectedEvent(BidRejectedEvent event) {
-
+        rejectedEvents.add(event);
     }
 
     public List<BidPlacedEvent> getPlacedEvents() {

@@ -8,32 +8,37 @@ import wpessers.auctionservice.auction.domain.bidresult.BidResult;
 import wpessers.auctionservice.auction.domain.bidresult.Success;
 import wpessers.auctionservice.bid.application.port.in.PlaceBidCommand;
 import wpessers.auctionservice.bid.application.port.out.BidEventPublisher;
+import wpessers.auctionservice.bid.application.port.out.BidStorage;
+import wpessers.auctionservice.bid.domain.Bid;
+import wpessers.auctionservice.bid.domain.event.BidPlacedEvent;
 import wpessers.auctionservice.shared.application.port.out.TimeProvider;
 import wpessers.auctionservice.shared.domain.Money;
-import java.util.Map;
 
 @Service
 public class BidService {
 
     private final AuctionRegistry auctionRegistry;
+    private final BidStorage bidStorage;
     private final BidEventPublisher bidEventPublisher;
     private final TimeProvider timeProvider;
-//    Map
 
-    public BidService(AuctionRegistry auctionRegistry, BidEventPublisher bidEventPublisher,
-        TimeProvider timeProvider) {
+    public BidService(AuctionRegistry auctionRegistry,
+                      BidStorage bidStorage,
+                      BidEventPublisher bidEventPublisher,
+                      TimeProvider timeProvider) {
         this.auctionRegistry = auctionRegistry;
+        this.bidStorage = bidStorage;
         this.bidEventPublisher = bidEventPublisher;
         this.timeProvider = timeProvider;
     }
 
 
-    public void placeBid(PlaceBidCommand placeBidCommand) {
-        BidResult result = auctionRegistry.executeOnAuction(placeBidCommand.auctionId(),
-            auction -> auction.placeBid(
-                placeBidCommand.bidderId(),
-                new Money(placeBidCommand.amount()),
-                timeProvider.now()));
+    public void placeBid(PlaceBidCommand command) {
+        Money bidAmount = new Money(command.amount());
+        BidResult result = auctionRegistry.executeOnAuction(
+                command.auctionId(),
+                auction -> auction.placeBid(command.bidderId(), bidAmount, timeProvider.now())
+        );
 
         switch (result) {
             case AuctionNotActive auctionNotActive -> {
@@ -41,6 +46,8 @@ public class BidService {
             case BidAmountTooLow bidAmountTooLow -> {
             }
             case Success success -> {
+                bidStorage.save(new Bid(command.auctionId(), command.bidderId(), bidAmount, timeProvider.now()));
+                bidEventPublisher.publishBidPlacedEvent(new BidPlacedEvent(command.auctionId(), command.bidderId(), success.previousBidder(), bidAmount));
             }
         }
     }
