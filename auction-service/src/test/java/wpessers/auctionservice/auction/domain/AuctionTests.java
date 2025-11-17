@@ -82,9 +82,27 @@ class AuctionTests {
 
     @Nested
     class AuctionPlaceBidTests {
+
         private static final Instant AUCTION_START = Instant.parse("2025-01-01T10:00:00Z");
         private static final Instant AUCTION_END = Instant.parse("2025-01-01T20:00:00Z");
         private static final Instant DURING_AUCTION = Instant.parse("2025-01-01T15:00:00Z");
+
+        private static void assertSuccess(BidResult result, Money expectedPreviousAmount,
+            Money expectedNewAmount, UUID expectedPreviousBidder) {
+            assertThat(result).isExactlyInstanceOf(Success.class);
+            Success successResult = (Success) result;
+
+            assertThat(successResult.previousAmount()).isEqualTo(expectedPreviousAmount);
+            assertThat(successResult.newAmount()).isEqualTo(expectedNewAmount);
+            assertThat(successResult.previousBidder()).isEqualTo(expectedPreviousBidder);
+        }
+
+        private static void assertAuctionBidState(Auction auction, UUID expectedWinnerId,
+            Money expectedHighestBid, long expectedBidVersion) {
+            assertThat(auction.getCurrentWinnerId()).isEqualTo(expectedWinnerId);
+            assertThat(auction.getHighestBid()).isEqualTo(expectedHighestBid);
+            assertThat(auction.getBidVersion()).isEqualTo(expectedBidVersion);
+        }
 
         @Test
         @DisplayName("Initial bid should return success")
@@ -188,7 +206,7 @@ class AuctionTests {
             assertThat(result).isExactlyInstanceOf(BidAmountTooLow.class);
             assertAuctionBidState(auction, lastBidderId, lastBidAmount, 1L);
         }
-        
+
         @Test
         @DisplayName("Bid should not be placed when it is lower than the starting price")
         void shouldNotPlaceBidLowerThanStarting() {
@@ -206,23 +224,6 @@ class AuctionTests {
             // Then a BidAmountTooLow result should be returned and auction state remains unchanged
             assertThat(result).isExactlyInstanceOf(BidAmountTooLow.class);
             assertAuctionBidState(auction, null, null, 0L);
-        }
-
-        private static void assertSuccess(BidResult result, Money expectedPreviousAmount,
-            Money expectedNewAmount, UUID expectedPreviousBidder) {
-            assertThat(result).isExactlyInstanceOf(Success.class);
-            Success successResult = (Success) result;
-
-            assertThat(successResult.previousAmount()).isEqualTo(expectedPreviousAmount);
-            assertThat(successResult.newAmount()).isEqualTo(expectedNewAmount);
-            assertThat(successResult.previousBidder()).isEqualTo(expectedPreviousBidder);
-        }
-
-        private static void assertAuctionBidState(Auction auction, UUID expectedWinnerId,
-            Money expectedHighestBid, long expectedBidVersion) {
-            assertThat(auction.getCurrentWinnerId()).isEqualTo(expectedWinnerId);
-            assertThat(auction.getHighestBid()).isEqualTo(expectedHighestBid);
-            assertThat(auction.getBidVersion()).isEqualTo(expectedBidVersion);
         }
     }
 }

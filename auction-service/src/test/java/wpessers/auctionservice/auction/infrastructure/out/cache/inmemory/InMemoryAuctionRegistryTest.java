@@ -1,16 +1,15 @@
 package wpessers.auctionservice.auction.infrastructure.out.cache.inmemory;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import wpessers.auctionservice.auction.domain.Auction;
 import wpessers.auctionservice.auction.domain.exception.AuctionNotFoundException;
 import wpessers.auctionservice.fixtures.AuctionBuilder;
-
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryAuctionRegistryTest {
 
@@ -37,7 +36,7 @@ class InMemoryAuctionRegistryTest {
     @DisplayName("Should throw AuctionNotFoundException when auction not registered")
     void shouldThrowOnAuctionNotRegistered() {
         assertThrows(AuctionNotFoundException.class,
-                () -> registry.executeOnAuction(UUID.randomUUID(), a -> null));
+            () -> registry.executeOnAuction(UUID.randomUUID(), a -> null));
     }
 
     @Test
@@ -50,6 +49,6 @@ class InMemoryAuctionRegistryTest {
         registry.deregister(auctionId);
 
         assertThrows(AuctionNotFoundException.class,
-                () -> registry.executeOnAuction(auctionId, a -> null));
+            () -> registry.executeOnAuction(auctionId, a -> null));
     }
 }

@@ -5,7 +5,7 @@ import wpessers.auctionservice.bid.domain.event.BidRejectedEvent;
 
 public interface BidEventPublisher {
 
-    public void publishBidPlacedEvent(BidPlacedEvent event);
+    void publishBidPlacedEvent(BidPlacedEvent event);
 
-    public void publishBidRejectedEvent(BidRejectedEvent event);
+    void publishBidRejectedEvent(BidRejectedEvent event);
 }

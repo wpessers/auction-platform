@@ -27,12 +27,11 @@ import wpessers.auctionservice.shared.infrastructure.out.time.StubTimeProviderAd
 
 class AuctionServiceTests {
 
+    private final AuctionMapper mapper = new AuctionMapper();
     private StubIdGeneratorAdapter idGenerator;
     private FakeAuctionStorageAdapter auctionStorage;
     private FakeAuctionRegistryAdapter auctionRegistry;
     private StubTimeProviderAdapter timeProvider;
-    private final AuctionMapper mapper = new AuctionMapper();
-
     private AuctionService auctionService;
 
     @BeforeEach

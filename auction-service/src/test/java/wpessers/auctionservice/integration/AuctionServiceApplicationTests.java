@@ -10,8 +10,8 @@ import org.springframework.test.context.ActiveProfiles;
 @Import(TestContainersConfiguration.class)
 class AuctionServiceApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }

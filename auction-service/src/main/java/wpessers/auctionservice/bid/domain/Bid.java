@@ -9,4 +9,6 @@ public record Bid(
     UUID bidderId,
     Money amount,
     Instant timestamp
-) {}
+) {
+
+}

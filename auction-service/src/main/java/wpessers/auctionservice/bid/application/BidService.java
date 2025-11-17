@@ -11,6 +11,8 @@ import wpessers.auctionservice.bid.application.port.out.BidEventPublisher;
 import wpessers.auctionservice.bid.application.port.out.BidStorage;
 import wpessers.auctionservice.bid.domain.Bid;
 import wpessers.auctionservice.bid.domain.event.BidPlacedEvent;
+import wpessers.auctionservice.bid.domain.event.BidRejectedEvent;
+import wpessers.auctionservice.bid.domain.event.RejectionReason;
 import wpessers.auctionservice.shared.application.port.out.TimeProvider;
 import wpessers.auctionservice.shared.domain.Money;
 
@@ -23,9 +25,9 @@ public class BidService {
     private final TimeProvider timeProvider;
 
     public BidService(AuctionRegistry auctionRegistry,
-                      BidStorage bidStorage,
-                      BidEventPublisher bidEventPublisher,
-                      TimeProvider timeProvider) {
+        BidStorage bidStorage,
+        BidEventPublisher bidEventPublisher,
+        TimeProvider timeProvider) {
         this.auctionRegistry = auctionRegistry;
         this.bidStorage = bidStorage;
         this.bidEventPublisher = bidEventPublisher;
@@ -36,18 +38,39 @@ public class BidService {
     public void placeBid(PlaceBidCommand command) {
         Money bidAmount = new Money(command.amount());
         BidResult result = auctionRegistry.executeOnAuction(
-                command.auctionId(),
-                auction -> auction.placeBid(command.bidderId(), bidAmount, timeProvider.now())
+            command.auctionId(),
+            auction -> auction.placeBid(command.bidderId(), bidAmount, timeProvider.now())
         );
 
         switch (result) {
-            case AuctionNotActive auctionNotActive -> {
-            }
-            case BidAmountTooLow bidAmountTooLow -> {
-            }
+            case AuctionNotActive ignored -> bidEventPublisher.publishBidRejectedEvent(
+                new BidRejectedEvent(
+                    command.auctionId(),
+                    command.bidderId(),
+                    bidAmount,
+                    RejectionReason.AUCTION_CLOSED
+                )
+            );
+            case BidAmountTooLow ignored -> bidEventPublisher.publishBidRejectedEvent(
+                new BidRejectedEvent(
+                    command.auctionId(),
+                    command.bidderId(),
+                    bidAmount,
+                    RejectionReason.BID_TOO_LOW
+                )
+            );
             case Success success -> {
-                bidStorage.save(new Bid(command.auctionId(), command.bidderId(), bidAmount, timeProvider.now()));
-                bidEventPublisher.publishBidPlacedEvent(new BidPlacedEvent(command.auctionId(), command.bidderId(), success.previousBidder(), bidAmount));
+                bidStorage.save(
+                    new Bid(command.auctionId(), command.bidderId(), bidAmount, timeProvider.now())
+                );
+                bidEventPublisher.publishBidPlacedEvent(
+                    new BidPlacedEvent(
+                        command.auctionId(),
+                        command.bidderId(),
+                        success.previousBidder(),
+                        bidAmount
+                    )
+                );
             }
         }
     }
