@@ -2,6 +2,7 @@ package wpessers.auctionservice.user.infrastructure.out.generation;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.UUID;
 import wpessers.auctionservice.user.application.port.out.TokenGenerator;
 
 public class StubTokenGeneratorAdapter implements TokenGenerator {
@@ -13,7 +14,7 @@ public class StubTokenGeneratorAdapter implements TokenGenerator {
     }
 
     @Override
-    public String generateToken(String username) {
+    public String generateToken(UUID userId, String username) {
         return tokens.remove();
     }
 

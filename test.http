@@ -1,16 +1,24 @@
-###
-POST http://localhost:8080/api/auctions
+### Login User
+POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "name": "Vintage Clock",
+  "username": "warre",
+  "password": "password123"
+}
+
+> {%
+    client.global.set("auth_token", response.body);
+%}
+
+### Create Auction
+POST http://localhost:8080/api/auctions
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Vintage Wall Clock",
   "description": "A beautiful vintage clock from the 1950s.",
   "endTime": "2025-12-31T23:59:59Z",
   "startingPrice": 100
 }
-
-###
-GET http://localhost:8080/api/auctions/a89b1ec2-a637-47c4-8f1d-b7c68fa14a89
-
-###
-GET http://localhost:8080/api/auctions/active

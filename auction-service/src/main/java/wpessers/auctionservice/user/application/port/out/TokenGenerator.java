@@ -1,6 +1,8 @@
 package wpessers.auctionservice.user.application.port.out;
 
+import java.util.UUID;
+
 public interface TokenGenerator {
 
-    String generateToken(String username);
+    String generateToken(UUID userId, String username);
 }

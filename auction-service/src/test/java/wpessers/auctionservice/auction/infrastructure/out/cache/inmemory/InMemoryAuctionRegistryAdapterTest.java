@@ -11,13 +11,13 @@ import wpessers.auctionservice.auction.domain.Auction;
 import wpessers.auctionservice.auction.domain.exception.AuctionNotFoundException;
 import wpessers.auctionservice.fixtures.AuctionBuilder;
 
-class InMemoryAuctionRegistryTest {
+class InMemoryAuctionRegistryAdapterTest {
 
-    private InMemoryAuctionRegistry registry;
+    private InMemoryAuctionRegistryAdapter registry;
 
     @BeforeEach
     void setUp() {
-        registry = new InMemoryAuctionRegistry();
+        registry = new InMemoryAuctionRegistryAdapter();
     }
 
     @Test

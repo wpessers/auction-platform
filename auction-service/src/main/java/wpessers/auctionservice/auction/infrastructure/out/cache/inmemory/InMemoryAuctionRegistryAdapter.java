@@ -14,11 +14,11 @@ import wpessers.auctionservice.auction.domain.exception.AuctionNotFoundException
 
 @Component
 @Profile({"dev", "test"})
-public class InMemoryAuctionRegistry implements AuctionRegistry {
+public class InMemoryAuctionRegistryAdapter implements AuctionRegistry {
 
     private final ConcurrentMap<UUID, AuctionHolder> auctions;
 
-    public InMemoryAuctionRegistry() {
+    public InMemoryAuctionRegistryAdapter() {
         this.auctions = new ConcurrentHashMap<>();
     }
 

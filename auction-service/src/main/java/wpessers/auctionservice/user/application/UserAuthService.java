@@ -53,10 +53,10 @@ public class UserAuthService {
         User user = userStorage.findByUsername(username)
             .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
 
-        if (!passwordEncoder.matches(user.password(), password)) {
+        if (!passwordEncoder.matches(password, user.password())) {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
-        return tokenGenerator.generateToken(user.username());
+        return tokenGenerator.generateToken(user.id(), user.username());
     }
 }

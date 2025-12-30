@@ -1,21 +1,25 @@
-package wpessers.auctionservice.user.infrastructure.out.generation;
+package wpessers.auctionservice.shared.infrastructure.out.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+import java.util.UUID;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import wpessers.auctionservice.shared.application.port.out.TokenValidator;
+import wpessers.auctionservice.shared.application.port.out.UserClaims;
 import wpessers.auctionservice.user.application.port.out.TokenGenerator;
 
 @Component
-public class JwtTokenGeneratorAdapter implements TokenGenerator {
+public class JwtTokenProviderAdapter implements TokenGenerator, TokenValidator {
 
     private final SecretKey key;
     private final long expirationMs;
 
-    public JwtTokenGeneratorAdapter(
+    public JwtTokenProviderAdapter(
         @Value("${jwt.secret}") String secret,
         @Value("${jwt.expiration-ms}") long expirationMs
     ) {
@@ -25,12 +29,27 @@ public class JwtTokenGeneratorAdapter implements TokenGenerator {
     }
 
     @Override
-    public String generateToken(String username) {
+    public String generateToken(UUID userId, String username) {
         return Jwts.builder()
-            .subject(username)
+            .subject(String.valueOf(userId))
+            .claim("username", username)
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + expirationMs))
             .signWith(key)
             .compact();
+    }
+
+    @Override
+    public UserClaims parseToken(String token) {
+        Claims claims = Jwts.parser()
+            .verifyWith(key)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+
+        return new UserClaims(
+            UUID.fromString(claims.getSubject()),
+            claims.get("username", String.class)
+        );
     }
 }

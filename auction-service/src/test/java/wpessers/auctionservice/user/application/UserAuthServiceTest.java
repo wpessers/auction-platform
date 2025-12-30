@@ -21,7 +21,7 @@ class UserAuthServiceTest {
 
     private StubIdGeneratorAdapter idGenerator;
     private FakeUserStorageAdapter userStorage;
-    private StubTokenGeneratorAdapter tokenProvider;
+    private StubTokenGeneratorAdapter tokenGenerator;
     private PasswordEncoder passwordEncoder;
     private UserAuthService userAuthService;
 
@@ -29,12 +29,12 @@ class UserAuthServiceTest {
     void setUp() {
         this.idGenerator = new StubIdGeneratorAdapter();
         this.userStorage = new FakeUserStorageAdapter();
-        this.tokenProvider = new StubTokenGeneratorAdapter();
+        this.tokenGenerator = new StubTokenGeneratorAdapter();
         this.passwordEncoder = NoOpPasswordEncoder.getInstance();
         this.userAuthService = new UserAuthService(
             idGenerator,
             userStorage,
-            tokenProvider,
+            tokenGenerator,
             passwordEncoder
         );
     }
@@ -92,7 +92,7 @@ class UserAuthServiceTest {
         UUID userId = UUID.randomUUID();
         User user = new User(userId, "username", "password", "test@email.com");
         userStorage.save(user);
-        tokenProvider.addToken("token-" + userId);
+        tokenGenerator.addToken("token-" + userId);
 
         String token = userAuthService.login("username", "password");
 
