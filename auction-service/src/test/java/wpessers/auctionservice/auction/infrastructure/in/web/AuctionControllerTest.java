@@ -27,9 +27,11 @@ import wpessers.auctionservice.auction.application.port.in.AuctionResponse;
 import wpessers.auctionservice.auction.application.port.in.CreateAuctionCommand;
 import wpessers.auctionservice.auction.domain.exception.AuctionNotFoundException;
 import wpessers.auctionservice.auction.domain.exception.InvalidStartingPriceException;
+import wpessers.auctionservice.shared.application.port.out.TokenParser;
+import wpessers.auctionservice.shared.infrastructure.in.web.JwtAuthenticationFilter;
 import wpessers.auctionservice.shared.infrastructure.in.web.SecurityConfig;
 
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class})
 @WebMvcTest(AuctionController.class)
 class AuctionControllerTest {
 
@@ -41,6 +43,9 @@ class AuctionControllerTest {
 
     @MockitoBean
     private AuctionService auctionService;
+
+    @MockitoBean
+    private TokenParser tokenParser;
 
     @Test
     @WithMockUser

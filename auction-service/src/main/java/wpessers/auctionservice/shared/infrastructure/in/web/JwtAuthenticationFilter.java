@@ -12,23 +12,23 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import wpessers.auctionservice.shared.application.port.out.TokenValidator;
+import wpessers.auctionservice.shared.application.port.out.TokenParser;
 import wpessers.auctionservice.shared.application.port.out.UserClaims;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    /* It may be a little bit overkill to use a TokenValidator port here, since it's difficult to
+    /* It may be a little bit overkill to use a TokenParser port here, since it's difficult to
     loosely couple the filter code without over-engineering in my opinion. Hence, there's some very
     tight coupling with JWT here. For example catching the JwtException. This would be thrown when
     an invalid token is provided. Because the JwtTokenProviderAdapter uses the parseSignedClaims
     method, which throws when the token is expired, malformed, etc. Clearing the security context
     here will then eventually result in a 401 response when Spring security checks the context.*/
 
-    private final TokenValidator tokenValidator;
+    private final TokenParser tokenParser;
 
-    public JwtAuthenticationFilter(TokenValidator tokenValidator) {
-        this.tokenValidator = tokenValidator;
+    public JwtAuthenticationFilter(TokenParser tokenParser) {
+        this.tokenParser = tokenParser;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                UserClaims claims = tokenValidator.parseToken(token);
+                UserClaims claims = tokenParser.parseToken(token);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     claims,
                     null,

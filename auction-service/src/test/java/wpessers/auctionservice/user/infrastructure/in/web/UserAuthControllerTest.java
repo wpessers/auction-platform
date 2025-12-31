@@ -16,13 +16,15 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import wpessers.auctionservice.shared.application.port.out.TokenParser;
+import wpessers.auctionservice.shared.infrastructure.in.web.JwtAuthenticationFilter;
 import wpessers.auctionservice.shared.infrastructure.in.web.SecurityConfig;
 import wpessers.auctionservice.user.application.UserAuthService;
 import wpessers.auctionservice.user.application.port.in.RegisterUserCommand;
 import wpessers.auctionservice.user.domain.exception.InvalidEmailException;
 import wpessers.auctionservice.user.domain.exception.InvalidUsernameException;
 
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class})
 @WebMvcTest(UserAuthController.class)
 class UserAuthControllerTest {
 
@@ -34,6 +36,9 @@ class UserAuthControllerTest {
 
     @MockitoBean
     private UserAuthService userAuthService;
+
+    @MockitoBean
+    private TokenParser tokenParser;
 
     @Test
     @DisplayName("Should register user and return CREATED status")

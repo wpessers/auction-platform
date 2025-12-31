@@ -9,12 +9,12 @@ import java.util.UUID;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import wpessers.auctionservice.shared.application.port.out.TokenValidator;
+import wpessers.auctionservice.shared.application.port.out.TokenParser;
 import wpessers.auctionservice.shared.application.port.out.UserClaims;
 import wpessers.auctionservice.user.application.port.out.TokenGenerator;
 
 @Component
-public class JwtTokenProviderAdapter implements TokenGenerator, TokenValidator {
+public class JwtTokenProviderAdapter implements TokenGenerator, TokenParser {
 
     private final SecretKey key;
     private final long expirationMs;

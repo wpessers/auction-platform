@@ -1,6 +1,6 @@
 package wpessers.auctionservice.shared.application.port.out;
 
-public interface TokenValidator {
+public interface TokenParser {
 
     UserClaims parseToken(String token);
 }
