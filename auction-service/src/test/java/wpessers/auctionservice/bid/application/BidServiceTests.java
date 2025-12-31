@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import wpessers.auctionservice.auction.domain.Auction;
-import wpessers.auctionservice.auction.infrastructure.out.cache.inmemory.InMemoryAuctionRegistry;
+import wpessers.auctionservice.auction.infrastructure.out.cache.inmemory.InMemoryAuctionRegistryAdapter;
 import wpessers.auctionservice.bid.application.port.in.PlaceBidCommand;
 import wpessers.auctionservice.bid.domain.event.BidPlacedEvent;
 import wpessers.auctionservice.bid.domain.event.BidRejectedEvent;
@@ -36,7 +36,7 @@ class BidServiceTests {
     private static final Instant CLOSED_AUCTION_START = CURRENT_TIME.minus(2L, ChronoUnit.DAYS);
     private static final Instant CLOSED_AUCTION_END = CURRENT_TIME.minus(1L, ChronoUnit.DAYS);
 
-    private InMemoryAuctionRegistry auctionRegistry;
+    private InMemoryAuctionRegistryAdapter auctionRegistry;
     private FakeBidStorageAdapter bidStorage;
     private FakeBidEventPublisherAdapter eventPublisher;
     private StubTimeProviderAdapter timeProvider;
@@ -47,7 +47,7 @@ class BidServiceTests {
         timeProvider = new StubTimeProviderAdapter();
         timeProvider.setFixedTime(CURRENT_TIME);
 
-        auctionRegistry = new InMemoryAuctionRegistry();
+        auctionRegistry = new InMemoryAuctionRegistryAdapter();
         Auction activeAuction = new AuctionBuilder()
             .withId(ACTIVE_AUCTION_ID)
             .withTimeWindow(ACTIVE_AUCTION_START, ACTIVE_AUCTION_END)

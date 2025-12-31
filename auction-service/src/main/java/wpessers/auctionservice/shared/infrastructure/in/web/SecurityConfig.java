@@ -38,6 +38,8 @@ public class SecurityConfig {
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auctions/**")
                 .permitAll()
+                .requestMatchers("/", "/index.html", "/ws/**")
+                .permitAll()
                 .anyRequest()
                 .authenticated()
             )

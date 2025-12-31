@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Auction WebSocket Console</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      background: #f4f4f9;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+    }
+
+    .panel {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      flex: 1;
+    }
+
+    #log {
+      height: 400px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      word-break: break-all;
+      background: #222;
+      color: #0f0;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 12px;
+      border-radius: 4px;
+    }
+
+    .controls div {
+      margin-bottom: 10px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px 15px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: white;
+    }
+
+    button:disabled {
+      background: #ccc;
+    }
+
+    .status {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .connected {
+      color: green;
+    }
+
+    .disconnected {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+<h1>Auction WebSocket Console</h1>
+<div class="container">
+  <div class="panel controls">
+    <div class="status disconnected" id="status">Status: Disconnected</div>
+    <div>
+      <label>JWT Token:</label>
+      <input id="authToken" type="text" placeholder="Paste your Bearer token here...">
+    </div>
+    <div style="margin-top: 10px;">
+      <button id="connectBtn">Connect</button>
+      <button disabled id="disconnectBtn">Disconnect</button>
+    </div>
+    <hr>
+    <div>
+      <label>Subscribe to Destination:</label>
+      <input id="subDest" type="text" value="/topic/auctions/123">
+      <button disabled id="subBtn">Subscribe</button>
+    </div>
+    <hr>
+    <div>
+      <label>Send to Destination:</label>
+      <input id="pubDest" type="text" value="/app/bid">
+      <label>Payload (JSON):</label>
+      <textarea id="payload" rows="5">{"auctionId": "a89b1ec2-a637-47c4-8f1d-b7c68fa14a89", "amount": 150.00}</textarea>
+      <button disabled id="sendBtn">Send Message</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Message Log</h3>
+    <div id="log"></div>
+    <button onclick="document.getElementById('log').innerHTML = ''"
+            style="margin-top:10px; background:#666;">Clear Log
+    </button>
+  </div>
+</div>
+
+<script>
+  let stompClient = null;
+
+  const log = (msg, type = 'info') => {
+    const div = document.getElementById('log');
+    const entry = document.createElement('div');
+    entry.style.color = type === 'error' ? '#ff5555' : (type === 'sent' ? '#55ff55' : '#00ff00');
+    entry.innerText = `[${new Date().toLocaleTimeString()}] ${type.toUpperCase()}: ${msg}`;
+    div.appendChild(entry);
+    div.scrollTop = div.scrollHeight;
+  };
+
+  document.getElementById('connectBtn').onclick = () => {
+    const socket = new WebSocket('ws://' + window.location.host + '/ws');
+    stompClient = Stomp.over(socket);
+    stompClient.debug = (msg) => log(msg, 'stomp');
+
+    const jwt = document.getElementById('authToken').value;
+    const headers = jwt ? {'Authorization': 'Bearer ' + jwt} : {};
+
+    stompClient.connect(headers, (frame) => {
+      document.getElementById('status').innerText = 'Status: Connected';
+      document.getElementById('status').className = 'status connected';
+      document.getElementById('connectBtn').disabled = true;
+      document.getElementById('disconnectBtn').disabled = false;
+      document.getElementById('subBtn').disabled = false;
+      document.getElementById('sendBtn').disabled = false;
+      log('Connected: ' + frame);
+    }, (error) => {
+      log('Error: ' + error, 'error');
+    });
+  };
+
+  document.getElementById('disconnectBtn').onclick = () => {
+    if (stompClient) {
+      stompClient.disconnect(() => {
+        document.getElementById('status').innerText = 'Status: Disconnected';
+        document.getElementById('status').className = 'status disconnected';
+        document.getElementById('connectBtn').disabled = false;
+        document.getElementById('disconnectBtn').disabled = true;
+        document.getElementById('subBtn').disabled = true;
+        document.getElementById('sendBtn').disabled = true;
+        log('Disconnected');
+      });
+    }
+  };
+
+  document.getElementById('subBtn').onclick = () => {
+    const dest = document.getElementById('subDest').value;
+    stompClient.subscribe(dest, (message) => {
+      log(`RECEIVED from ${dest}: ${message.body}`);
+    });
+    log(`Subscribed to ${dest}`);
+  };
+
+  document.getElementById('sendBtn').onclick = () => {
+    const dest = document.getElementById('pubDest').value;
+    const payload = document.getElementById('payload').value;
+    stompClient.send(dest, {}, payload);
+    log(`SENT to ${dest}: ${payload}`, 'sent');
+  };
+</script>
+</body>
+</html>
