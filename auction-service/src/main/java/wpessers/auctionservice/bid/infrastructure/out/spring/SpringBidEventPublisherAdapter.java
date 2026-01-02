@@ -1,4 +1,4 @@
-package wpessers.auctionservice.bid.infrastructure.out;
+package wpessers.auctionservice.bid.infrastructure.out.spring;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;

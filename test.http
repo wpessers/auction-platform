@@ -19,6 +19,9 @@ Authorization: Bearer {{auth_token}}
 {
   "name": "Vintage Wall Clock",
   "description": "A beautiful vintage clock from the 1950s.",
-  "endTime": "2025-12-31T23:59:59Z",
+  "endTime": "2026-12-31T23:59:59Z",
   "startingPrice": 100
 }
+
+### Get active auctions
+GET http://localhost:8080/api/auctions/active

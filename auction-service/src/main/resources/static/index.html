@@ -82,7 +82,7 @@
     <div class="status disconnected" id="status">Status: Disconnected</div>
     <div>
       <label>JWT Token:</label>
-      <input id="authToken" type="text" placeholder="Paste your Bearer token here...">
+      <input id="authToken" placeholder="Paste your Bearer token here..." type="text">
     </div>
     <div style="margin-top: 10px;">
       <button id="connectBtn">Connect</button>
@@ -99,7 +99,7 @@
       <label>Send to Destination:</label>
       <input id="pubDest" type="text" value="/app/bid">
       <label>Payload (JSON):</label>
-      <textarea id="payload" rows="5">{"auctionId": "a89b1ec2-a637-47c4-8f1d-b7c68fa14a89", "amount": 150.00}</textarea>
+      <textarea id="payload" rows="5">{"auctionId": "00000000-1111-2222-3333-444444444444", "amount": 150.00}</textarea>
       <button disabled id="sendBtn">Send Message</button>
     </div>
   </div>
@@ -145,8 +145,13 @@
       setTimeout(() => {
         stompClient.subscribe('/user/queue/errors', (message) => {
           log(`ERROR from server: ${message.body}`, 'error');
-        }, { id: 'sub-errors' });
+        }, {id: 'sub-errors'});
         log('Auto-subscribed to /user/queue/errors');
+
+        stompClient.subscribe('/user/queue/notifications', (message) => {
+          log(`NOTIFICATION from server: ${message.body}`);
+        }, {id: 'sub-notifications'});
+        log('Auto-subscribed to /user/queue/notifications');
       }, 100);
 
     }, (error) => {
