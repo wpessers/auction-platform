@@ -140,6 +140,15 @@
       document.getElementById('subBtn').disabled = false;
       document.getElementById('sendBtn').disabled = false;
       log('Connected: ' + frame);
+
+      // Small delay to ensure socket is ready, then subscribe with explicit ID
+      setTimeout(() => {
+        stompClient.subscribe('/user/queue/errors', (message) => {
+          log(`ERROR from server: ${message.body}`, 'error');
+        }, { id: 'sub-errors' });
+        log('Auto-subscribed to /user/queue/errors');
+      }, 100);
+
     }, (error) => {
       log('Error: ' + error, 'error');
     });

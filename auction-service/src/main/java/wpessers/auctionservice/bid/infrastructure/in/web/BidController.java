@@ -1,11 +1,14 @@
 package wpessers.auctionservice.bid.infrastructure.in.web;
 
-import java.security.Principal;
 import jakarta.validation.Valid;
+import java.security.Principal;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
+import wpessers.auctionservice.auction.domain.exception.AuctionNotFoundException;
 import wpessers.auctionservice.bid.application.BidService;
 import wpessers.auctionservice.bid.application.port.in.PlaceBidCommand;
 import wpessers.auctionservice.shared.application.port.out.UserClaims;
@@ -29,5 +32,11 @@ public class BidController {
                 message.amount()
             ));
         }
+    }
+
+    @MessageExceptionHandler
+    @SendToUser("/queue/errors")
+    public String handleAuctionNotFoundException(AuctionNotFoundException ex) {
+        return ex.getMessage();
     }
 }
