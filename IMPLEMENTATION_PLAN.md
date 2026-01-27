@@ -187,6 +187,10 @@ Several enhancements have been made to improve user experience and ensure full c
    - FAB for auction creation only visible to authenticated users
    - Profile page remains protected
 
+6. **Winning Indicator in Bidding Panel** - Added "You're winning!" indicator to BiddingPanel per bidding spec requirements. When the authenticated user is the highest bidder, a green banner with a checkmark icon displays "You're winning!" prominently at the top of the bidding panel.
+
+7. **Search State Preservation** - Search query is now preserved in URL parameters (?search=query). When navigating from auction list to detail page and back, the search state is maintained. This fulfills the spec requirement "Back navigation returns to auction list preserving search state".
+
 ---
 
 ## Future Work
