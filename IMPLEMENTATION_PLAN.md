@@ -29,7 +29,7 @@ This document outlines the complete implementation roadmap for the Auction Platf
 
 | Area | Status | Notes |
 |------|--------|-------|
-| **Backend Core** | ~95% complete | All CRITICAL/HIGH bugs fixed, only 1 LOW (Redis) |
+| **Backend Core** | ✅ 100% complete | All issues resolved including Redis adapter |
 | **Frontend** | ✅ 100% complete | All 6 phases implemented |
 | **Specs** | 100% complete | All 6 specs comprehensive and ready |
 | **Price Service** | Not implemented | Skeleton only - gRPC service placeholder |
@@ -44,7 +44,7 @@ This document outlines the complete implementation roadmap for the Auction Platf
 | Auction CRUD | ✅ Working | Fixed routing, response fields |
 | Bidding (WebSocket) | ✅ Working | Fixed BidRejectedMessage |
 | Auction Lifecycle | ✅ Working | Scheduler implemented |
-| Redis Registry | Not implemented | All 3 methods throw UnsupportedOperationException (LOW priority) |
+| Redis Registry | ✅ Working | Implemented for production deployments |
 
 ### Frontend Status (Verified 2026-01-26)
 
@@ -122,13 +122,21 @@ These issues don't affect development workflow.
 
 #### Issue 6: RedisAuctionRegistryAdapter Not Implemented
 
-- [ ] Implement `RedisAuctionRegistryAdapter` methods (prod profile only)
+- [x] **RESOLVED** (2026-01-27): Implemented Redis adapter for production deployments
 
-**Impact**: None for frontend development. Only active with `@Profile("prod")`.
+**Resolution**:
+- Added `spring-boot-starter-data-redis` dependency to `build.gradle.kts`
+- Created `RedisConfig` class with `RedisTemplate` bean configuration
+- Created `AuctionCacheDto` for JSON serialization of auction state
+- Added `Auction.reconstruct()` factory method for proper state restoration
+- Implemented all three methods in `RedisAuctionRegistryAdapter`:
+  - `register()` - stores auction in Redis
+  - `deregister()` - removes auction from Redis
+  - `executeOnAuction()` - distributed locking with Redis for thread-safe operations
+- Added Redis service to `docker-compose.yml`
+- Created `application-prod.yml` with Redis configuration
 
-**Current State**: All methods throw `UnsupportedOperationException`.
-
-**Note**: The `InMemoryAuctionRegistry` is used by default and works correctly. This is only needed for production horizontal scaling.
+**Note**: The `InMemoryAuctionRegistry` is used by default for dev/test profiles. Redis adapter activates with `@Profile("prod")` for horizontal scaling.
 
 ---
 
@@ -956,7 +964,7 @@ FRONTEND PHASES
 | ~~**MEDIUM**~~ | ~~Phase 5: Auction Creation~~ | ~~3-4 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**LOW**~~ | ~~Phase 6: Polish~~ | ~~3-4 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**MEDIUM**~~ | ~~Issue 7: Registration auto-login spec mismatch~~ | ~~30 min~~ | ✅ Done | ✓ Fixed 2026-01-27 |
-| **LOW** | Issue 6: Redis Adapter (prod only) | 2-3 hrs | Not Started | ✓ All 3 methods throw UnsupportedOperationException |
+| ~~**LOW**~~ | ~~Issue 6: Redis Adapter (prod only)~~ | ~~2-3 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 
 ### Estimated Total Effort
 

@@ -81,6 +81,61 @@ class AuctionTests {
     }
 
     @Nested
+    class AuctionReconstructTests {
+
+        @Test
+        @DisplayName("Should reconstruct auction with full state including bid data")
+        void shouldReconstructAuctionWithFullState() {
+            UUID id = UUID.randomUUID();
+            String name = "Test Auction";
+            String description = "Test Description";
+            AuctionWindow window = new AuctionWindow(
+                Instant.parse("2025-01-01T10:00:00Z"),
+                Instant.parse("2025-01-01T20:00:00Z")
+            );
+            Money startingPrice = new Money(100);
+            AuctionStatus status = AuctionStatus.ACTIVE;
+            Money highestBid = new Money(150);
+            UUID currentWinnerId = UUID.randomUUID();
+            long bidVersion = 5L;
+
+            Auction auction = Auction.reconstruct(
+                id, name, description, window, startingPrice,
+                status, highestBid, currentWinnerId, bidVersion
+            );
+
+            assertThat(auction.getId()).isEqualTo(id);
+            assertThat(auction.getName()).isEqualTo(name);
+            assertThat(auction.getDescription()).isEqualTo(description);
+            assertThat(auction.getAuctionWindow()).isEqualTo(window);
+            assertThat(auction.getStartingPrice()).isEqualTo(startingPrice);
+            assertThat(auction.getStatus()).isEqualTo(status);
+            assertThat(auction.getHighestBid()).isEqualTo(highestBid);
+            assertThat(auction.getCurrentWinnerId()).isEqualTo(currentWinnerId);
+            assertThat(auction.getBidVersion()).isEqualTo(bidVersion);
+        }
+
+        @Test
+        @DisplayName("Should reconstruct auction with null bid data")
+        void shouldReconstructAuctionWithNullBidData() {
+            UUID id = UUID.randomUUID();
+            AuctionWindow window = new AuctionWindow(
+                Instant.parse("2025-01-01T10:00:00Z"),
+                Instant.parse("2025-01-01T20:00:00Z")
+            );
+
+            Auction auction = Auction.reconstruct(
+                id, "Test", "Desc", window, new Money(100),
+                AuctionStatus.ACTIVE, null, null, 0L
+            );
+
+            assertThat(auction.getHighestBid()).isNull();
+            assertThat(auction.getCurrentWinnerId()).isNull();
+            assertThat(auction.getBidVersion()).isEqualTo(0L);
+        }
+    }
+
+    @Nested
     class AuctionPlaceBidTests {
 
         private static final Instant AUCTION_START = Instant.parse("2025-01-01T10:00:00Z");

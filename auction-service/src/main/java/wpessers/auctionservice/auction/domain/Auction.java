@@ -43,6 +43,29 @@ public class Auction {
         this.bidVersion = 0L;
     }
 
+    /**
+     * Reconstructs an Auction with full state from cache storage.
+     * This factory method is used by the Redis cache adapter to restore
+     * auction state without going through the bid placement logic.
+     */
+    public static Auction reconstruct(
+        UUID id,
+        String name,
+        String description,
+        AuctionWindow auctionWindow,
+        Money startingPrice,
+        AuctionStatus status,
+        Money highestBid,
+        UUID currentWinnerId,
+        long bidVersion
+    ) {
+        Auction auction = new Auction(id, name, description, auctionWindow, startingPrice, status);
+        auction.highestBid = highestBid;
+        auction.currentWinnerId = currentWinnerId;
+        auction.bidVersion = bidVersion;
+        return auction;
+    }
+
     public UUID getId() {
         return id;
     }
