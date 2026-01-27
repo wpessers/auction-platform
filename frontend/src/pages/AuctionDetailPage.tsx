@@ -295,6 +295,7 @@ function AuctionDetailContent({
               isActive={isActive}
               bidError={bidError}
               onBidError={onBidError}
+              currentWinnerId={auction.currentWinnerId ?? null}
             />
           </div>
         </div>

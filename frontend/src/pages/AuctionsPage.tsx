@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { auctionsApi } from '@/api/auctions';
 import type { Auction } from '@/types/auction';
 import { AuctionCard } from '@/components/auctions/AuctionCard';
@@ -18,13 +19,28 @@ interface BidPlacedMessage {
 export function AuctionsPage() {
   const { isAuthenticated } = useAuth();
   const { subscribe, connectionState } = useWebSocket();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const subscriptionsRef = useRef<(() => void)[]>([]);
+
+  // Get search query from URL, default to empty string
+  const searchQuery = searchParams.get('search') || '';
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  // Update URL when search changes
+  const setSearchQuery = useCallback(
+    (query: string) => {
+      if (query) {
+        setSearchParams({ search: query }, { replace: true });
+      } else {
+        setSearchParams({}, { replace: true });
+      }
+    },
+    [setSearchParams]
+  );
 
   const fetchAuctions = useCallback(async () => {
     try {
@@ -94,9 +110,9 @@ export function AuctionsPage() {
     );
   }, [auctions, debouncedSearchQuery]);
 
-  const handleClearSearch = () => {
+  const handleClearSearch = useCallback(() => {
     setSearchQuery('');
-  };
+  }, [setSearchQuery]);
 
   const handleCreateSuccess = () => {
     // Refresh the auction list
