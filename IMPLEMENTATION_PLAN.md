@@ -139,6 +139,27 @@ The Price Service has been fully implemented as a standalone gRPC microservice w
 - gRPC communication ensures low-latency pricing data
 - Microservice architecture enables independent scaling
 
+### Profile API Implementation
+
+The user profile API has been implemented to enable users to view their account information:
+
+**Backend Components:**
+1. **New Endpoint** - `GET /api/users/me` for fetching authenticated user profile with email
+2. **UserProfileController** - New REST controller handling profile requests
+3. **UserProfileResponse** - DTO containing userId, username, and email
+4. **UserNotFoundException** - Exception thrown when user ID from JWT doesn't exist
+5. **UserStorage Port Update** - Added `findById` method to retrieve user by UUID
+
+**Frontend Components:**
+1. **ProfilePage Enhancement** - Now fetches and displays user email from API instead of JWT
+2. **JWT Parsing Fix** - Corrected token parsing to extract proper fields from JWT payload (userId from `userId` claim, username from `sub` claim)
+
+**Benefits:**
+- Users can view complete profile information including email
+- Centralized user data fetching from backend (single source of truth)
+- Fixed JWT parsing ensures correct user identification
+- Foundation for future profile management features
+
 ---
 
 ## Future Work
@@ -211,6 +232,12 @@ PRODUCTION ARCHITECTURE
 | POST | `/api/auth/register` | No | `{ username, password, email }` | `201 Created` JWT string |
 | POST | `/api/auth/login` | No | `{ username, password }` | `200 OK` JWT string |
 
+### User Endpoints
+
+| Method | Endpoint | Auth | Request Body | Response |
+|--------|----------|------|--------------|----------|
+| GET | `/api/users/me` | Yes | - | `UserProfileResponse` |
+
 ### Auction Endpoints
 
 | Method | Endpoint | Auth | Request Body | Response |
@@ -251,6 +278,16 @@ PRODUCTION ARCHITECTURE
   "startTime": "2024-01-15T10:00:00Z",
   "endTime": "2024-01-15T22:00:00Z",
   "startingPrice": 100.00
+}
+```
+
+### User Profile Response
+
+```json
+{
+  "userId": "550e8400-e29b-41d4-a716-446655440000",
+  "username": "john_doe",
+  "email": "john@example.com"
 }
 ```
 
