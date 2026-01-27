@@ -36,7 +36,7 @@ public class SpringBidEventListener {
         String userId = event.bidderId().toString();
         String destination = "/queue/errors";
         BidRejectedMessage message = new BidRejectedMessage(
-            event.auctionId(),
+            event.bidderId(),
             event.reason().toString()
         );
         messagingTemplate.convertAndSendToUser(userId, destination, message);

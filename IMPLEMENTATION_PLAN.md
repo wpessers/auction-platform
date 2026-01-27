@@ -100,75 +100,15 @@ All specs exist in `/specs/` (NOT `/docs/specs/frontend/`):
 
 ### Priority: HIGH (Causes Incorrect Behavior)
 
-These issues don't block development but cause bugs in production.
+~~All HIGH priority backend issues have been resolved.~~
 
----
-
-#### Issue 4: BidRejectedMessage Sends Wrong ID
-
-- [ ] **FIX REQUIRED**: Fix `SpringBidEventListener.java` to send bidderId instead of auctionId
-
-**Impact**: When a bid is rejected, the wrong user receives the error notification.
-
-**Problem**: In `SpringBidEventListener.java` lines 38-40, `BidRejectedMessage` is constructed with `auctionId` in the bidderId field:
-```java
-// WRONG: Sends to auction ID instead of bidder ID
-new BidRejectedMessage(event.auctionId(), event.reason())
-```
-
-**Location**: `/auction-service/src/main/java/wpessers/auctionservice/bid/infrastructure/in/spring/SpringBidEventListener.java`
-
-**Fix**:
-```java
-// CORRECT: Send to the bidder who made the rejected bid
-new BidRejectedMessage(event.bidderId(), event.reason())
-```
-
-**Note**: Verify that `BidRejectedEvent` contains the `bidderId` field. If not, it needs to be added throughout the event chain.
-
----
-
-#### Issue 5: No Auction Lifecycle Scheduler
-
-- [ ] **FIX REQUIRED**: Implement scheduled tasks for auction status transitions
-
-**Impact**: SCHEDULED auctions never automatically become ACTIVE. ACTIVE auctions never automatically CLOSE.
-
-**Problem**: The system has no mechanism to:
-1. Activate SCHEDULED auctions when `startTime` is reached
-2. Close ACTIVE auctions when `endTime` is reached
-
-**Required Changes**:
-
-1. Add `@EnableScheduling` to main application class or create a config class
-2. Create `AuctionLifecycleScheduler` component with scheduled tasks
-
-**Suggested Implementation**:
-```java
-@Component
-@RequiredArgsConstructor
-public class AuctionLifecycleScheduler {
-
-    private final AuctionRepository auctionRepository;
-    private final AuctionStatusService auctionStatusService;
-
-    @Scheduled(fixedRate = 60000) // Every minute
-    public void activateScheduledAuctions() {
-        Instant now = Instant.now();
-        List<Auction> toActivate = auctionRepository
-            .findByStatusAndStartTimeLessThanEqual(AuctionStatus.SCHEDULED, now);
-        toActivate.forEach(auctionStatusService::activate);
-    }
-
-    @Scheduled(fixedRate = 60000) // Every minute
-    public void closeExpiredAuctions() {
-        Instant now = Instant.now();
-        List<Auction> toClose = auctionRepository
-            .findByStatusAndEndTimeLessThanEqual(AuctionStatus.ACTIVE, now);
-        toClose.forEach(auctionStatusService::close);
-    }
-}
-```
+- [x] **Issue 4: BidRejectedMessage Sends Wrong ID** - RESOLVED (2026-01-27)
+  - Fixed `SpringBidEventListener.java` to use `event.bidderId()` instead of `event.auctionId()`
+- [x] **Issue 5: No Auction Lifecycle Scheduler** - RESOLVED (2026-01-27)
+  - Added `@EnableScheduling` to main application class
+  - Created `AuctionLifecycleScheduler` component with `@Scheduled` methods
+  - Added repository methods for time-based queries
+  - Scheduler runs every 30 seconds to activate/close auctions
 
 ---
 
@@ -1023,8 +963,8 @@ FRONTEND PHASES
 | ~~**CRITICAL**~~ | ~~Issue 2: Add missing AuctionResponse fields~~ | ~~15 min~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**CRITICAL**~~ | ~~Issue 3: Update AuctionMapper~~ | ~~15 min~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | **CRITICAL** | Phase 1: Foundation | 2-3 hrs | Not Started | ✓ Frontend is bare skeleton |
-| **HIGH** | Issue 4: Fix BidRejectedMessage bug | 30 min | Not Started | ✓ Uses event.auctionId() not event.bidderId() |
-| **HIGH** | Issue 5: Implement Auction Lifecycle Scheduler | 1-2 hrs | Not Started | ✓ No @Scheduled or @EnableScheduling found |
+| ~~**HIGH**~~ | ~~Issue 4: Fix BidRejectedMessage bug~~ | ~~30 min~~ | ✅ Done | ✓ Fixed 2026-01-27 |
+| ~~**HIGH**~~ | ~~Issue 5: Implement Auction Lifecycle Scheduler~~ | ~~1-2 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | **HIGH** | Phase 2: Authentication | 3-4 hrs | Not Started | - |
 | **HIGH** | Phase 3: Auction Browsing | 4-5 hrs | Not Started | - |
 | **HIGH** | Phase 4: Real-Time & Bidding | 5-6 hrs | Not Started | - |
