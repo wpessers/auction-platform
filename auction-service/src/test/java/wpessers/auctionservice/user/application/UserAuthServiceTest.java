@@ -12,8 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import wpessers.auctionservice.shared.infrastructure.out.generation.StubIdGeneratorAdapter;
 import wpessers.auctionservice.user.application.port.in.RegisterUserCommand;
 import wpessers.auctionservice.user.domain.User;
+import wpessers.auctionservice.user.application.port.in.UserProfileResponse;
 import wpessers.auctionservice.user.domain.exception.InvalidEmailException;
 import wpessers.auctionservice.user.domain.exception.InvalidUsernameException;
+import wpessers.auctionservice.user.domain.exception.UserNotFoundException;
 import wpessers.auctionservice.user.infrastructure.out.generation.StubTokenGeneratorAdapter;
 import wpessers.auctionservice.user.infrastructure.out.persistence.inmemory.FakeUserStorageAdapter;
 
@@ -118,5 +120,28 @@ class UserAuthServiceTest {
 
         assertThrows(IllegalArgumentException.class,
             () -> userAuthService.login("username", "wrongpassword"));
+    }
+
+    @Test
+    @DisplayName("Should return user profile")
+    void shouldGetProfile() {
+        UUID userId = UUID.randomUUID();
+        User user = new User(userId, "username", "password", "test@email.com");
+        userStorage.save(user);
+
+        UserProfileResponse profile = userAuthService.getProfile(userId);
+
+        assertThat(profile.userId()).isEqualTo(userId);
+        assertThat(profile.username()).isEqualTo("username");
+        assertThat(profile.email()).isEqualTo("test@email.com");
+    }
+
+    @Test
+    @DisplayName("Should throw exception when getting profile for nonexistent user")
+    void shouldThrowOnProfileNotFound() {
+        UUID nonexistentUserId = UUID.randomUUID();
+
+        assertThrows(UserNotFoundException.class,
+            () -> userAuthService.getProfile(nonexistentUserId));
     }
 }

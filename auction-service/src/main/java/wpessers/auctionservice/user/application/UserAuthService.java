@@ -5,11 +5,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import wpessers.auctionservice.shared.application.port.out.IdGenerator;
 import wpessers.auctionservice.user.application.port.in.RegisterUserCommand;
+import wpessers.auctionservice.user.application.port.in.UserProfileResponse;
 import wpessers.auctionservice.user.application.port.out.TokenGenerator;
 import wpessers.auctionservice.user.application.port.out.UserStorage;
 import wpessers.auctionservice.user.domain.User;
 import wpessers.auctionservice.user.domain.exception.InvalidEmailException;
 import wpessers.auctionservice.user.domain.exception.InvalidUsernameException;
+import wpessers.auctionservice.user.domain.exception.UserNotFoundException;
 
 @Service
 public class UserAuthService {
@@ -29,6 +31,12 @@ public class UserAuthService {
         this.userStorage = userStorage;
         this.tokenGenerator = tokenGenerator;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public UserProfileResponse getProfile(UUID userId) {
+        User user = userStorage.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+        return new UserProfileResponse(user.id(), user.username(), user.email());
     }
 
     public String register(RegisterUserCommand command) {

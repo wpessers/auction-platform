@@ -15,6 +15,7 @@ import wpessers.auctionservice.auction.domain.exception.InvalidAuctionWindowExce
 import wpessers.auctionservice.auction.domain.exception.InvalidStartingPriceException;
 import wpessers.auctionservice.user.domain.exception.InvalidEmailException;
 import wpessers.auctionservice.user.domain.exception.InvalidUsernameException;
+import wpessers.auctionservice.user.domain.exception.UserNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -70,6 +71,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ProblemDetail handleInvalidEmailException(InvalidEmailException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+            ex.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleUserNotFoundException(UserNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,
             ex.getMessage());
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;

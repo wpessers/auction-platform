@@ -28,7 +28,8 @@ function parseJwt(token: string): User | null {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const payload = JSON.parse(atob(base64));
-    return { userId: payload.userId, username: payload.sub };
+    // JWT structure: subject (sub) = userId, username claim = username
+    return { userId: payload.sub, username: payload.username };
   } catch {
     return null;
   }

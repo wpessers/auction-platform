@@ -11,10 +11,18 @@ export interface RegisterRequest {
   email: string;
 }
 
+export interface UserProfile {
+  userId: string;
+  username: string;
+  email: string;
+}
+
 export const authApi = {
   login: (data: LoginRequest): Promise<string> =>
     api.post('/api/auth/login', data),
 
   register: (data: RegisterRequest): Promise<string> =>
     api.post('/api/auth/register', data),
+
+  getProfile: (): Promise<UserProfile> => api.get('/api/users/me'),
 };

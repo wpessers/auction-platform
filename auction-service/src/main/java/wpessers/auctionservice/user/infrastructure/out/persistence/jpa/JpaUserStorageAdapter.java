@@ -1,6 +1,7 @@
 package wpessers.auctionservice.user.infrastructure.out.persistence.jpa;
 
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 import wpessers.auctionservice.user.application.port.out.UserStorage;
 import wpessers.auctionservice.user.domain.User;
@@ -19,6 +20,11 @@ public class JpaUserStorageAdapter implements UserStorage {
     @Override
     public void save(User user) {
         userRepository.save(mapper.toEntity(user));
+    }
+
+    @Override
+    public Optional<User> findById(UUID id) {
+        return userRepository.findById(id).map(mapper::toDomain);
     }
 
     @Override

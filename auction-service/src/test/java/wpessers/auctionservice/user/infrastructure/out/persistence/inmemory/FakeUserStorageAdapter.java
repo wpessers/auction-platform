@@ -2,6 +2,7 @@ package wpessers.auctionservice.user.infrastructure.out.persistence.inmemory;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 import wpessers.auctionservice.user.application.port.out.UserStorage;
 import wpessers.auctionservice.user.domain.User;
 
@@ -16,6 +17,13 @@ public class FakeUserStorageAdapter implements UserStorage {
     @Override
     public void save(User user) {
         users.put(user.username(), user);
+    }
+
+    @Override
+    public Optional<User> findById(UUID id) {
+        return users.values().stream()
+            .filter(user -> user.id().equals(id))
+            .findFirst();
     }
 
     @Override
