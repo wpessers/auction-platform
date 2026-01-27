@@ -1,12 +1,24 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 export function RootLayout() {
   const location = useLocation();
-  const token = localStorage.getItem('token');
-  const isAuthenticated = !!token;
+  const navigate = useNavigate();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
 
-  // Parse user info from JWT if available
-  const user = isAuthenticated ? parseJwt(token) : null;
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
+
+  // Show loading state while checking auth
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-text-secondary">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -42,10 +54,7 @@ export function RootLayout() {
                   {user?.username || 'Profile'}
                 </Link>
                 <button
-                  onClick={() => {
-                    localStorage.removeItem('token');
-                    window.location.href = '/login';
-                  }}
+                  onClick={handleLogout}
                   className="rounded bg-card px-3 py-1.5 text-sm text-text-secondary transition-colors duration-fast hover:bg-border hover:text-text-primary"
                 >
                   Logout
@@ -81,15 +90,4 @@ export function RootLayout() {
       </main>
     </div>
   );
-}
-
-function parseJwt(token: string): { userId: string; username: string } | null {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const payload = JSON.parse(atob(base64));
-    return { userId: payload.userId, username: payload.sub };
-  } catch {
-    return null;
-  }
 }

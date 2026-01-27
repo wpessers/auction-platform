@@ -422,20 +422,20 @@ src/
 
 ---
 
-### Phase 2: Authentication (HIGH)
+### Phase 2: Authentication (HIGH) - ✅ COMPLETED 2026-01-27
 
-**Priority**: HIGH
+**Priority**: ~~HIGH~~ DONE
 **Estimated Effort**: 3-4 hours
-**Blockers**: Phase 1 complete
+**Blockers**: Phase 1 complete ✓
 **Blocks**: Phases 4, 5 (bidding and creation require auth)
 
 #### 2.1 Auth Context & Provider
 
-- [ ] Create `src/context/AuthContext.tsx`
-- [ ] Implement JWT token storage/retrieval
-- [ ] Implement JWT parsing for user info
-- [ ] Add login/logout functions
-- [ ] Add loading state for initial auth check
+- [x] Create `src/context/AuthContext.tsx`
+- [x] Implement JWT token storage/retrieval
+- [x] Implement JWT parsing for user info
+- [x] Add login/logout functions
+- [x] Add loading state for initial auth check
 
 **src/context/AuthContext.tsx**:
 ```typescript
@@ -457,19 +457,19 @@ function parseJwt(token: string) {
 
 #### 2.2 Protected Route Component
 
-- [ ] Create `src/components/auth/ProtectedRoute.tsx`
-- [ ] Redirect to login if not authenticated
-- [ ] Store intended destination for post-login redirect
-- [ ] Show loading state during auth check
+- [x] Create `src/components/auth/ProtectedRoute.tsx`
+- [x] Redirect to login if not authenticated
+- [x] Store intended destination for post-login redirect
+- [x] Show loading state during auth check
 
 #### 2.3 Login Page
 
-- [ ] Create `src/pages/LoginPage.tsx`
-- [ ] Username and password inputs
-- [ ] Form validation (required fields)
-- [ ] Error message display
-- [ ] Link to registration page
-- [ ] Handle success message from registration redirect
+- [x] Create `src/pages/LoginPage.tsx`
+- [x] Username and password inputs
+- [x] Form validation (required fields)
+- [x] Error message display
+- [x] Link to registration page
+- [x] Handle success message from registration redirect
 
 **API Contract**:
 ```typescript
@@ -483,12 +483,12 @@ function parseJwt(token: string) {
 
 #### 2.4 Register Page
 
-- [ ] Create `src/pages/RegisterPage.tsx`
-- [ ] Username, email, password inputs
-- [ ] Form validation (required, email format)
-- [ ] Error message display (e.g., "Username already exists")
-- [ ] Link to login page
-- [ ] Redirect to login on success (workaround for no auto-login)
+- [x] Create `src/pages/RegisterPage.tsx`
+- [x] Username, email, password inputs
+- [x] Form validation (required, email format)
+- [x] Error message display (e.g., "Username already exists")
+- [x] Link to login page
+- [x] Redirect to login on success (workaround for no auto-login)
 
 **API Contract**:
 ```typescript
@@ -501,18 +501,18 @@ function parseJwt(token: string) {
 
 #### 2.5 Profile Page
 
-- [ ] Create `src/pages/ProfilePage.tsx`
-- [ ] Display username from JWT
-- [ ] Display userId (for debugging/reference)
-- [ ] Logout button
-- [ ] Note: Email not available in JWT
+- [x] Create `src/pages/ProfilePage.tsx`
+- [x] Display username from JWT
+- [x] Display userId (for debugging/reference)
+- [x] Logout button
+- [x] Note: Email not available in JWT
 
 #### 2.6 Header with Auth State
 
-- [ ] Update `RootLayout` header with conditional rendering
-- [ ] Show login/register links when logged out
-- [ ] Show username + profile dropdown when logged in
-- [ ] Implement logout from dropdown
+- [x] Update `RootLayout` header with conditional rendering
+- [x] Show login/register links when logged out
+- [x] Show username + profile dropdown when logged in
+- [x] Implement logout from dropdown
 
 ---
 
@@ -965,7 +965,7 @@ FRONTEND PHASES
 | ~~**CRITICAL**~~ | ~~Phase 1: Foundation~~ | ~~2-3 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**HIGH**~~ | ~~Issue 4: Fix BidRejectedMessage bug~~ | ~~30 min~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**HIGH**~~ | ~~Issue 5: Implement Auction Lifecycle Scheduler~~ | ~~1-2 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
-| **HIGH** | Phase 2: Authentication | 3-4 hrs | Not Started | - |
+| ~~**HIGH**~~ | ~~Phase 2: Authentication~~ | ~~3-4 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | **HIGH** | Phase 3: Auction Browsing | 4-5 hrs | Not Started | - |
 | **HIGH** | Phase 4: Real-Time & Bidding | 5-6 hrs | Not Started | - |
 | **MEDIUM** | Phase 5: Auction Creation | 3-4 hrs | Not Started | - |
@@ -988,8 +988,9 @@ FRONTEND PHASES
 1. [x] Fix backend Issue 1 (routing) - `AuctionController.java` ✅ Done
 2. [x] Fix backend Issue 2 (response fields) - `AuctionResponse.java` ✅ Done
 3. [x] Fix backend Issue 3 (mapper) - `AuctionMapper.java` ✅ Done
-4. [ ] Start Phase 1 (foundation)
-5. [ ] Continue with Phases 2-6
+4. [x] Start Phase 1 (foundation) ✅ Done
+5. [x] Phase 2: Authentication ✅ Done
+6. [ ] Continue with Phases 3-6
 
 ### Architecture Notes
 
