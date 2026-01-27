@@ -516,16 +516,16 @@ function parseJwt(token: string) {
 
 ---
 
-### Phase 3: Auction Browsing (HIGH)
+### Phase 3: Auction Browsing (HIGH) - ✅ COMPLETED 2026-01-27
 
-**Priority**: HIGH
+**Priority**: ~~HIGH~~ DONE
 **Estimated Effort**: 4-5 hours
 **Blockers**: Phase 1 complete, Backend Issues 1-3 fixed
 **Blocks**: Phase 4 (detail page needed for bidding)
 
 #### 3.1 Type Definitions
 
-- [ ] Create `src/types/auction.ts`
+- [x] Create `src/types/auction.ts`
 
 ```typescript
 export interface Auction {
@@ -543,7 +543,7 @@ export interface Auction {
 
 #### 3.2 Auction API Functions
 
-- [ ] Create `src/api/auctions.ts`
+- [x] Create `src/api/auctions.ts`
 
 ```typescript
 export async function getActiveAuctions(): Promise<Auction[]> {
@@ -557,11 +557,11 @@ export async function getAuction(id: string): Promise<Auction> {
 
 #### 3.3 Countdown Timer Hook
 
-- [ ] Create `src/hooks/useCountdown.ts`
-- [ ] Return formatted time remaining
-- [ ] Update every second when < 5 minutes
-- [ ] Update every minute otherwise
-- [ ] Handle expired auctions
+- [x] Create `src/hooks/useCountdown.ts`
+- [x] Return formatted time remaining
+- [x] Update every second when < 5 minutes
+- [x] Update every minute otherwise
+- [x] Handle expired auctions
 
 ```typescript
 function useCountdown(endTime: string): {
@@ -573,31 +573,31 @@ function useCountdown(endTime: string): {
 
 #### 3.4 Auction Card Component
 
-- [ ] Create `src/components/auctions/AuctionCard.tsx`
-- [ ] Display: name, time remaining, current bid (or starting price)
-- [ ] Visual indicator for active/urgent/ended status
-- [ ] Click navigates to detail page
-- [ ] Dark theme styling per UI spec
+- [x] Create `src/components/auctions/AuctionCard.tsx`
+- [x] Display: name, time remaining, current bid (or starting price)
+- [x] Visual indicator for active/urgent/ended status
+- [x] Click navigates to detail page
+- [x] Dark theme styling per UI spec
 
 #### 3.5 Auctions List Page
 
-- [ ] Create `src/pages/AuctionsPage.tsx`
-- [ ] Fetch active auctions on mount
-- [ ] Display as responsive card grid
-- [ ] Search input (client-side filtering)
-- [ ] Empty state for no auctions
-- [ ] Empty state for no search results
-- [ ] Loading state
+- [x] Create `src/pages/AuctionsPage.tsx`
+- [x] Fetch active auctions on mount
+- [x] Display as responsive card grid
+- [x] Search input (client-side filtering)
+- [x] Empty state for no auctions
+- [x] Empty state for no search results
+- [x] Loading state
 
 #### 3.6 Auction Detail Page
 
-- [ ] Create `src/pages/AuctionDetailPage.tsx`
-- [ ] Fetch auction by ID
-- [ ] Display all auction fields
-- [ ] Live countdown timer
-- [ ] Current bid display
-- [ ] Back navigation to list
-- [ ] Placeholder for bidding panel (Phase 4)
+- [x] Create `src/pages/AuctionDetailPage.tsx`
+- [x] Fetch auction by ID
+- [x] Display all auction fields
+- [x] Live countdown timer
+- [x] Current bid display
+- [x] Back navigation to list
+- [x] Placeholder for bidding panel (Phase 4)
 
 ---
 
@@ -966,7 +966,7 @@ FRONTEND PHASES
 | ~~**HIGH**~~ | ~~Issue 4: Fix BidRejectedMessage bug~~ | ~~30 min~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**HIGH**~~ | ~~Issue 5: Implement Auction Lifecycle Scheduler~~ | ~~1-2 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**HIGH**~~ | ~~Phase 2: Authentication~~ | ~~3-4 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
-| **HIGH** | Phase 3: Auction Browsing | 4-5 hrs | Not Started | - |
+| ~~**HIGH**~~ | ~~Phase 3: Auction Browsing~~ | ~~4-5 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | **HIGH** | Phase 4: Real-Time & Bidding | 5-6 hrs | Not Started | - |
 | **MEDIUM** | Phase 5: Auction Creation | 3-4 hrs | Not Started | - |
 | **MEDIUM** | Issue 7: Registration auto-login spec mismatch | 30 min | Not Started | ✓ Spec vs backend discrepancy |
