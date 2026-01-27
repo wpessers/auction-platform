@@ -27,9 +27,9 @@ This document serves as a reference for the Auction Platform architecture, APIs,
 | **Backend Core** | ✅ 100% complete | All issues resolved including Redis adapter |
 | **Frontend** | ✅ 100% complete | All 6 phases implemented |
 | **Specs** | 100% complete | All 6 specs comprehensive and ready |
-| **Price Service** | Not implemented | Skeleton only - gRPC service placeholder |
+| **Price Service** | ✅ 100% complete | Full gRPC integration with intelligent pricing |
 
-**MVP is complete.** The application is feature-complete and production-ready.
+**MVP is complete.** The application is feature-complete and production-ready with AI-powered pricing capabilities.
 
 ### Backend Status (Verified 2026-01-27)
 
@@ -40,6 +40,7 @@ This document serves as a reference for the Auction Platform architecture, APIs,
 | Bidding (WebSocket) | ✅ Working | Real-time bidding with proper error handling |
 | Auction Lifecycle | ✅ Working | Scheduler auto-transitions auction states |
 | Redis Registry | ✅ Working | Production-ready horizontal scaling |
+| Price Service | ✅ Working | gRPC-based intelligent pricing with REST API |
 
 ### Frontend Status (Verified 2026-01-27)
 
@@ -50,6 +51,7 @@ frontend/
 │   ├── components/        # Reusable UI components
 │   │   ├── auctions/      # Auction cards, creation modal, detail views
 │   │   ├── bidding/       # Bidding panel with real-time updates
+│   │   ├── pricing/       # AI-powered pricing suggestions
 │   │   ├── auth/          # Protected routes
 │   │   ├── layout/        # Root layout with navigation
 │   │   └── ui/            # Toast, modals, loading states, error boundary
@@ -101,19 +103,45 @@ All 6 development phases have been completed:
 5. **Phase 5: Auction Creation** - Create auction form with validation, floating action button
 6. **Phase 6: Polish** - Error boundaries, loading states, animations, accessibility, mobile responsiveness
 
+### Price Service Implementation
+
+The Price Service has been fully implemented as a standalone gRPC microservice with complete integration into the auction platform:
+
+**Core Components:**
+- **gRPC Proto File** - `pricing.proto` defining `PricingService` with two RPCs:
+  - `GetBidSuggestion` - Returns intelligent bid recommendations based on auction data
+  - `AnalyzeAuction` - Provides comprehensive market analysis and pricing insights
+
+- **Price Service gRPC Server** (Kotlin) - Standalone microservice with intelligent pricing algorithms:
+  - Statistical analysis of bid patterns and market trends
+  - Dynamic bid increment calculations based on auction phase
+  - Confidence scoring for pricing recommendations
+  - Market positioning analysis
+
+- **Auction Service gRPC Client** - Integration adapter with robust error handling:
+  - gRPC client adapter for Price Service communication
+  - Fallback handling for service unavailability
+  - Graceful degradation when pricing service is offline
+
+- **REST API Endpoints** - Exposed pricing functionality via HTTP:
+  - `GET /api/pricing/auctions/{id}/suggestions` - Returns `BidSuggestion` with recommended amounts
+  - `GET /api/pricing/auctions/{id}/analysis` - Returns `AuctionAnalysis` with market insights
+
+- **Frontend Integration** - `PricingSuggestions` component:
+  - Displays AI-powered bid recommendations in real-time
+  - Visual confidence indicators for suggestions
+  - Seamless integration with bidding panel
+  - Automatic updates based on auction activity
+
+**Benefits:**
+- AI-powered bid recommendations improve user decision-making
+- Market analysis provides transparency and insights
+- gRPC communication ensures low-latency pricing data
+- Microservice architecture enables independent scaling
+
 ---
 
 ## Future Work
-
-### Price Service Integration
-
-The next major feature for development is the **Price Service**, which currently exists as a skeleton placeholder:
-
-- **Location**: `/price-service/`
-- **Purpose**: Provide intelligent pricing suggestions using gRPC
-- **Current Status**: Placeholder only - not implemented
-- **Integration Point**: Would connect to auction service via gRPC for real-time price analysis
-- **Benefits**: AI-powered bid recommendations, market analysis, pricing insights
 
 ### Potential Enhancements
 
@@ -128,6 +156,7 @@ Additional features to consider for future releases:
 - Image uploads for auctions
 - Payment integration
 - Auction analytics dashboard
+- Historical price trends and analytics
 
 ---
 
@@ -143,6 +172,7 @@ PRODUCTION ARCHITECTURE
 │  - Tailwind CSS 4 (Dark Theme)                     │
 │  - React Router 7                                   │
 │  - WebSocket (STOMP + SockJS)                      │
+│  - Pricing Suggestions Component                    │
 └──────────────┬────────────────────┬─────────────────┘
                │                    │
                │ HTTP/REST          │ WebSocket
@@ -154,34 +184,20 @@ PRODUCTION ARCHITECTURE
 │  - Auction CRUD                                      │
 │  - Bidding Engine                                    │
 │  - Lifecycle Scheduler                               │
-└───────┬────────────────────┬─────────────────────────┘
-        │                    │
-        │ PostgreSQL         │ Redis (prod)
-        │                    │
-        v                    v
-┌──────────────┐    ┌─────────────────┐
-│  PostgreSQL  │    │  Redis Registry │
-│   Database   │    │ (Distributed    │
-│              │    │  Locking)       │
-└──────────────┘    └─────────────────┘
-
-FUTURE INTEGRATION
-==================
-
-┌──────────────────────────────────────────────────────┐
-│           Auction Service (Spring Boot)              │
-└──────────────────────────┬───────────────────────────┘
-                           │
-                           │ gRPC
-                           │
-                           v
-                  ┌─────────────────┐
-                  │  Price Service  │
-                  │  (gRPC Server)  │
-                  │                 │
-                  │  - Pricing AI   │
-                  │  - Suggestions  │
-                  └─────────────────┘
+│  - Pricing REST API (proxy to Price Service)        │
+└───────┬────────────────────┬──────────────┬──────────┘
+        │                    │              │
+        │ PostgreSQL         │ Redis        │ gRPC
+        │                    │              │
+        v                    v              v
+┌──────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│  PostgreSQL  │    │  Redis Registry │    │  Price Service  │
+│   Database   │    │ (Distributed    │    │  (Kotlin/gRPC)  │
+│              │    │  Locking)       │    │                 │
+└──────────────┘    └─────────────────┘    │  - Pricing AI   │
+                                            │  - Market       │
+                                            │    Analysis     │
+                                            └─────────────────┘
 ```
 
 ---
@@ -202,6 +218,13 @@ FUTURE INTEGRATION
 | GET | `/api/auctions/active` | No | - | `Auction[]` |
 | GET | `/api/auctions/{id}` | No | - | `Auction` |
 | POST | `/api/auctions` | Yes | `CreateAuctionRequest` | `201 Created` UUID |
+
+### Pricing Endpoints
+
+| Method | Endpoint | Auth | Request Body | Response |
+|--------|----------|------|--------------|----------|
+| GET | `/api/pricing/auctions/{id}/suggestions` | No | - | `BidSuggestion` |
+| GET | `/api/pricing/auctions/{id}/analysis` | No | - | `AuctionAnalysis` |
 
 ### Auction Response Format
 
@@ -228,6 +251,44 @@ FUTURE INTEGRATION
   "startTime": "2024-01-15T10:00:00Z",
   "endTime": "2024-01-15T22:00:00Z",
   "startingPrice": 100.00
+}
+```
+
+### Bid Suggestion Response
+
+```json
+{
+  "auctionId": "550e8400-e29b-41d4-a716-446655440000",
+  "suggestedBids": [
+    {
+      "amount": 155.00,
+      "confidence": "HIGH",
+      "reasoning": "Competitive bid with strong winning potential"
+    },
+    {
+      "amount": 160.00,
+      "confidence": "MEDIUM",
+      "reasoning": "Aggressive bid for immediate lead"
+    }
+  ],
+  "minimumBid": 151.00,
+  "timestamp": "2024-01-15T12:30:00Z"
+}
+```
+
+### Auction Analysis Response
+
+```json
+{
+  "auctionId": "550e8400-e29b-41d4-a716-446655440000",
+  "biddingActivity": "HIGH",
+  "priceVelocity": 25.5,
+  "estimatedFinalPrice": 200.00,
+  "marketPosition": "COMPETITIVE",
+  "insights": [
+    "High bidding activity indicates strong interest",
+    "Price increasing 25% faster than average"
+  ]
 }
 ```
 
@@ -322,7 +383,7 @@ The auction-service follows the ports & adapters pattern:
 - `application/` - Use cases and ports (interfaces)
 - `domain/` - Business logic and entities
 - `infrastructure/in/` - Inbound adapters (controllers, WebSocket listeners)
-- `infrastructure/out/` - Outbound adapters (persistence, events)
+- `infrastructure/out/` - Outbound adapters (persistence, events, gRPC clients)
 
 This architecture provides:
 - Clear separation of concerns
@@ -335,6 +396,7 @@ This architecture provides:
 **Controllers** (HTTP Entry Points):
 - `AuctionController.java` - REST endpoints for auction CRUD
 - `UserAuthController.java` - Authentication endpoints
+- `PricingController.java` - Pricing endpoints (proxy to Price Service)
 
 **WebSocket Components**:
 - `SpringBidEventListener.java` - Broadcasts bid events to subscribers
@@ -346,6 +408,22 @@ This architecture provides:
 **Registry Adapters**:
 - `InMemoryAuctionRegistry.java` - Development/testing (default)
 - `RedisAuctionRegistryAdapter.java` - Production (with `@Profile("prod")`)
+
+**gRPC Integration**:
+- `PriceServiceGrpcAdapter.java` - Client adapter for Price Service communication with fallback handling
+
+### Price Service Architecture
+
+**Microservice Components**:
+- `PricingServiceImpl.kt` - gRPC service implementation with intelligent algorithms
+- `pricing.proto` - Protocol buffer definitions
+- Independent Kotlin/gRPC server with dedicated port
+
+**Integration Pattern**:
+- Auction service acts as gRPC client
+- REST API proxies requests to Price Service
+- Graceful degradation if Price Service unavailable
+- Low-latency communication via gRPC
 
 ### Frontend Architecture
 
@@ -372,12 +450,14 @@ This architecture provides:
 - Uses in-memory auction registry
 - No Redis required
 - Single-instance deployment
+- Price Service optional (graceful fallback)
 
 **Production Mode** (`spring.profiles.active=prod`):
 - Uses Redis for distributed state
 - Supports horizontal scaling
 - Multiple instances can run simultaneously
 - Distributed locking ensures consistency
+- Price Service recommended for full feature set
 
 ### Environment Configuration
 
@@ -393,7 +473,7 @@ This architecture provides:
 
 ## Summary
 
-The Auction Platform MVP is complete with all core features implemented:
+The Auction Platform MVP is complete with all core features and AI-powered pricing capabilities:
 
 - User authentication with JWT
 - Real-time auction browsing with search
@@ -401,5 +481,7 @@ The Auction Platform MVP is complete with all core features implemented:
 - Auction creation with validation
 - Responsive dark-themed UI
 - Production-ready with Redis scaling
+- AI-powered bid suggestions and market analysis
+- gRPC-based Price Service microservice
 
-The application is ready for deployment and use. Future work focuses on the Price Service integration and optional enhancements.
+The application is fully production-ready and feature-complete. Future work focuses on optional enhancements like user profile management, advanced filtering, and analytics dashboards.

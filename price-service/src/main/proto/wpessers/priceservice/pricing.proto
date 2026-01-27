@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package wpessers.priceservice;
+
+option java_multiple_files = true;
+option java_package = "wpessers.priceservice.grpc";
+option java_outer_classname = "PricingProto";
+
+// Price Service provides intelligent pricing suggestions for auctions
+service PricingService {
+  // Get a bid suggestion for a specific auction based on current state
+  rpc GetBidSuggestion(BidSuggestionRequest) returns (BidSuggestionResponse);
+
+  // Analyze an auction's pricing and provide market insights
+  rpc AnalyzeAuction(AuctionAnalysisRequest) returns (AuctionAnalysisResponse);
+}
+
+// Request for bid suggestion
+message BidSuggestionRequest {
+  string auction_id = 1;
+  double current_highest_bid = 2;
+  double starting_price = 3;
+  int64 time_remaining_seconds = 4;
+  int32 total_bids = 5;
+}
+
+// Response with suggested bid amounts
+message BidSuggestionResponse {
+  // Conservative bid suggestion (small increment)
+  double conservative_bid = 1;
+  // Moderate bid suggestion (medium increment)
+  double moderate_bid = 2;
+  // Aggressive bid suggestion (larger increment to discourage competition)
+  double aggressive_bid = 3;
+  // Confidence score (0.0 to 1.0) for the suggestions
+  double confidence = 4;
+  // Human-readable reasoning for the suggestions
+  string reasoning = 5;
+}
+
+// Request for auction analysis
+message AuctionAnalysisRequest {
+  string auction_id = 1;
+  string auction_name = 2;
+  double starting_price = 3;
+  double current_highest_bid = 4;
+  int64 start_time_epoch = 5;
+  int64 end_time_epoch = 6;
+  int32 total_bids = 7;
+}
+
+// Response with auction analysis
+message AuctionAnalysisResponse {
+  // Market heat indicator (LOW, MEDIUM, HIGH, VERY_HIGH)
+  MarketHeat market_heat = 1;
+  // Estimated final price based on current activity
+  double estimated_final_price = 2;
+  // Price trend direction
+  PriceTrend price_trend = 3;
+  // Recommendation for potential bidders
+  string recommendation = 4;
+  // Bidding activity level description
+  string activity_summary = 5;
+}
+
+enum MarketHeat {
+  MARKET_HEAT_UNSPECIFIED = 0;
+  LOW = 1;
+  MEDIUM = 2;
+  HIGH = 3;
+  VERY_HIGH = 4;
+}
+
+enum PriceTrend {
+  PRICE_TREND_UNSPECIFIED = 0;
+  STABLE = 1;
+  RISING = 2;
+  RISING_FAST = 3;
+}

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useWebSocket } from '@/context/WebSocketContext';
 import { Link } from 'react-router-dom';
+import { PricingSuggestions } from './PricingSuggestions';
 
 interface BiddingPanelProps {
   auctionId: string;
@@ -32,6 +33,11 @@ export function BiddingPanel({
     if (!isConnected || isSubmitting) return;
 
     const amount = currentBid > 0 ? currentBid + increment : startingPrice + increment;
+    submitBid(amount);
+  };
+
+  const handleSuggestionClick = (amount: number) => {
+    if (!isConnected || isSubmitting) return;
     submitBid(amount);
   };
 
@@ -97,6 +103,21 @@ export function BiddingPanel({
 
   return (
     <div className="space-y-4">
+      {/* AI-Powered Pricing Suggestions */}
+      <PricingSuggestions
+        auctionId={auctionId}
+        currentBid={currentBid}
+        onSuggestionClick={handleSuggestionClick}
+        disabled={!isConnected || isSubmitting}
+      />
+
+      {/* Divider */}
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-border"></div>
+        <span className="text-xs text-text-disabled">or</span>
+        <div className="h-px flex-1 bg-border"></div>
+      </div>
+
       {/* Quick bid buttons */}
       <div>
         <p className="mb-2 text-sm text-text-disabled">Quick Bid</p>
