@@ -180,6 +180,13 @@ Several enhancements have been made to improve user experience and ensure full c
    - Visual indicators for winning bid and current user's bids
    - Graceful handling of empty bid history and loading states
 
+5. **Public Auction Browsing** - Fixed route protection to match spec requirements:
+   - Auction list (`/auctions`) and detail (`/auctions/:id`) routes are now publicly accessible
+   - Users can browse auctions without authentication per the spec
+   - Bidding still requires authentication (handled by BiddingPanel component)
+   - FAB for auction creation only visible to authenticated users
+   - Profile page remains protected
+
 ---
 
 ## Future Work

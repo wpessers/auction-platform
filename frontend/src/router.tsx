@@ -16,22 +16,9 @@ export const router = createBrowserRouter([
     children: [
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
-      {
-        path: 'auctions',
-        element: (
-          <ProtectedRoute>
-            <AuctionsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'auctions/:id',
-        element: (
-          <ProtectedRoute>
-            <AuctionDetailPage />
-          </ProtectedRoute>
-        ),
-      },
+      // Auction browsing is public per spec - no auth required
+      { path: 'auctions', element: <AuctionsPage /> },
+      { path: 'auctions/:id', element: <AuctionDetailPage /> },
       {
         path: 'profile',
         element: (
