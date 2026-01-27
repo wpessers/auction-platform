@@ -601,20 +601,20 @@ function useCountdown(endTime: string): {
 
 ---
 
-### Phase 4: Real-Time & Bidding (HIGH)
+### Phase 4: Real-Time & Bidding (HIGH) - ✅ COMPLETED 2026-01-27
 
-**Priority**: HIGH
+**Priority**: ~~HIGH~~ DONE
 **Estimated Effort**: 5-6 hours
 **Blockers**: Phases 2 & 3 complete, Backend Issue 4 fixed
 **Blocks**: Phase 6 (polish depends on core features)
 
 #### 4.1 WebSocket Service
 
-- [ ] Create `src/services/websocket.ts`
-- [ ] STOMP client setup with SockJS fallback
-- [ ] Connect with JWT token in headers
-- [ ] Auto-reconnect with exponential backoff
-- [ ] Connection state management
+- [x] Create `src/services/websocket.ts`
+- [x] STOMP client setup with SockJS fallback
+- [x] Connect with JWT token in headers
+- [x] Auto-reconnect with exponential backoff
+- [x] Connection state management
 
 ```typescript
 class WebSocketService {
@@ -628,61 +628,61 @@ class WebSocketService {
 
 #### 4.2 WebSocket Context
 
-- [ ] Create `src/context/WebSocketContext.tsx`
-- [ ] Connect when authenticated
-- [ ] Disconnect on logout
-- [ ] Expose connection state
-- [ ] Provide subscription helpers
+- [x] Create `src/context/WebSocketContext.tsx`
+- [x] Connect when authenticated
+- [x] Disconnect on logout
+- [x] Expose connection state
+- [x] Provide subscription helpers
 
 #### 4.3 Connection Status Indicator
 
-- [ ] Create `src/components/ui/ConnectionStatus.tsx`
-- [ ] Show only when disconnected > 5 seconds
-- [ ] Subtle, non-intrusive design
+- [x] Create `src/components/ui/ConnectionStatus.tsx`
+- [x] Show only when disconnected > 5 seconds
+- [x] Subtle, non-intrusive design
 
 #### 4.4 Toast Notification System
 
-- [ ] Create `src/components/ui/Toast.tsx`
-- [ ] Create `src/context/ToastContext.tsx`
-- [ ] Support success/error/warning/info types
-- [ ] Auto-dismiss after 5 seconds
-- [ ] Clickable toasts (for outbid navigation)
-- [ ] Stack multiple toasts
+- [x] Create `src/components/ui/Toast.tsx`
+- [x] Create `src/context/ToastContext.tsx`
+- [x] Support success/error/warning/info types
+- [x] Auto-dismiss after 5 seconds
+- [x] Clickable toasts (for outbid navigation)
+- [x] Stack multiple toasts
 
 #### 4.5 Real-Time Auction Updates
 
-- [ ] Subscribe to `/topic/auctions/{id}` on detail page
-- [ ] Update auction state when bid received
-- [ ] Unsubscribe on page leave
+- [x] Subscribe to `/topic/auctions/{id}` on detail page
+- [x] Update auction state when bid received
+- [x] Unsubscribe on page leave
 
 #### 4.6 Outbid Notifications
 
-- [ ] Subscribe to `/user/queue/notifications`
-- [ ] Show toast when outbid
-- [ ] Toast links to auction
+- [x] Subscribe to `/user/queue/notifications`
+- [x] Show toast when outbid
+- [x] Toast links to auction
 
 #### 4.7 Bidding Panel Component
 
-- [ ] Create `src/components/bidding/BiddingPanel.tsx`
-- [ ] Show current highest bid
-- [ ] Quick bid buttons (+$5, +$10, +$50)
-- [ ] Custom amount input
-- [ ] Client-side validation
-- [ ] Loading state during submission
-- [ ] Disable when auction not active
+- [x] Create `src/components/bidding/BiddingPanel.tsx`
+- [x] Show current highest bid
+- [x] Quick bid buttons (+$5, +$10, +$50)
+- [x] Custom amount input
+- [x] Client-side validation
+- [x] Loading state during submission
+- [x] Disable when auction not active
 
 #### 4.8 Bid Submission
 
-- [ ] Send bid via WebSocket to `/app/bid`
-- [ ] Handle success (update UI)
-- [ ] Handle BID_TOO_LOW error
-- [ ] Handle AUCTION_CLOSED error
-- [ ] Subscribe to `/user/queue/errors` for rejections
+- [x] Send bid via WebSocket to `/app/bid`
+- [x] Handle success (update UI)
+- [x] Handle BID_TOO_LOW error
+- [x] Handle AUCTION_CLOSED error
+- [x] Subscribe to `/user/queue/errors` for rejections
 
 #### 4.9 Auth-Gated Bidding
 
-- [ ] Show login prompt for unauthenticated users
-- [ ] Show bidding panel only when authenticated
+- [x] Show login prompt for unauthenticated users
+- [x] Show bidding panel only when authenticated
 
 ---
 
@@ -967,7 +967,7 @@ FRONTEND PHASES
 | ~~**HIGH**~~ | ~~Issue 5: Implement Auction Lifecycle Scheduler~~ | ~~1-2 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**HIGH**~~ | ~~Phase 2: Authentication~~ | ~~3-4 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**HIGH**~~ | ~~Phase 3: Auction Browsing~~ | ~~4-5 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
-| **HIGH** | Phase 4: Real-Time & Bidding | 5-6 hrs | Not Started | - |
+| ~~**HIGH**~~ | ~~Phase 4: Real-Time & Bidding~~ | ~~5-6 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | **MEDIUM** | Phase 5: Auction Creation | 3-4 hrs | Not Started | - |
 | **MEDIUM** | Issue 7: Registration auto-login spec mismatch | 30 min | Not Started | ✓ Spec vs backend discrepancy |
 | **LOW** | Issue 6: Redis Adapter (prod only) | 2-3 hrs | Not Started | ✓ All 3 methods throw UnsupportedOperationException |

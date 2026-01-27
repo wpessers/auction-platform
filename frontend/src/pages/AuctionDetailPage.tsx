@@ -1,17 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { auctionsApi } from '@/api/auctions';
 import type { Auction } from '@/types/auction';
 import { useCountdown } from '@/hooks/useCountdown';
+import { useWebSocket } from '@/context/WebSocketContext';
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
 import { ApiError } from '@/api/client';
 import { format } from 'date-fns';
+import { BiddingPanel } from '@/components/bidding/BiddingPanel';
+
+interface BidPlacedMessage {
+  bidderId: string;
+  amount: number;
+}
+
+interface BidRejectedMessage {
+  bidderId: string;
+  reason: 'BID_TOO_LOW' | 'AUCTION_CLOSED';
+}
 
 export function AuctionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [auction, setAuction] = useState<Auction | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [bidError, setBidError] = useState<string | null>(null);
+  const { subscribe } = useWebSocket();
+  const { user } = useAuth();
+  const { addToast } = useToast();
 
+  // Fetch initial auction data
   useEffect(() => {
     const fetchAuction = async () => {
       if (!id) return;
@@ -38,6 +57,63 @@ export function AuctionDetailPage() {
     fetchAuction();
   }, [id]);
 
+  // Handle bid placed messages
+  const handleBidPlaced = useCallback(
+    (message: unknown) => {
+      const bid = message as BidPlacedMessage;
+      setAuction((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          highestBid: bid.amount,
+          currentWinnerId: bid.bidderId,
+        };
+      });
+
+      // Show success toast if it was our bid
+      if (bid.bidderId === user?.userId) {
+        addToast({
+          type: 'success',
+          message: `Your bid of $${bid.amount.toFixed(2)} was accepted!`,
+        });
+      }
+    },
+    [user?.userId, addToast]
+  );
+
+  // Handle bid rejected messages
+  const handleBidRejected = useCallback(
+    (message: unknown) => {
+      const rejection = message as BidRejectedMessage;
+      if (rejection.bidderId === user?.userId) {
+        if (rejection.reason === 'BID_TOO_LOW') {
+          setBidError('Your bid was too low. Someone else placed a higher bid.');
+        } else if (rejection.reason === 'AUCTION_CLOSED') {
+          setBidError('This auction has ended. Bidding is no longer accepted.');
+          setAuction((prev) => {
+            if (!prev) return prev;
+            return { ...prev, status: 'CLOSED' };
+          });
+        }
+      }
+    },
+    [user?.userId]
+  );
+
+  // Subscribe to auction updates
+  useEffect(() => {
+    if (!id) return;
+
+    const unsubscribe = subscribe(`/topic/auctions/${id}`, handleBidPlaced);
+    return unsubscribe;
+  }, [id, subscribe, handleBidPlaced]);
+
+  // Subscribe to bid rejections (user-specific)
+  useEffect(() => {
+    const unsubscribe = subscribe('/user/queue/errors', handleBidRejected);
+    return unsubscribe;
+  }, [subscribe, handleBidRejected]);
+
   if (isLoading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
@@ -60,14 +136,26 @@ export function AuctionDetailPage() {
     );
   }
 
-  return <AuctionDetailContent auction={auction} />;
+  return (
+    <AuctionDetailContent
+      auction={auction}
+      bidError={bidError}
+      onBidError={setBidError}
+    />
+  );
 }
 
 interface AuctionDetailContentProps {
   auction: Auction;
+  bidError: string | null;
+  onBidError: (error: string | null) => void;
 }
 
-function AuctionDetailContent({ auction }: AuctionDetailContentProps) {
+function AuctionDetailContent({
+  auction,
+  bidError,
+  onBidError,
+}: AuctionDetailContentProps) {
   const { timeRemaining, isUrgent, isExpired } = useCountdown(auction.endTime);
   const currentPrice = auction.highestBid ?? auction.startingPrice;
 
@@ -97,6 +185,7 @@ function AuctionDetailContent({ auction }: AuctionDetailContentProps) {
   };
 
   const status = getStatusDisplay();
+  const isActive = auction.status === 'ACTIVE' && !isExpired;
 
   return (
     <div>
@@ -170,7 +259,7 @@ function AuctionDetailContent({ auction }: AuctionDetailContentProps) {
           </div>
         </div>
 
-        {/* Sidebar - Bidding panel placeholder */}
+        {/* Sidebar - Bidding panel */}
         <div className="lg:col-span-1">
           <div className="sticky top-4 rounded-lg border border-border bg-surface p-6">
             {/* Time remaining */}
@@ -200,22 +289,15 @@ function AuctionDetailContent({ auction }: AuctionDetailContentProps) {
               )}
             </div>
 
-            {/* Bidding panel placeholder (Phase 4) */}
-            {auction.status === 'ACTIVE' && !isExpired ? (
-              <div className="rounded border border-dashed border-border p-4">
-                <p className="text-center text-sm text-text-disabled">
-                  Bidding panel coming in Phase 4
-                </p>
-              </div>
-            ) : (
-              <div className="rounded bg-card p-4 text-center">
-                <p className="text-text-secondary">
-                  {auction.status === 'SCHEDULED'
-                    ? 'This auction has not started yet.'
-                    : 'This auction has ended.'}
-                </p>
-              </div>
-            )}
+            {/* Bidding panel */}
+            <BiddingPanel
+              auctionId={auction.id}
+              currentBid={auction.highestBid ?? 0}
+              startingPrice={auction.startingPrice}
+              isActive={isActive}
+              bidError={bidError}
+              onBidError={onBidError}
+            />
           </div>
         </div>
       </div>
