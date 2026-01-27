@@ -20,8 +20,14 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    /* Testing */
-    "types": ["vitest/globals"]
+    /* Testing and Vite */
+    "types": ["vitest/globals", "vite/client"],
+
+    /* Path aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src"]
 }

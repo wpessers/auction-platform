@@ -19,6 +19,7 @@
     "@types/node": "^25.0.10",
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
+    "@types/sockjs-client": "^1.5.4",
     "@vitejs/plugin-react": "^5.1.2",
     "jsdom": "^27.4.0",
     "playwright": "^1.58.0",
@@ -28,7 +29,11 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.2.1",
+    "date-fns": "^4.1.0",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "react-router-dom": "^7.13.0",
+    "sockjs-client": "^1.6.1"
   }
 }

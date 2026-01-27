@@ -1,1 +1,1 @@
-{"root":["./src/app.test.tsx","./src/app.tsx","./src/main.tsx","./src/test/setup.ts"],"version":"5.9.3"}
+{"root":["./src/app.test.tsx","./src/app.tsx","./src/main.tsx","./src/router.tsx","./src/api/auctions.ts","./src/api/auth.ts","./src/api/client.ts","./src/components/auth/protectedroute.tsx","./src/components/layout/rootlayout.tsx","./src/config/env.ts","./src/pages/auctiondetailpage.tsx","./src/pages/auctionspage.tsx","./src/pages/loginpage.tsx","./src/pages/profilepage.tsx","./src/pages/registerpage.tsx","./src/test/setup.ts","./src/types/auction.ts"],"version":"5.9.3"}
