@@ -346,8 +346,9 @@ PRODUCTION ARCHITECTURE
 ### JWT Token Structure
 
 Tokens contain the following claims:
-- `sub` - Username
-- `userId` - User UUID
+- `sub` - User UUID (userId)
+- `username` - Username
+- `iat` - Issued at timestamp
 - `exp` - Expiration timestamp
 
 Frontend can parse JWT client-side to extract user information:
@@ -357,7 +358,7 @@ function parseJwt(token: string): { userId: string; username: string } {
   const base64Url = token.split('.')[1];
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
   const payload = JSON.parse(atob(base64));
-  return { userId: payload.userId, username: payload.sub };
+  return { userId: payload.sub, username: payload.username };
 }
 ```
 
