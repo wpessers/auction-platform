@@ -31,7 +31,7 @@ public class UserAuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void register(RegisterUserCommand command) {
+    public String register(RegisterUserCommand command) {
         if (userStorage.usernameExists(command.username())) {
             throw new InvalidUsernameException("Username already exists: " + command.username());
         }
@@ -47,6 +47,8 @@ public class UserAuthService {
             command.email()
         );
         userStorage.save(user);
+
+        return tokenGenerator.generateToken(user.id(), user.username());
     }
 
     public String login(String username, String password) {

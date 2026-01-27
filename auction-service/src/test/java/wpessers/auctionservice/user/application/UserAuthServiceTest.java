@@ -40,18 +40,21 @@ class UserAuthServiceTest {
     }
 
     @Test
-    @DisplayName("Should register a new user")
+    @DisplayName("Should register a new user and return token")
     void shouldRegister() {
-        idGenerator.addId(UUID.randomUUID());
+        UUID userId = UUID.randomUUID();
+        idGenerator.addId(userId);
+        tokenGenerator.addToken("registration-token-" + userId);
         RegisterUserCommand registerUserCommand = new RegisterUserCommand(
             "username",
             "password",
             "test.user@email.com"
         );
 
-        userAuthService.register(registerUserCommand);
+        String token = userAuthService.register(registerUserCommand);
 
         assertThat(userStorage.findByUsername("username")).isPresent();
+        assertThat(token).isEqualTo("registration-token-" + userId);
     }
 
     @Test

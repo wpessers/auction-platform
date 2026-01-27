@@ -142,36 +142,18 @@ These issues are inconsistencies between specs and backend behavior.
 
 #### Issue 7: Registration Doesn't Auto-Login (Spec Mismatch)
 
-- [ ] **DECISION REQUIRED**: Either update backend to return JWT on register, OR update spec
+- [x] **RESOLVED** (2026-01-27): Backend updated to return JWT on register
 
-**Impact**: Spec says "On successful registration, user is automatically logged in" but backend returns empty 201.
+**Resolution**:
+- Backend: `UserAuthService.register()` now returns a JWT token after successful registration
+- Backend: `UserAuthController` returns the token with 201 Created status
+- Frontend: `RegisterPage` now auto-logs in the user and redirects to `/auctions`
 
-**Spec Location**: `/specs/authentication.md` line 14
-
-**Current Backend Behavior**: `POST /api/auth/register` returns empty `201 Created`, no JWT token.
-
-**Options**:
-1. **Update Backend**: Modify `UserAuthController.register()` to return JWT token (like login)
-2. **Update Spec**: Change spec to say "redirect to login with success message" (current workaround)
+**Spec Location**: `/specs/authentication.md` line 14 - now matches implementation
 
 ---
 
 ### Workarounds (No Backend Fix Needed)
-
-#### Registration Doesn't Auto-Login
-
-**Current Behavior**: `POST /api/auth/register` returns empty `201 Created`, no JWT token.
-
-**Workaround**: After successful registration, redirect to login page with success message.
-
-```typescript
-async function register(data: RegisterData) {
-  await api.post('/api/auth/register', data);
-  navigate('/login', { state: { message: 'Registration successful! Please log in.' } });
-}
-```
-
----
 
 #### No Profile Endpoint
 
@@ -869,7 +851,7 @@ FRONTEND PHASES
 
 | Method | Endpoint | Auth | Request Body | Response |
 |--------|----------|------|--------------|----------|
-| POST | `/api/auth/register` | No | `{ username, password, email }` | `201 Created` (empty) |
+| POST | `/api/auth/register` | No | `{ username, password, email }` | `201 Created` JWT string |
 | POST | `/api/auth/login` | No | `{ username, password }` | `200 OK` JWT string |
 
 ### Auction Endpoints
@@ -973,7 +955,7 @@ FRONTEND PHASES
 | ~~**HIGH**~~ | ~~Phase 4: Real-Time & Bidding~~ | ~~5-6 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**MEDIUM**~~ | ~~Phase 5: Auction Creation~~ | ~~3-4 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**LOW**~~ | ~~Phase 6: Polish~~ | ~~3-4 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
-| **MEDIUM** | Issue 7: Registration auto-login spec mismatch | 30 min | Not Started | ✓ Spec vs backend discrepancy |
+| ~~**MEDIUM**~~ | ~~Issue 7: Registration auto-login spec mismatch~~ | ~~30 min~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | **LOW** | Issue 6: Redis Adapter (prod only) | 2-3 hrs | Not Started | ✓ All 3 methods throw UnsupportedOperationException |
 
 ### Estimated Total Effort

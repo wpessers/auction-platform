@@ -21,16 +21,15 @@ public class UserAuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterUserRequest request) {
+    public ResponseEntity<String> register(@RequestBody @Valid RegisterUserRequest request) {
         RegisterUserCommand registerUserCommand = new RegisterUserCommand(
             request.username(),
             request.password(),
             request.email()
         );
 
-        userAuthService.register(
-            registerUserCommand);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        String token = userAuthService.register(registerUserCommand);
+        return ResponseEntity.status(HttpStatus.CREATED).body(token);
     }
 
     @PostMapping("/login")

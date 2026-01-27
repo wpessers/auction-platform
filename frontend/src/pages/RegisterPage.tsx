@@ -6,7 +6,7 @@ import { ApiError } from '@/api/client';
 
 export function RegisterPage() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -50,16 +50,14 @@ export function RegisterPage() {
     setIsSubmitting(true);
 
     try {
-      await authApi.register({
+      const token = await authApi.register({
         username: username.trim(),
         password,
         email: email.trim(),
       });
-      // Redirect to login with success message (backend doesn't auto-login)
-      navigate('/login', {
-        state: { message: 'Registration successful! Please log in.' },
-        replace: true,
-      });
+      // Auto-login with returned token and redirect to auctions
+      login(token);
+      navigate('/auctions', { replace: true });
     } catch (err) {
       if (err instanceof ApiError) {
         // Backend may return "Username already exists" or similar

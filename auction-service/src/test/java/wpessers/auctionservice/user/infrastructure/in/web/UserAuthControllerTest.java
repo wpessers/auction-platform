@@ -41,18 +41,21 @@ class UserAuthControllerTest {
     private TokenParser tokenParser;
 
     @Test
-    @DisplayName("Should register user and return CREATED status")
+    @DisplayName("Should register user and return CREATED status with token")
     void shouldRegisterUser() throws Exception {
         RegisterUserRequest request = new RegisterUserRequest(
             "username",
             "password",
             "email@test.com"
         );
+        String mockToken = "mock-jwt-token";
+        when(userAuthService.register(any(RegisterUserCommand.class))).thenReturn(mockToken);
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$").value(mockToken));
     }
 
     @Test

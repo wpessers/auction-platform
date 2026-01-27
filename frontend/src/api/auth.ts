@@ -15,6 +15,6 @@ export const authApi = {
   login: (data: LoginRequest): Promise<string> =>
     api.post('/api/auth/login', data),
 
-  register: (data: RegisterRequest): Promise<void> =>
+  register: (data: RegisterRequest): Promise<string> =>
     api.post('/api/auth/register', data),
 };
