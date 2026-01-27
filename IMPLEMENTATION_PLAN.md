@@ -686,44 +686,44 @@ class WebSocketService {
 
 ---
 
-### Phase 5: Auction Creation (MEDIUM)
+### Phase 5: Auction Creation (MEDIUM) - ✅ COMPLETED 2026-01-27
 
-**Priority**: MEDIUM
+**Priority**: ~~MEDIUM~~ DONE
 **Estimated Effort**: 3-4 hours
 **Blockers**: Phases 2 & 3 complete
 **Blocks**: None (independent feature)
 
 #### 5.1 Floating Action Button
 
-- [ ] Create `src/components/ui/FAB.tsx`
-- [ ] Position bottom-right, green accent
-- [ ] Only visible to authenticated users
-- [ ] Plus icon
-- [ ] Click opens creation modal
+- [x] Create `src/components/ui/FAB.tsx`
+- [x] Position bottom-right, green accent
+- [x] Only visible to authenticated users
+- [x] Plus icon
+- [x] Click opens creation modal
 
 #### 5.2 Create Auction Modal
 
-- [ ] Create `src/components/auctions/CreateAuctionModal.tsx`
-- [ ] Modal overlay with backdrop blur
-- [ ] Close on backdrop click or X button
-- [ ] Keyboard accessible (Escape to close)
+- [x] Create `src/components/auctions/CreateAuctionModal.tsx`
+- [x] Modal overlay with backdrop blur
+- [x] Close on backdrop click or X button
+- [x] Keyboard accessible (Escape to close)
 
 #### 5.3 Auction Form
 
-- [ ] Name input (required)
-- [ ] Description textarea (required)
-- [ ] Start time datetime picker (required, >= now)
-- [ ] End time datetime picker (required, > start time)
-- [ ] Starting price number input (required, >= 0)
-- [ ] "Start now" checkbox option
-- [ ] Inline validation errors
+- [x] Name input (required)
+- [x] Description textarea (required)
+- [x] Start time datetime picker (required, >= now)
+- [x] End time datetime picker (required, > start time)
+- [x] Starting price number input (required, >= 0)
+- [x] "Start now" checkbox option
+- [x] Inline validation errors
 
 #### 5.4 Form Submission
 
-- [ ] POST to `/api/auctions`
-- [ ] Loading state on submit button
-- [ ] On success: close modal, show toast, refresh list
-- [ ] On error: show message, keep form data
+- [x] POST to `/api/auctions`
+- [x] Loading state on submit button
+- [x] On success: close modal, show toast, refresh list
+- [x] On error: show message, keep form data
 
 **API Contract**:
 ```typescript
@@ -968,7 +968,7 @@ FRONTEND PHASES
 | ~~**HIGH**~~ | ~~Phase 2: Authentication~~ | ~~3-4 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**HIGH**~~ | ~~Phase 3: Auction Browsing~~ | ~~4-5 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | ~~**HIGH**~~ | ~~Phase 4: Real-Time & Bidding~~ | ~~5-6 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
-| **MEDIUM** | Phase 5: Auction Creation | 3-4 hrs | Not Started | - |
+| ~~**MEDIUM**~~ | ~~Phase 5: Auction Creation~~ | ~~3-4 hrs~~ | ✅ Done | ✓ Fixed 2026-01-27 |
 | **MEDIUM** | Issue 7: Registration auto-login spec mismatch | 30 min | Not Started | ✓ Spec vs backend discrepancy |
 | **LOW** | Issue 6: Redis Adapter (prod only) | 2-3 hrs | Not Started | ✓ All 3 methods throw UnsupportedOperationException |
 | **LOW** | Phase 6: Polish | 3-4 hrs | Not Started | - |

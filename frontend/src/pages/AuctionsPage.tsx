@@ -1,34 +1,39 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { auctionsApi } from '@/api/auctions';
 import type { Auction } from '@/types/auction';
 import { AuctionCard } from '@/components/auctions/AuctionCard';
+import { CreateAuctionModal } from '@/components/auctions/CreateAuctionModal';
+import { FAB } from '@/components/ui/FAB';
+import { useAuth } from '@/context/AuthContext';
 import { ApiError } from '@/api/client';
 
 export function AuctionsPage() {
+  const { isAuthenticated } = useAuth();
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchAuctions = useCallback(async () => {
+    try {
+      const data = await auctionsApi.getActive();
+      setAuctions(data);
+      setError(null);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError('Failed to load auctions. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchAuctions = async () => {
-      try {
-        const data = await auctionsApi.getActive();
-        setAuctions(data);
-        setError(null);
-      } catch (err) {
-        if (err instanceof ApiError) {
-          setError(err.message);
-        } else {
-          setError('Failed to load auctions. Please try again.');
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchAuctions();
-  }, []);
+  }, [fetchAuctions]);
 
   const filteredAuctions = useMemo(() => {
     if (!searchQuery.trim()) return auctions;
@@ -41,6 +46,11 @@ export function AuctionsPage() {
 
   const handleClearSearch = () => {
     setSearchQuery('');
+  };
+
+  const handleCreateSuccess = () => {
+    // Refresh the auction list
+    fetchAuctions();
   };
 
   if (isLoading) {
@@ -130,6 +140,18 @@ export function AuctionsPage() {
           ))}
         </div>
       )}
+
+      {/* FAB for creating auctions (only for authenticated users) */}
+      {isAuthenticated && (
+        <FAB onClick={() => setIsModalOpen(true)} label="Create Auction" />
+      )}
+
+      {/* Create Auction Modal */}
+      <CreateAuctionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={handleCreateSuccess}
+      />
     </div>
   );
 }
