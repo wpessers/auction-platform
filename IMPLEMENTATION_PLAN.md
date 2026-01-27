@@ -208,6 +208,7 @@ Additional features to consider for future releases:
 - Payment integration
 - Auction analytics dashboard
 - Historical price trends and analytics
+- JWT token refresh for sessions longer than 24 hours (current tokens expire after 24h, requiring re-login)
 
 ---
 
