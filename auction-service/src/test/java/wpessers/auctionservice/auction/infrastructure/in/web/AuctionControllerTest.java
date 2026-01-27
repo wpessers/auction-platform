@@ -27,7 +27,10 @@ import wpessers.auctionservice.auction.application.port.in.AuctionResponse;
 import wpessers.auctionservice.auction.application.port.in.CreateAuctionCommand;
 import wpessers.auctionservice.auction.domain.exception.AuctionNotFoundException;
 import wpessers.auctionservice.auction.domain.exception.InvalidStartingPriceException;
+import wpessers.auctionservice.bid.application.port.out.BidStorage;
+import wpessers.auctionservice.bid.domain.Bid;
 import wpessers.auctionservice.shared.application.port.out.TokenParser;
+import wpessers.auctionservice.shared.domain.Money;
 import wpessers.auctionservice.shared.infrastructure.in.web.JwtAuthenticationFilter;
 import wpessers.auctionservice.shared.infrastructure.in.web.SecurityConfig;
 
@@ -43,6 +46,9 @@ class AuctionControllerTest {
 
     @MockitoBean
     private AuctionService auctionService;
+
+    @MockitoBean
+    private BidStorage bidStorage;
 
     @MockitoBean
     private TokenParser tokenParser;
@@ -157,5 +163,41 @@ class AuctionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Should return OK status with bid history")
+    void shouldReturnBidHistory() throws Exception {
+        UUID auctionId = UUID.randomUUID();
+        UUID bidderId1 = UUID.randomUUID();
+        UUID bidderId2 = UUID.randomUUID();
+        Instant now = Instant.now();
+
+        List<Bid> bids = List.of(
+            new Bid(auctionId, bidderId1, new Money(150.00), now),
+            new Bid(auctionId, bidderId2, new Money(120.00), now.minusSeconds(60))
+        );
+        when(bidStorage.findByAuctionId(auctionId)).thenReturn(bids);
+
+        mockMvc.perform(get("/api/auctions/{id}/bids", auctionId))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$[0].bidderId").value(bidderId1.toString()))
+            .andExpect(jsonPath("$[0].amount").value(150.00))
+            .andExpect(jsonPath("$[1].bidderId").value(bidderId2.toString()))
+            .andExpect(jsonPath("$[1].amount").value(120.00));
+    }
+
+    @Test
+    @DisplayName("Should return OK status with empty bid history when no bids exist")
+    void shouldReturnEmptyBidHistory() throws Exception {
+        UUID auctionId = UUID.randomUUID();
+        when(bidStorage.findByAuctionId(auctionId)).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/auctions/{id}/bids", auctionId))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$.length()").value(0));
     }
 }

@@ -14,15 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 import wpessers.auctionservice.auction.application.AuctionService;
 import wpessers.auctionservice.auction.application.port.in.AuctionResponse;
 import wpessers.auctionservice.auction.application.port.in.CreateAuctionCommand;
+import wpessers.auctionservice.bid.application.port.in.BidResponse;
+import wpessers.auctionservice.bid.application.port.out.BidStorage;
 
 @RestController
 @RequestMapping("/api/auctions")
 public class AuctionController {
 
     private final AuctionService auctionService;
+    private final BidStorage bidStorage;
 
-    public AuctionController(AuctionService auctionService) {
+    public AuctionController(AuctionService auctionService, BidStorage bidStorage) {
         this.auctionService = auctionService;
+        this.bidStorage = bidStorage;
     }
 
     @PostMapping
@@ -47,5 +51,18 @@ public class AuctionController {
     @GetMapping("/{id}")
     public ResponseEntity<AuctionResponse> getAuction(@PathVariable UUID id) {
         return ResponseEntity.ok(auctionService.findAuction(id));
+    }
+
+    @GetMapping("/{id}/bids")
+    public ResponseEntity<List<BidResponse>> getBidHistory(@PathVariable UUID id) {
+        List<BidResponse> bids = bidStorage.findByAuctionId(id)
+            .stream()
+            .map(bid -> new BidResponse(
+                bid.bidderId(),
+                bid.amount().amount(),
+                bid.timestamp()
+            ))
+            .toList();
+        return ResponseEntity.ok(bids);
     }
 }

@@ -174,6 +174,12 @@ Several enhancements have been made to improve user experience and ensure full c
    - "< 1 hour" now shows "45 minutes left" (was "45m left")
    - "< 5 minutes" shows "4:32" (unchanged, was already correct)
 
+4. **Bid History Feature** - Implemented bid history display on auction detail pages per the spec requirement "Shows bid history or at minimum the current winning bid":
+   - Backend: Added `GET /api/auctions/{id}/bids` endpoint returning bid history sorted by timestamp (newest first)
+   - Frontend: Added `BidHistory` component showing all bids with bidder ID, amount, and timestamp
+   - Visual indicators for winning bid and current user's bids
+   - Graceful handling of empty bid history and loading states
+
 ---
 
 ## Future Work
@@ -186,7 +192,6 @@ Additional features to consider for future releases:
 - Auction categories and filtering
 - Advanced search with filters (price range, time remaining, status)
 - Auction watchlist / favorites
-- Bid history for users
 - Email notifications for auction events
 - Image uploads for auctions
 - Payment integration
@@ -258,6 +263,7 @@ PRODUCTION ARCHITECTURE
 |--------|----------|------|--------------|----------|
 | GET | `/api/auctions/active` | No | - | `Auction[]` |
 | GET | `/api/auctions/{id}` | No | - | `Auction` |
+| GET | `/api/auctions/{id}/bids` | No | - | `BidHistoryItem[]` |
 | POST | `/api/auctions` | Yes | `CreateAuctionRequest` | `201 Created` UUID |
 
 ### Pricing Endpoints
@@ -303,6 +309,23 @@ PRODUCTION ARCHITECTURE
   "username": "john_doe",
   "email": "john@example.com"
 }
+```
+
+### Bid History Response
+
+```json
+[
+  {
+    "bidderId": "550e8400-e29b-41d4-a716-446655440000",
+    "amount": 175.00,
+    "timestamp": "2024-01-15T14:30:00Z"
+  },
+  {
+    "bidderId": "660e8400-e29b-41d4-a716-446655440001",
+    "amount": 150.00,
+    "timestamp": "2024-01-15T13:15:00Z"
+  }
+]
 ```
 
 ### Bid Suggestion Response

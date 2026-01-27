@@ -9,6 +9,7 @@ import { useToast } from '@/context/ToastContext';
 import { ApiError } from '@/api/client';
 import { format } from 'date-fns';
 import { BiddingPanel } from '@/components/bidding/BiddingPanel';
+import { BidHistory } from '@/components/bidding/BidHistory';
 import { AuctionDetailSkeleton } from '@/components/ui/Skeleton';
 
 interface BidPlacedMessage {
@@ -297,6 +298,14 @@ function AuctionDetailContent({
             />
           </div>
         </div>
+      </div>
+
+      {/* Bid History section - full width below the grid */}
+      <div className="mt-6">
+        <BidHistory
+          auctionId={auction.id}
+          currentWinnerId={auction.currentWinnerId}
+        />
       </div>
     </div>
   );

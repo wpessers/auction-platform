@@ -19,3 +19,9 @@ export interface CreateAuctionRequest {
   endTime: string; // ISO-8601
   startingPrice: number;
 }
+
+export interface BidHistoryItem {
+  bidderId: string;
+  amount: number;
+  timestamp: string; // ISO-8601
+}
