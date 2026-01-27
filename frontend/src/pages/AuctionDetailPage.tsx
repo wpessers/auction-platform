@@ -9,6 +9,7 @@ import { useToast } from '@/context/ToastContext';
 import { ApiError } from '@/api/client';
 import { format } from 'date-fns';
 import { BiddingPanel } from '@/components/bidding/BiddingPanel';
+import { AuctionDetailSkeleton } from '@/components/ui/Skeleton';
 
 interface BidPlacedMessage {
   bidderId: string;
@@ -115,11 +116,7 @@ export function AuctionDetailPage() {
   }, [subscribe, handleBidRejected]);
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-text-secondary">Loading auction...</div>
-      </div>
-    );
+    return <AuctionDetailSkeleton />;
   }
 
   if (error || !auction) {

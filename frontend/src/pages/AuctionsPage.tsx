@@ -6,6 +6,8 @@ import { CreateAuctionModal } from '@/components/auctions/CreateAuctionModal';
 import { FAB } from '@/components/ui/FAB';
 import { useAuth } from '@/context/AuthContext';
 import { ApiError } from '@/api/client';
+import { AuctionCardSkeleton } from '@/components/ui/Skeleton';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export function AuctionsPage() {
   const { isAuthenticated } = useAuth();
@@ -14,6 +16,7 @@ export function AuctionsPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const fetchAuctions = useCallback(async () => {
     try {
@@ -36,13 +39,13 @@ export function AuctionsPage() {
   }, [fetchAuctions]);
 
   const filteredAuctions = useMemo(() => {
-    if (!searchQuery.trim()) return auctions;
+    if (!debouncedSearchQuery.trim()) return auctions;
 
-    const query = searchQuery.toLowerCase();
+    const query = debouncedSearchQuery.toLowerCase();
     return auctions.filter((auction) =>
       auction.name.toLowerCase().includes(query)
     );
-  }, [auctions, searchQuery]);
+  }, [auctions, debouncedSearchQuery]);
 
   const handleClearSearch = () => {
     setSearchQuery('');
@@ -55,8 +58,15 @@ export function AuctionsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-text-secondary">Loading auctions...</div>
+      <div>
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="text-2xl font-bold text-text-primary">Active Auctions</h1>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <AuctionCardSkeleton key={i} />
+          ))}
+        </div>
       </div>
     );
   }
@@ -64,9 +74,15 @@ export function AuctionsPage() {
   if (error) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center">
-        <p className="mb-4 text-error">{error}</p>
+        <div className="mb-4 text-4xl">⚠️</div>
+        <h2 className="mb-2 text-xl font-bold text-text-primary">Failed to Load Auctions</h2>
+        <p className="mb-6 text-text-secondary">{error}</p>
         <button
-          onClick={() => window.location.reload()}
+          onClick={() => {
+            setIsLoading(true);
+            setError(null);
+            fetchAuctions();
+          }}
           className="rounded bg-accent px-4 py-2 font-medium text-background transition-colors duration-fast hover:bg-accent-hover"
         >
           Try Again
@@ -135,8 +151,14 @@ export function AuctionsPage() {
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredAuctions.map((auction) => (
-            <AuctionCard key={auction.id} auction={auction} />
+          {filteredAuctions.map((auction, index) => (
+            <div
+              key={auction.id}
+              className="animate-fade-in"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              <AuctionCard auction={auction} />
+            </div>
           ))}
         </div>
       )}

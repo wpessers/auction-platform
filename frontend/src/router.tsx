@@ -7,6 +7,7 @@ import { RegisterPage } from '@/pages/RegisterPage';
 import { AuctionsPage } from '@/pages/AuctionsPage';
 import { AuctionDetailPage } from '@/pages/AuctionDetailPage';
 import { ProfilePage } from '@/pages/ProfilePage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
         ),
       },
       { index: true, element: <Navigate to="/auctions" replace /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ]);
