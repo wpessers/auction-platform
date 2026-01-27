@@ -78,7 +78,10 @@ class AuctionControllerTest {
             "desc",
             Instant.now(),
             Instant.now().plusSeconds(60),
-            BigDecimal.valueOf(100)
+            BigDecimal.valueOf(100),
+            BigDecimal.valueOf(150),
+            UUID.randomUUID(),
+            "ACTIVE"
         );
         when(auctionService.findAuction(id)).thenReturn(auctionResponse);
 
@@ -97,7 +100,10 @@ class AuctionControllerTest {
             "desc",
             Instant.now(),
             Instant.now().plusSeconds(60),
-            BigDecimal.valueOf(100)
+            BigDecimal.valueOf(100),
+            null,
+            null,
+            "ACTIVE"
         ));
         when(auctionService.getActiveAuctions()).thenReturn(response);
 

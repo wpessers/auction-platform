@@ -14,7 +14,10 @@ public class AuctionMapper {
             auction.getDescription(),
             auction.getAuctionWindow().startTime(),
             auction.getAuctionWindow().endTime(),
-            auction.getStartingPrice().amount()
+            auction.getStartingPrice().amount(),
+            auction.getHighestBid() != null ? auction.getHighestBid().amount() : null,
+            auction.getCurrentWinnerId(),
+            auction.getStatus().name()
         );
     }
 }

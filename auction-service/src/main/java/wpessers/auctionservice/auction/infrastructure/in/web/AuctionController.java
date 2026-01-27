@@ -39,13 +39,13 @@ public class AuctionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(auctionId);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<AuctionResponse> getAuction(@PathVariable UUID id) {
-        return ResponseEntity.ok(auctionService.findAuction(id));
-    }
-
     @GetMapping("/active")
     public ResponseEntity<List<AuctionResponse>> getActiveAuctions() {
         return ResponseEntity.ok(auctionService.getActiveAuctions());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AuctionResponse> getAuction(@PathVariable UUID id) {
+        return ResponseEntity.ok(auctionService.findAuction(id));
     }
 }

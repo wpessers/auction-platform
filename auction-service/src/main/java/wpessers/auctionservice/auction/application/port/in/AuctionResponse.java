@@ -10,7 +10,10 @@ public record AuctionResponse(
     String description,
     Instant startTime,
     Instant endTime,
-    BigDecimal startingPrice
+    BigDecimal startingPrice,
+    BigDecimal highestBid,
+    UUID currentWinnerId,
+    String status
 ) {
 
 }
