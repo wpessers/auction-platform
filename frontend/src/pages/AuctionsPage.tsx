@@ -1,22 +1,30 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { auctionsApi } from '@/api/auctions';
 import type { Auction } from '@/types/auction';
 import { AuctionCard } from '@/components/auctions/AuctionCard';
 import { CreateAuctionModal } from '@/components/auctions/CreateAuctionModal';
 import { FAB } from '@/components/ui/FAB';
 import { useAuth } from '@/context/AuthContext';
+import { useWebSocket } from '@/context/WebSocketContext';
 import { ApiError } from '@/api/client';
 import { AuctionCardSkeleton } from '@/components/ui/Skeleton';
 import { useDebounce } from '@/hooks/useDebounce';
 
+interface BidPlacedMessage {
+  bidderId: string;
+  amount: number;
+}
+
 export function AuctionsPage() {
   const { isAuthenticated } = useAuth();
+  const { subscribe, connectionState } = useWebSocket();
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const subscriptionsRef = useRef<(() => void)[]>([]);
 
   const fetchAuctions = useCallback(async () => {
     try {
@@ -37,6 +45,45 @@ export function AuctionsPage() {
   useEffect(() => {
     fetchAuctions();
   }, [fetchAuctions]);
+
+  // Get a stable list of auction IDs to track which auctions need subscriptions
+  const auctionIds = useMemo(() => auctions.map(a => a.id), [auctions]);
+  const auctionIdsKey = auctionIds.join(',');
+
+  // Subscribe to bid updates for all displayed auctions
+  useEffect(() => {
+    // Only subscribe when connected
+    if (connectionState !== 'connected' || auctionIds.length === 0) {
+      return;
+    }
+
+    // Clean up previous subscriptions
+    subscriptionsRef.current.forEach(unsubscribe => unsubscribe());
+    subscriptionsRef.current = [];
+
+    // Subscribe to each auction's bid updates
+    auctionIds.forEach(auctionId => {
+      const handleBidPlaced = (message: unknown) => {
+        const bid = message as BidPlacedMessage;
+        setAuctions(prevAuctions =>
+          prevAuctions.map(a =>
+            a.id === auctionId
+              ? { ...a, highestBid: bid.amount, currentWinnerId: bid.bidderId }
+              : a
+          )
+        );
+      };
+
+      const unsubscribe = subscribe(`/topic/auctions/${auctionId}`, handleBidPlaced);
+      subscriptionsRef.current.push(unsubscribe);
+    });
+
+    // Cleanup on unmount or when auctions change
+    return () => {
+      subscriptionsRef.current.forEach(unsubscribe => unsubscribe());
+      subscriptionsRef.current = [];
+    };
+  }, [auctionIdsKey, connectionState, subscribe, auctionIds]);
 
   const filteredAuctions = useMemo(() => {
     if (!debouncedSearchQuery.trim()) return auctions;

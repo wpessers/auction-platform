@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 
 interface OutbidMessage {
   uuid: string;  // auction UUID
+  auctionName: string;  // auction name for display
   amount: number;
 }
 
@@ -21,7 +22,7 @@ export function OutbidNotificationListener() {
 
       addToast({
         type: 'warning',
-        message: `You've been outbid! New highest bid: $${outbid.amount.toFixed(2)}`,
+        message: `You've been outbid on "${outbid.auctionName}"! New highest bid: $${outbid.amount.toFixed(2)}`,
         action: {
           label: 'View Auction',
           onClick: () => navigate(`/auctions/${outbid.uuid}`),

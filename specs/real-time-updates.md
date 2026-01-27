@@ -89,6 +89,7 @@ Users see bid updates and notifications without refreshing the page.
 ```json
 {
   "uuid": "auction-uuid",
+  "auctionName": "Vintage Watch",
   "amount": 150.00
 }
 ```

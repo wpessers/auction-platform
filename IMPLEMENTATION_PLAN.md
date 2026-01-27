@@ -160,6 +160,20 @@ The user profile API has been implemented to enable users to view their account 
 - Fixed JWT parsing ensures correct user identification
 - Foundation for future profile management features
 
+### Recent UX and Spec Compliance Improvements
+
+Several enhancements have been made to improve user experience and ensure full compliance with specifications:
+
+1. **Outbid Notification Enhancement** - Enhanced outbid notifications to include the auction name. The `OutbidMessage` WebSocket message now includes an `auctionName` field, and the toast notification displays "You've been outbid on [Auction Name]!" per the spec requirements.
+
+2. **Real-time Auction List Updates** - Added WebSocket subscriptions to the AuctionsPage so that auction cards update in real-time when bids are placed. Previously, cards only updated on page refresh or modal close. Now all displayed auction cards reflect the latest bid amounts immediately.
+
+3. **Time Format Compliance** - Updated the countdown timer to match the spec format exactly:
+   - "> 1 day" now shows "2 days left" (was "2d 5h left")
+   - "< 1 day" now shows "5 hours 23 minutes left" (was "5h 23m left")
+   - "< 1 hour" now shows "45 minutes left" (was "45m left")
+   - "< 5 minutes" shows "4:32" (unchanged, was already correct)
+
 ---
 
 ## Future Work
@@ -388,11 +402,12 @@ Updates are broadcast to all subscribers when a new bid is placed.
 ```json
 {
   "uuid": "auction-uuid",
+  "auctionName": "Vintage Watch",
   "amount": 175.00
 }
 ```
 
-Personal notifications sent when another user outbids you.
+Personal notifications sent when another user outbids you. The notification includes the auction name for display in toast messages.
 
 ### Receiving Bid Rejections
 

@@ -33,13 +33,20 @@ export function useCountdown(endTime: string): CountdownResult {
     let timeRemaining: string;
 
     if (days > 0) {
-      timeRemaining = `${days}d ${hours}h left`;
+      // "> 1 day": "2 days left" (spec format)
+      timeRemaining = `${days} ${days === 1 ? 'day' : 'days'} left`;
     } else if (hours > 0) {
-      timeRemaining = `${hours}h ${minutes}m left`;
+      // "< 1 day": "5 hours 23 minutes left" (spec format)
+      if (minutes > 0) {
+        timeRemaining = `${hours} ${hours === 1 ? 'hour' : 'hours'} ${minutes} ${minutes === 1 ? 'minute' : 'minutes'} left`;
+      } else {
+        timeRemaining = `${hours} ${hours === 1 ? 'hour' : 'hours'} left`;
+      }
     } else if (minutes > 0 && !isUrgent) {
-      timeRemaining = `${minutes}m left`;
+      // "< 1 hour": "45 minutes left" (spec format)
+      timeRemaining = `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} left`;
     } else {
-      // Urgent: show M:SS format
+      // "< 5 minutes": "4:32" - urgent countdown timer (spec format)
       const totalMinutes = Math.floor(totalSeconds / 60);
       const displaySeconds = seconds.toString().padStart(2, '0');
       timeRemaining = `${totalMinutes}:${displaySeconds}`;
