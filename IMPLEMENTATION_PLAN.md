@@ -227,7 +227,7 @@ Several enhancements have been made to improve user experience and ensure full c
 
 ### Frontend Test Coverage Improvements
 
-Frontend test coverage was improved from 1 test file (2 tests) to 6 test files (67 tests):
+Frontend test coverage was improved from 1 test file (2 tests) to 10 test files (140 tests):
 
 1. **src/context/AuthContext.test.tsx** - 8 tests covering:
    - Initial state and loading behavior
@@ -268,6 +268,50 @@ Frontend test coverage was improved from 1 test file (2 tests) to 6 test files (
    - Timer reset on brief disconnections
    - State transitions (connecting → connected, connecting → disconnected)
    - Fixed bottom-left positioning with z-index
+
+6. **src/hooks/useDebounce.test.ts** - 11 tests covering:
+   - Initial value return
+   - Value update delay
+   - Timer reset on value change
+   - Default delay of 300ms
+   - Custom delay values
+   - Different data types (numbers, objects)
+   - Rapid consecutive updates
+   - Timer cleanup on unmount
+   - Delay changes
+
+7. **src/context/WebSocketContext.test.tsx** - 10 tests covering:
+   - Initial disconnected state
+   - Connection when authenticated
+   - No connection when unauthenticated
+   - Connection state updates
+   - Cleanup on unmount
+   - Subscribe method delegation
+   - Unsubscribe function return
+   - Send method delegation
+   - useWebSocket hook error when used outside provider
+
+8. **src/components/auctions/AuctionCard.test.tsx** - 18 tests covering:
+   - Auction name and description display
+   - Starting price vs current bid display
+   - Large price formatting with commas
+   - Time remaining display
+   - Status badges (Active, Scheduled, Closed, Ending Soon)
+   - Navigation link to detail page
+   - Urgent styling for time remaining
+   - Edge cases (zero price, long names, long descriptions)
+
+9. **src/components/bidding/BiddingPanel.test.tsx** - 34 tests covering:
+   - Unauthenticated user login prompt
+   - Inactive auction messaging (winner vs non-winner vs no bids)
+   - Winning indicator display
+   - Quick bid buttons with correct increment calculations
+   - Custom bid input with validation
+   - Error display for invalid/low bids
+   - Minimum bid display
+   - Connection state warnings
+   - AI pricing suggestions integration
+   - Loading state during submission
 
 ---
 
