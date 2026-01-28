@@ -6,7 +6,7 @@ import { ApiError } from '@/api/client';
 interface CreateAuctionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (newAuctionId?: string) => void;
 }
 
 interface FormData {
@@ -121,7 +121,7 @@ export function CreateAuctionModal({
         : new Date(formData.startTime).toISOString();
       const endTime = new Date(formData.endTime).toISOString();
 
-      await auctionsApi.create({
+      const newAuctionId = await auctionsApi.create({
         name: formData.name.trim(),
         description: formData.description.trim(),
         startTime,
@@ -134,7 +134,7 @@ export function CreateAuctionModal({
         message: 'Auction created successfully!',
       });
 
-      onSuccess();
+      onSuccess(newAuctionId);
       onClose();
     } catch (err) {
       if (err instanceof ApiError) {

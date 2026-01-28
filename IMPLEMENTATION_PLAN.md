@@ -221,6 +221,10 @@ Several enhancements have been made to improve user experience and ensure full c
     - The entire toast now navigates to the auction (not just the action button)
     - Prevented event propagation on dismiss and action buttons to avoid accidental navigation
 
+16. **Bid Update Animation** - Added subtle pulse-highlight animation to auction cards when they receive real-time bid updates. This fulfills the optional spec requirement "Optionally show subtle animation to draw attention to changed card" from real-time-updates.md. The animation uses a green tint flash that lasts 1 second.
+
+17. **Navigate to New Auction After Creation** - After successfully creating an auction, the user is now automatically navigated to the new auction's detail page. This fulfills the optional spec requirement "Optionally navigate to the new auction detail page" from auction-creation.md. The CreateAuctionModal now passes the new auction UUID to the parent component which handles the navigation.
+
 ---
 
 ## Future Work

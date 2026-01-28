@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { auctionsApi } from '@/api/auctions';
 import type { Auction } from '@/types/auction';
 import { AuctionCard } from '@/components/auctions/AuctionCard';
@@ -19,12 +19,15 @@ interface BidPlacedMessage {
 export function AuctionsPage() {
   const { isAuthenticated } = useAuth();
   const { subscribe, connectionState } = useWebSocket();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const subscriptionsRef = useRef<(() => void)[]>([]);
+  // Track recently updated auction IDs for animation
+  const [updatedAuctionIds, setUpdatedAuctionIds] = useState<Set<string>>(new Set());
 
   // Get search query from URL, default to empty string
   const searchQuery = searchParams.get('search') || '';
@@ -88,6 +91,16 @@ export function AuctionsPage() {
               : a
           )
         );
+        // Add auction ID to updated set for animation
+        setUpdatedAuctionIds(prev => new Set(prev).add(auctionId));
+        // Remove from updated set after animation completes (1s)
+        setTimeout(() => {
+          setUpdatedAuctionIds(prev => {
+            const next = new Set(prev);
+            next.delete(auctionId);
+            return next;
+          });
+        }, 1000);
       };
 
       const unsubscribe = subscribe(`/topic/auctions/${auctionId}`, handleBidPlaced);
@@ -114,9 +127,13 @@ export function AuctionsPage() {
     setSearchQuery('');
   }, [setSearchQuery]);
 
-  const handleCreateSuccess = () => {
+  const handleCreateSuccess = (newAuctionId?: string) => {
     // Refresh the auction list
     fetchAuctions();
+    // Navigate to the newly created auction if ID is provided
+    if (newAuctionId) {
+      navigate(`/auctions/${newAuctionId}`);
+    }
   };
 
   if (isLoading) {
@@ -217,7 +234,7 @@ export function AuctionsPage() {
           {filteredAuctions.map((auction, index) => (
             <div
               key={auction.id}
-              className="animate-fade-in"
+              className={`animate-fade-in rounded-lg ${updatedAuctionIds.has(auction.id) ? 'animate-pulse-highlight' : ''}`}
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <AuctionCard auction={auction} />
