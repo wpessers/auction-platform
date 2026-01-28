@@ -10,24 +10,31 @@ vi.mock('@/config/env', () => ({
 
 describe('API Client', () => {
   const mockFetch = vi.fn();
-  const originalFetch = global.fetch;
+  const originalFetch = globalThis.fetch;
   const originalLocation = window.location;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    global.fetch = mockFetch;
+    globalThis.fetch = mockFetch;
     // Reset localStorage mock
     (localStorage.getItem as ReturnType<typeof vi.fn>).mockReturnValue(null);
     (localStorage.removeItem as ReturnType<typeof vi.fn>).mockClear();
 
     // Mock window.location
-    delete (window as { location?: Location }).location;
-    window.location = { ...originalLocation, href: '' } as Location;
+    Object.defineProperty(window, 'location', {
+      value: { ...originalLocation, href: '' },
+      writable: true,
+      configurable: true,
+    });
   });
 
   afterEach(() => {
-    global.fetch = originalFetch;
-    window.location = originalLocation;
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(window, 'location', {
+      value: originalLocation,
+      writable: true,
+      configurable: true,
+    });
   });
 
   describe('GET requests', () => {
