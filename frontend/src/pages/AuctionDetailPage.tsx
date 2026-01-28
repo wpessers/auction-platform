@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { auctionsApi } from '@/api/auctions';
 import type { Auction } from '@/types/auction';
 import { useCountdown } from '@/hooks/useCountdown';
@@ -24,6 +24,8 @@ interface BidRejectedMessage {
 
 export function AuctionDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [auction, setAuction] = useState<Auction | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +33,10 @@ export function AuctionDetailPage() {
   const { subscribe } = useWebSocket();
   const { user } = useAuth();
   const { addToast } = useToast();
+
+  // Check if we came from the auctions page to enable proper back navigation
+  const cameFromAuctions = location.state?.from === 'auctions' ||
+    (typeof window !== 'undefined' && window.history.length > 1);
 
   // Fetch initial auction data
   useEffect(() => {
@@ -139,6 +145,7 @@ export function AuctionDetailPage() {
       auction={auction}
       bidError={bidError}
       onBidError={setBidError}
+      onBack={() => cameFromAuctions ? navigate(-1) : navigate('/auctions')}
     />
   );
 }
@@ -147,12 +154,14 @@ interface AuctionDetailContentProps {
   auction: Auction;
   bidError: string | null;
   onBidError: (error: string | null) => void;
+  onBack: () => void;
 }
 
 function AuctionDetailContent({
   auction,
   bidError,
   onBidError,
+  onBack,
 }: AuctionDetailContentProps) {
   const { timeRemaining, isUrgent, isExpired } = useCountdown(auction.endTime);
   const currentPrice = auction.highestBid ?? auction.startingPrice;
@@ -188,8 +197,8 @@ function AuctionDetailContent({
   return (
     <div>
       {/* Back navigation */}
-      <Link
-        to="/auctions"
+      <button
+        onClick={onBack}
         className="mb-6 inline-flex items-center gap-1 text-sm text-text-secondary transition-colors duration-fast hover:text-accent"
       >
         <svg
@@ -207,7 +216,7 @@ function AuctionDetailContent({
           />
         </svg>
         Back to Auctions
-      </Link>
+      </button>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main content */}

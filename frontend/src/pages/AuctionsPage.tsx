@@ -146,7 +146,7 @@ export function AuctionsPage() {
             setError(null);
             fetchAuctions();
           }}
-          className="rounded bg-accent px-4 py-2 font-medium text-background transition-colors duration-fast hover:bg-accent-hover"
+          className="min-h-[44px] rounded bg-accent px-4 py-3 font-medium text-background transition-colors duration-fast hover:bg-accent-hover"
         >
           Try Again
         </button>

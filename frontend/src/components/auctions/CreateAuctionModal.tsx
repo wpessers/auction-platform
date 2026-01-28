@@ -86,7 +86,7 @@ export function CreateAuctionModal({
     if (!startNow && !formData.startTime) {
       newErrors.startTime = 'Start time is required';
     } else if (!startNow && startTime < now) {
-      newErrors.startTime = 'Start time must be in the future';
+      newErrors.startTime = 'Start time cannot be in the past';
     }
 
     if (!formData.endTime) {
@@ -349,14 +349,14 @@ export function CreateAuctionModal({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="rounded px-4 py-2 text-text-secondary transition-colors hover:text-text-primary disabled:opacity-50"
+              className="min-h-[44px] rounded px-4 py-3 text-text-secondary transition-colors hover:text-text-primary disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded bg-accent px-4 py-2 font-medium text-background transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
+              className="min-h-[44px] rounded bg-accent px-4 py-3 font-medium text-background transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? 'Creating...' : 'Create Auction'}
             </button>

@@ -191,6 +191,14 @@ Several enhancements have been made to improve user experience and ensure full c
 
 7. **Search State Preservation** - Search query is now preserved in URL parameters (?search=query). When navigating from auction list to detail page and back, the search state is maintained. This fulfills the spec requirement "Back navigation returns to auction list preserving search state".
 
+8. **Back Navigation Search Preservation** - Changed the "Back to Auctions" link in AuctionDetailPage to use programmatic navigation (navigate(-1)) instead of a static link, ensuring search state is preserved when returning to the auction list from a detail page.
+
+9. **Start Time Validation Message** - Updated the validation error message for start time to match the spec wording: "Start time cannot be in the past" (previously said "must be in the future").
+
+10. **Button Touch Targets** - Updated all primary action buttons to have min-height of 44px per the UI spec's accessibility requirements. Affected components: CreateAuctionModal, BiddingPanel, LoginPage, RegisterPage, AuctionsPage.
+
+11. **Secondary Button Pattern** - Added CSS utility classes for primary (.btn-primary) and secondary (.btn-secondary) button styles per the UI spec. Secondary buttons now have transparent background with accent-colored border and text. Updated ErrorBoundary component to use these patterns.
+
 ---
 
 ## Future Work

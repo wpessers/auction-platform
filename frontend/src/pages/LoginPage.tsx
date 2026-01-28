@@ -125,7 +125,7 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded bg-accent py-2.5 font-medium text-background transition-colors duration-fast hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-[44px] w-full rounded bg-accent py-3 font-medium text-background transition-colors duration-fast hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? 'Logging in...' : 'Login'}
           </button>

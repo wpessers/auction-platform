@@ -86,7 +86,7 @@ export function BiddingPanel({
         </p>
         <Link
           to="/login"
-          className="inline-block rounded bg-accent px-4 py-2 font-medium text-background transition-colors hover:bg-accent-hover"
+          className="inline-block min-h-[44px] rounded bg-accent px-4 py-3 font-medium text-background transition-colors hover:bg-accent-hover"
         >
           Login to Bid
         </Link>
@@ -149,7 +149,7 @@ export function BiddingPanel({
               key={increment}
               onClick={() => handleQuickBid(increment)}
               disabled={!isConnected || isSubmitting}
-              className="rounded bg-accent-muted px-3 py-2 text-sm font-medium text-accent transition-colors hover:bg-accent/30 disabled:cursor-not-allowed disabled:opacity-50"
+              className="min-h-[44px] rounded bg-accent-muted px-3 py-3 text-sm font-medium text-accent transition-colors hover:bg-accent/30 disabled:cursor-not-allowed disabled:opacity-50"
             >
               +${increment}
             </button>
@@ -179,7 +179,7 @@ export function BiddingPanel({
           <button
             type="submit"
             disabled={!isConnected || isSubmitting || !customAmount}
-            className="rounded bg-accent px-4 py-2 font-medium text-background transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-[44px] rounded bg-accent px-4 py-3 font-medium text-background transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? 'Bidding...' : 'Bid'}
           </button>
