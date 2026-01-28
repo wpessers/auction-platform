@@ -201,6 +201,14 @@ Several enhancements have been made to improve user experience and ensure full c
 
 12. **Profile Dropdown Menu** - Implemented profile dropdown menu in the header per the authentication spec requirement. When authenticated, clicking the username shows a dropdown with Profile link (with user icon) and Logout button (with logout icon). The dropdown closes when clicking outside and on route changes. Mobile menu remains unchanged (stacked layout).
 
+13. **Backend Validation Hardening** - Added comprehensive backend validation to prevent edge cases:
+    - Auction end time must be after start time (cross-field validation)
+    - Auction name limited to 200 characters maximum
+    - Auction description limited to 5000 characters maximum
+    - Starting price limited to $999,999,999.99 maximum
+    - Bid amount limited to $999,999,999.99 maximum
+    These validations protect against malformed input and potential database issues.
+
 ---
 
 ## Future Work

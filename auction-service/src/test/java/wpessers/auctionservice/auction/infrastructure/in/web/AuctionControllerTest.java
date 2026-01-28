@@ -200,4 +200,80 @@ class AuctionControllerTest {
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$.length()").value(0));
     }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Should return BAD_REQUEST when end time is before start time")
+    void shouldReturnBadRequestWhenEndTimeBeforeStartTime() throws Exception {
+        Instant startTime = Instant.now().plusSeconds(3600);
+        Instant endTime = Instant.now().plusSeconds(60);
+        CreateAuctionRequest request = new CreateAuctionRequest(
+            "Test Auction",
+            "Description",
+            startTime,
+            endTime,
+            BigDecimal.valueOf(100)
+        );
+
+        mockMvc.perform(post("/api/auctions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Should return BAD_REQUEST when auction name exceeds 200 characters")
+    void shouldReturnBadRequestWhenNameTooLong() throws Exception {
+        String longName = "a".repeat(201);
+        CreateAuctionRequest request = new CreateAuctionRequest(
+            longName,
+            "Description",
+            null,
+            Instant.now().plusSeconds(3600),
+            BigDecimal.valueOf(100)
+        );
+
+        mockMvc.perform(post("/api/auctions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Should return BAD_REQUEST when auction description exceeds 5000 characters")
+    void shouldReturnBadRequestWhenDescriptionTooLong() throws Exception {
+        String longDescription = "a".repeat(5001);
+        CreateAuctionRequest request = new CreateAuctionRequest(
+            "Test Auction",
+            longDescription,
+            null,
+            Instant.now().plusSeconds(3600),
+            BigDecimal.valueOf(100)
+        );
+
+        mockMvc.perform(post("/api/auctions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Should return BAD_REQUEST when starting price exceeds maximum")
+    void shouldReturnBadRequestWhenStartingPriceTooHigh() throws Exception {
+        CreateAuctionRequest request = new CreateAuctionRequest(
+            "Test Auction",
+            "Description",
+            null,
+            Instant.now().plusSeconds(3600),
+            new BigDecimal("10000000000.00")
+        );
+
+        mockMvc.perform(post("/api/auctions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
+    }
 }
