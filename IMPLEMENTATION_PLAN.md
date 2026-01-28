@@ -225,6 +225,30 @@ Several enhancements have been made to improve user experience and ensure full c
 
 17. **Navigate to New Auction After Creation** - After successfully creating an auction, the user is now automatically navigated to the new auction's detail page. This fulfills the optional spec requirement "Optionally navigate to the new auction detail page" from auction-creation.md. The CreateAuctionModal now passes the new auction UUID to the parent component which handles the navigation.
 
+### Frontend Test Coverage Improvements
+
+Frontend test coverage was improved from 1 test file (2 tests) to 4 test files (41 tests):
+
+1. **src/context/AuthContext.test.tsx** - 8 tests covering:
+   - Initial state and loading behavior
+   - Token restoration from localStorage
+   - Invalid token handling
+   - Login functionality with JWT parsing
+   - Logout functionality clearing state
+   - useAuth hook error when used outside provider
+
+2. **src/hooks/useCountdown.test.ts** - 17 tests covering:
+   - All time format variants per spec ("X days left", "X hours Y minutes left", "X minutes left", "M:SS" urgent format)
+   - Timer update intervals (every second for urgent, every minute otherwise)
+   - Edge cases (boundary at 5 minutes, 0 seconds, expired)
+
+3. **src/api/client.test.ts** - 14 tests covering:
+   - GET, POST, PUT, DELETE request handling
+   - Authorization header injection
+   - 401 response handling (token removal, redirect to login)
+   - Error response parsing
+   - Empty response handling
+
 ---
 
 ## Future Work
