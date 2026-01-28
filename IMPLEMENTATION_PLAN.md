@@ -319,6 +319,8 @@ Frontend test coverage was improved from 1 test file (2 tests) to 10 test files 
    - Fixed window.location mocking to use Object.defineProperty in api/client.test.ts
    - Removed unused imports (waitFor, ToastType) from BiddingPanel.test.tsx and ToastContext.test.tsx
 
+11. **JWT Expiry Test Fix** - Fixed AuthContext.test.tsx where the mock JWT had an expiry timestamp with only 9 digits (999999999 = September 2001, already expired) instead of the intended 10 digits (9999999999 = year 2286). This caused login tests to fail because the AuthContext correctly detected the token as expired.
+
 ### JWT Token Refresh Implementation
 
 Implemented secure JWT token refresh mechanism for seamless user sessions:
@@ -360,6 +362,14 @@ Implemented secure JWT token refresh mechanism for seamless user sessions:
 - Token rotation prevents replay attacks
 - All tokens for user revoked on logout
 - Expired tokens cleaned up periodically
+
+### Backend Code Quality Improvements
+
+Several improvements have been made to enhance code quality and follow modern best practices:
+
+12. **Deprecated API Cleanup** - Replaced deprecated `NoOpPasswordEncoder` in UserAuthServiceTest.java with an inline test implementation to eliminate deprecation warnings and follow modern Spring Security practices.
+
+13. **Price Service Algorithm Enhancement** - Updated `estimateFinalPrice` in PricingServiceImpl.kt to actually use the `startingPrice` parameter that was previously unused. The function now calculates historical price growth rate to provide more accurate final price estimations for auctions with significant price momentum.
 
 ---
 
