@@ -199,6 +199,8 @@ Several enhancements have been made to improve user experience and ensure full c
 
 11. **Secondary Button Pattern** - Added CSS utility classes for primary (.btn-primary) and secondary (.btn-secondary) button styles per the UI spec. Secondary buttons now have transparent background with accent-colored border and text. Updated ErrorBoundary component to use these patterns.
 
+12. **Profile Dropdown Menu** - Implemented profile dropdown menu in the header per the authentication spec requirement. When authenticated, clicking the username shows a dropdown with Profile link (with user icon) and Logout button (with logout icon). The dropdown closes when clicking outside and on route changes. Mobile menu remains unchanged (stacked layout).
+
 ---
 
 ## Future Work
