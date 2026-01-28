@@ -215,11 +215,22 @@ class PricingServiceImpl : PricingServiceGrpc.PricingServiceImplBase() {
     ): Double {
         if (totalBids == 0) return currentPrice
 
+        // Calculate historical price growth rate from starting price
+        val priceGrowthRate = if (startingPrice > 0) {
+            (currentPrice - startingPrice) / startingPrice
+        } else {
+            0.0
+        }
+
         // Use logarithmic growth model for price estimation
         val remainingPercent = if (auctionDurationSec > 0) remainingSec.toDouble() / auctionDurationSec else 0.0
 
-        // Estimate additional growth based on time remaining and current momentum
-        val additionalGrowthFactor = 1.0 + (ln(1.0 + totalBids) * 0.1 * remainingPercent)
+        // Factor in historical momentum - auctions with higher growth rates project higher final prices
+        val momentumFactor = ln(1.0 + totalBids) * 0.1
+        val historicalGrowthBonus = priceGrowthRate * remainingPercent * 0.5
+
+        // Estimate additional growth based on time remaining, current momentum, and historical growth
+        val additionalGrowthFactor = 1.0 + (momentumFactor * remainingPercent) + max(historicalGrowthBonus, 0.0)
 
         return currentPrice * additionalGrowthFactor
     }

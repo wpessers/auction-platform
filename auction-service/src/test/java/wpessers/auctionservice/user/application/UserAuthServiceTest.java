@@ -7,7 +7,6 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import wpessers.auctionservice.shared.infrastructure.out.generation.StubIdGeneratorAdapter;
 import wpessers.auctionservice.user.application.port.in.RegisterUserCommand;
@@ -35,7 +34,18 @@ class UserAuthServiceTest {
         this.userStorage = new FakeUserStorageAdapter();
         this.tokenGenerator = new StubTokenGeneratorAdapter();
         this.refreshTokenStorage = new FakeRefreshTokenStorageAdapter();
-        this.passwordEncoder = NoOpPasswordEncoder.getInstance();
+        // Use inline no-op encoder for tests (avoids deprecated NoOpPasswordEncoder)
+        this.passwordEncoder = new PasswordEncoder() {
+            @Override
+            public String encode(CharSequence rawPassword) {
+                return rawPassword.toString();
+            }
+
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                return rawPassword.toString().equals(encodedPassword);
+            }
+        };
         this.userAuthService = new UserAuthService(
             idGenerator,
             userStorage,

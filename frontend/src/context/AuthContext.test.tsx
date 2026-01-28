@@ -4,7 +4,7 @@ import { AuthProvider, useAuth } from './AuthContext';
 import type { AuthTokens } from '@/api/auth';
 
 // Valid JWT token with payload: { sub: 'user-123', username: 'testuser', iat: 1234567890, exp: 9999999999 }
-// Base64 encoded payload: eyJzdWIiOiJ1c2VyLTEyMyIsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjEyMzQ1Njc4OTAsImV4cCI6OTk5OTk5OTk5OX0
+// Note: exp must be 10 digits (9999999999 = year 2286) not 9 digits (999999999 = year 2001 - already expired!)
 const validToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTEyMyIsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjEyMzQ1Njc4OTAsImV4cCI6OTk5OTk5OTk5OX0.signature';
 
