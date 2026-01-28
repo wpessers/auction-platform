@@ -313,6 +313,11 @@ Frontend test coverage was improved from 1 test file (2 tests) to 10 test files 
    - AI pricing suggestions integration
    - Loading state during submission
 
+10. **TypeScript Lint Fix** - Fixed TypeScript errors in test files:
+   - Replaced `global` with `globalThis` for proper TypeScript compatibility in api/client.test.ts and hooks/useDebounce.test.ts
+   - Fixed window.location mocking to use Object.defineProperty in api/client.test.ts
+   - Removed unused imports (waitFor, ToastType) from BiddingPanel.test.tsx and ToastContext.test.tsx
+
 ---
 
 ## Future Work
