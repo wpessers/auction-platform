@@ -227,7 +227,7 @@ Several enhancements have been made to improve user experience and ensure full c
 
 ### Frontend Test Coverage Improvements
 
-Frontend test coverage was improved from 1 test file (2 tests) to 4 test files (41 tests):
+Frontend test coverage was improved from 1 test file (2 tests) to 6 test files (67 tests):
 
 1. **src/context/AuthContext.test.tsx** - 8 tests covering:
    - Initial state and loading behavior
@@ -248,6 +248,26 @@ Frontend test coverage was improved from 1 test file (2 tests) to 4 test files (
    - 401 response handling (token removal, redirect to login)
    - Error response parsing
    - Empty response handling
+
+4. **src/context/ToastContext.test.tsx** - 14 tests covering:
+   - Toast type variants (success, error, warning, info)
+   - Multiple toast stacking with unique IDs
+   - Manual toast removal
+   - Auto-dismiss after 5 seconds per spec
+   - Independent auto-dismiss timing for multiple toasts
+   - onClick handler support for clickable toasts
+   - Action button support
+   - useToast hook error when used outside provider
+
+5. **src/components/ui/ConnectionStatus.test.tsx** - 12 tests covering:
+   - No indicator when connected
+   - Immediate "Connecting..." indicator with pulsing warning style
+   - 5-second delay before showing "Disconnected" per spec
+   - Error indicator styling when disconnected
+   - Indicator hiding when connection restored
+   - Timer reset on brief disconnections
+   - State transitions (connecting → connected, connecting → disconnected)
+   - Fixed bottom-left positioning with z-index
 
 ---
 
