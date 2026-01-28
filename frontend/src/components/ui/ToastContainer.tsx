@@ -12,6 +12,7 @@ export function ToastContainer() {
           key={toast.id}
           type={toast.type}
           message={toast.message}
+          onClick={toast.onClick}
           action={toast.action}
           onDismiss={() => removeToast(toast.id)}
         />
@@ -23,6 +24,7 @@ export function ToastContainer() {
 interface ToastItemProps {
   type: ToastType;
   message: string;
+  onClick?: () => void;
   action?: {
     label: string;
     onClick: () => void;
@@ -30,7 +32,7 @@ interface ToastItemProps {
   onDismiss: () => void;
 }
 
-function ToastItem({ type, message, action, onDismiss }: ToastItemProps) {
+function ToastItem({ type, message, onClick, action, onDismiss }: ToastItemProps) {
   const borderColor = {
     success: 'border-l-accent',
     error: 'border-l-error',
@@ -101,17 +103,26 @@ function ToastItem({ type, message, action, onDismiss }: ToastItemProps) {
     ),
   }[type];
 
+  const handleToastClick = () => {
+    if (onClick) {
+      onClick();
+      onDismiss();
+    }
+  };
+
   return (
     <div
-      className={`flex w-80 items-start gap-3 rounded border-l-4 bg-card p-4 shadow-lg ${borderColor}`}
+      className={`flex w-80 items-start gap-3 rounded border-l-4 bg-card p-4 shadow-lg ${borderColor} ${onClick ? 'cursor-pointer hover:bg-card/80' : ''}`}
       role="alert"
+      onClick={onClick ? handleToastClick : undefined}
     >
       <div className="flex-shrink-0">{icon}</div>
       <div className="flex-1">
         <p className="text-sm text-text-primary">{message}</p>
         {action && (
           <button
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               action.onClick();
               onDismiss();
             }}
@@ -122,7 +133,10 @@ function ToastItem({ type, message, action, onDismiss }: ToastItemProps) {
         )}
       </div>
       <button
-        onClick={onDismiss}
+        onClick={(e) => {
+          e.stopPropagation();
+          onDismiss();
+        }}
         className="flex-shrink-0 text-text-disabled transition-colors hover:text-text-secondary"
         aria-label="Dismiss"
       >

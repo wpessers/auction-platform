@@ -209,6 +209,18 @@ Several enhancements have been made to improve user experience and ensure full c
     - Bid amount limited to $999,999,999.99 maximum
     These validations protect against malformed input and potential database issues.
 
+14. **Winner vs Non-Winner Messaging** - Implemented differentiated messaging when an auction ends in the BiddingPanel component:
+    - Winners see: "Congratulations! You won this auction!" with their winning bid amount
+    - Non-winners see: "This auction has ended." with the winning bid amount
+    - If no bids were placed: "This auction has ended with no bids."
+    - This fulfills the spec requirement to "show appropriate message to winner vs other bidders"
+
+15. **Clickable Outbid Toast Notifications** - Enhanced outbid toast notifications to be fully clickable per the spec requirement "Toast is clickable and navigates to the auction":
+    - Added onClick handler to Toast interface in ToastContext
+    - Updated ToastContainer to support clickable toasts with hover state
+    - The entire toast now navigates to the auction (not just the action button)
+    - Prevented event propagation on dismiss and action buttons to avoid accidental navigation
+
 ---
 
 ## Future Work

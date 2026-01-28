@@ -23,6 +23,7 @@ export function OutbidNotificationListener() {
       addToast({
         type: 'warning',
         message: `You've been outbid on "${outbid.auctionName}"! New highest bid: $${outbid.amount.toFixed(2)}`,
+        onClick: () => navigate(`/auctions/${outbid.uuid}`),
         action: {
           label: 'View Auction',
           onClick: () => navigate(`/auctions/${outbid.uuid}`),
