@@ -14,6 +14,7 @@ import wpessers.auctionservice.auction.domain.exception.AuctionNotFoundException
 import wpessers.auctionservice.auction.domain.exception.InvalidAuctionWindowException;
 import wpessers.auctionservice.auction.domain.exception.InvalidStartingPriceException;
 import wpessers.auctionservice.user.domain.exception.InvalidEmailException;
+import wpessers.auctionservice.user.domain.exception.InvalidRefreshTokenException;
 import wpessers.auctionservice.user.domain.exception.InvalidUsernameException;
 import wpessers.auctionservice.user.domain.exception.UserNotFoundException;
 
@@ -79,6 +80,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ProblemDetail handleUserNotFoundException(UserNotFoundException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,
+            ex.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler
+    public ProblemDetail handleInvalidRefreshTokenException(InvalidRefreshTokenException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED,
             ex.getMessage());
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;

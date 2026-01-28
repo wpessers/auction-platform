@@ -17,6 +17,7 @@ import wpessers.auctionservice.user.domain.exception.InvalidEmailException;
 import wpessers.auctionservice.user.domain.exception.InvalidUsernameException;
 import wpessers.auctionservice.user.domain.exception.UserNotFoundException;
 import wpessers.auctionservice.user.infrastructure.out.generation.StubTokenGeneratorAdapter;
+import wpessers.auctionservice.user.infrastructure.out.persistence.inmemory.FakeRefreshTokenStorageAdapter;
 import wpessers.auctionservice.user.infrastructure.out.persistence.inmemory.FakeUserStorageAdapter;
 
 class UserAuthServiceTest {
@@ -24,6 +25,7 @@ class UserAuthServiceTest {
     private StubIdGeneratorAdapter idGenerator;
     private FakeUserStorageAdapter userStorage;
     private StubTokenGeneratorAdapter tokenGenerator;
+    private FakeRefreshTokenStorageAdapter refreshTokenStorage;
     private PasswordEncoder passwordEncoder;
     private UserAuthService userAuthService;
 
@@ -32,31 +34,37 @@ class UserAuthServiceTest {
         this.idGenerator = new StubIdGeneratorAdapter();
         this.userStorage = new FakeUserStorageAdapter();
         this.tokenGenerator = new StubTokenGeneratorAdapter();
+        this.refreshTokenStorage = new FakeRefreshTokenStorageAdapter();
         this.passwordEncoder = NoOpPasswordEncoder.getInstance();
         this.userAuthService = new UserAuthService(
             idGenerator,
             userStorage,
             tokenGenerator,
+            refreshTokenStorage,
             passwordEncoder
         );
     }
 
     @Test
-    @DisplayName("Should register a new user and return token")
+    @DisplayName("Should register a new user and return tokens")
     void shouldRegister() {
         UUID userId = UUID.randomUUID();
+        UUID tokenId = UUID.randomUUID();
         idGenerator.addId(userId);
-        tokenGenerator.addToken("registration-token-" + userId);
+        idGenerator.addId(tokenId);
+        tokenGenerator.addAccessToken("access-token-" + userId);
+        tokenGenerator.addRefreshToken("refresh-token-" + userId);
         RegisterUserCommand registerUserCommand = new RegisterUserCommand(
             "username",
             "password",
             "test.user@email.com"
         );
 
-        String token = userAuthService.register(registerUserCommand);
+        AuthTokens tokens = userAuthService.register(registerUserCommand);
 
         assertThat(userStorage.findByUsername("username")).isPresent();
-        assertThat(token).isEqualTo("registration-token-" + userId);
+        assertThat(tokens.accessToken()).isEqualTo("access-token-" + userId);
+        assertThat(tokens.refreshToken()).isEqualTo("refresh-token-" + userId);
     }
 
     @Test
@@ -92,16 +100,20 @@ class UserAuthServiceTest {
     }
 
     @Test
-    @DisplayName("Should login a user and return token")
+    @DisplayName("Should login a user and return tokens")
     void shouldLogin() {
         UUID userId = UUID.randomUUID();
+        UUID tokenId = UUID.randomUUID();
         User user = new User(userId, "username", "password", "test@email.com");
         userStorage.save(user);
-        tokenGenerator.addToken("token-" + userId);
+        idGenerator.addId(tokenId);
+        tokenGenerator.addAccessToken("access-token-" + userId);
+        tokenGenerator.addRefreshToken("refresh-token-" + userId);
 
-        String token = userAuthService.login("username", "password");
+        AuthTokens tokens = userAuthService.login("username", "password");
 
-        assertThat(token).isEqualTo("token-" + userId);
+        assertThat(tokens.accessToken()).isEqualTo("access-token-" + userId);
+        assertThat(tokens.refreshToken()).isEqualTo("refresh-token-" + userId);
     }
 
     @Test

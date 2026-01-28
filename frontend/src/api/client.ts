@@ -10,9 +10,53 @@ export class ApiError extends Error {
   }
 }
 
+let isRefreshing = false;
+let refreshPromise: Promise<boolean> | null = null;
+
+async function attemptTokenRefresh(): Promise<boolean> {
+  const refreshToken = localStorage.getItem('refreshToken');
+  if (!refreshToken) {
+    return false;
+  }
+
+  try {
+    const response = await fetch(`${env.apiBaseUrl}/api/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const tokens = await response.json();
+    localStorage.setItem('token', tokens.accessToken);
+    localStorage.setItem('refreshToken', tokens.refreshToken);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function handleTokenRefresh(): Promise<boolean> {
+  if (isRefreshing) {
+    return refreshPromise!;
+  }
+
+  isRefreshing = true;
+  refreshPromise = attemptTokenRefresh().finally(() => {
+    isRefreshing = false;
+    refreshPromise = null;
+  });
+
+  return refreshPromise;
+}
+
 async function request<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  isRetry = false
 ): Promise<T> {
   const token = localStorage.getItem('token');
 
@@ -25,8 +69,24 @@ async function request<T>(
     },
   });
 
+  if (response.status === 401 && !isRetry) {
+    // Try to refresh the token
+    const refreshed = await handleTokenRefresh();
+    if (refreshed) {
+      // Retry the request with new token
+      return request<T>(endpoint, options, true);
+    }
+
+    // Refresh failed, clear tokens and redirect
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    window.location.href = '/login';
+    throw new ApiError(401, 'Unauthorized');
+  }
+
   if (response.status === 401) {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     window.location.href = '/login';
     throw new ApiError(401, 'Unauthorized');
   }

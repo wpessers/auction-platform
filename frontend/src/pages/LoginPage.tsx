@@ -47,8 +47,8 @@ export function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const token = await authApi.login({ username: username.trim(), password });
-      login(token);
+      const tokens = await authApi.login({ username: username.trim(), password });
+      login(tokens);
       navigate(from, { replace: true });
     } catch (err) {
       if (err instanceof ApiError) {

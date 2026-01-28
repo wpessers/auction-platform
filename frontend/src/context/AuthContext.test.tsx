@@ -1,6 +1,28 @@
 import { render, screen, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { AuthProvider, useAuth } from './AuthContext';
+import type { AuthTokens } from '@/api/auth';
+
+// Valid JWT token with payload: { sub: 'user-123', username: 'testuser', iat: 1234567890, exp: 9999999999 }
+// Base64 encoded payload: eyJzdWIiOiJ1c2VyLTEyMyIsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjEyMzQ1Njc4OTAsImV4cCI6OTk5OTk5OTk5OX0
+const validToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTEyMyIsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjEyMzQ1Njc4OTAsImV4cCI6OTk5OTk5OTk5OX0.signature';
+
+const validRefreshToken = 'valid-refresh-token';
+
+const validAuthTokens: AuthTokens = {
+  accessToken: validToken,
+  refreshToken: validRefreshToken,
+  expiresIn: 900000,
+};
+
+// Invalid token (malformed)
+const invalidToken = 'not-a-valid-jwt';
+const invalidAuthTokens: AuthTokens = {
+  accessToken: invalidToken,
+  refreshToken: 'some-refresh-token',
+  expiresIn: 900000,
+};
 
 // Helper component to test the hook
 function TestComponent() {
@@ -12,7 +34,7 @@ function TestComponent() {
       <span data-testid="userId">{user?.userId || 'null'}</span>
       <span data-testid="username">{user?.username || 'null'}</span>
       <span data-testid="token">{token || 'null'}</span>
-      <button onClick={() => login(validToken)} data-testid="loginBtn">
+      <button onClick={() => login(validAuthTokens)} data-testid="loginBtn">
         Login
       </button>
       <button onClick={logout} data-testid="logoutBtn">
@@ -22,19 +44,13 @@ function TestComponent() {
   );
 }
 
-// Valid JWT token with payload: { sub: 'user-123', username: 'testuser', iat: 1234567890, exp: 9999999999 }
-// Base64 encoded payload: eyJzdWIiOiJ1c2VyLTEyMyIsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjEyMzQ1Njc4OTAsImV4cCI6OTk5OTk5OTk5OX0
-const validToken =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTEyMyIsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJpYXQiOjEyMzQ1Njc4OTAsImV4cCI6OTk5OTk5OTk5OX0.signature';
-
-// Invalid token (malformed)
-const invalidToken = 'not-a-valid-jwt';
-
 describe('AuthContext', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset localStorage mock
-    (localStorage.getItem as ReturnType<typeof vi.fn>).mockReturnValue(null);
+    // Reset localStorage mock - return values for both token and refreshToken
+    (localStorage.getItem as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+      return null;
+    });
   });
 
   describe('Initial state', () => {
@@ -67,7 +83,11 @@ describe('AuthContext', () => {
     });
 
     it('restores auth state from valid localStorage token', async () => {
-      (localStorage.getItem as ReturnType<typeof vi.fn>).mockReturnValue(validToken);
+      (localStorage.getItem as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+        if (key === 'token') return validToken;
+        if (key === 'refreshToken') return validRefreshToken;
+        return null;
+      });
 
       render(
         <AuthProvider>
@@ -84,7 +104,11 @@ describe('AuthContext', () => {
     });
 
     it('removes invalid token from localStorage on mount', async () => {
-      (localStorage.getItem as ReturnType<typeof vi.fn>).mockReturnValue(invalidToken);
+      (localStorage.getItem as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+        if (key === 'token') return invalidToken;
+        if (key === 'refreshToken') return 'some-refresh-token';
+        return null;
+      });
 
       render(
         <AuthProvider>
@@ -115,11 +139,14 @@ describe('AuthContext', () => {
         screen.getByTestId('loginBtn').click();
       });
 
-      expect(screen.getByTestId('isAuthenticated').textContent).toBe('true');
+      await waitFor(() => {
+        expect(screen.getByTestId('isAuthenticated').textContent).toBe('true');
+      });
       expect(screen.getByTestId('userId').textContent).toBe('user-123');
       expect(screen.getByTestId('username').textContent).toBe('testuser');
       expect(screen.getByTestId('token').textContent).toBe(validToken);
       expect(localStorage.setItem).toHaveBeenCalledWith('token', validToken);
+      expect(localStorage.setItem).toHaveBeenCalledWith('refreshToken', validRefreshToken);
     });
 
     it('does not log in with invalid token', async () => {
@@ -129,7 +156,7 @@ describe('AuthContext', () => {
         return (
           <div>
             <span data-testid="isAuthenticated">{String(isAuthenticated)}</span>
-            <button onClick={() => login(invalidToken)} data-testid="loginBtn">
+            <button onClick={() => login(invalidAuthTokens)} data-testid="loginBtn">
               Login
             </button>
           </div>
@@ -158,7 +185,11 @@ describe('AuthContext', () => {
 
   describe('logout', () => {
     it('clears auth state on logout', async () => {
-      (localStorage.getItem as ReturnType<typeof vi.fn>).mockReturnValue(validToken);
+      (localStorage.getItem as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+        if (key === 'token') return validToken;
+        if (key === 'refreshToken') return validRefreshToken;
+        return null;
+      });
 
       render(
         <AuthProvider>
@@ -180,6 +211,7 @@ describe('AuthContext', () => {
       expect(screen.getByTestId('username').textContent).toBe('null');
       expect(screen.getByTestId('token').textContent).toBe('null');
       expect(localStorage.removeItem).toHaveBeenCalledWith('token');
+      expect(localStorage.removeItem).toHaveBeenCalledWith('refreshToken');
     });
   });
 

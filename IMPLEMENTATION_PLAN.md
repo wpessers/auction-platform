@@ -36,6 +36,7 @@ This document serves as a reference for the Auction Platform architecture, APIs,
 | Component | Status | Notes |
 |-----------|--------|-------|
 | Authentication | ✅ Working | JWT-based auth with auto-login on registration |
+| JWT Token Refresh | ✅ Working | Access tokens (15 min) with refresh tokens (7 days) |
 | Auction CRUD | ✅ Working | Fixed routing, complete response fields |
 | Bidding (WebSocket) | ✅ Working | Real-time bidding with proper error handling |
 | Auction Lifecycle | ✅ Working | Scheduler auto-transitions auction states |
@@ -318,6 +319,48 @@ Frontend test coverage was improved from 1 test file (2 tests) to 10 test files 
    - Fixed window.location mocking to use Object.defineProperty in api/client.test.ts
    - Removed unused imports (waitFor, ToastType) from BiddingPanel.test.tsx and ToastContext.test.tsx
 
+### JWT Token Refresh Implementation
+
+Implemented secure JWT token refresh mechanism for seamless user sessions:
+
+**Token Strategy:**
+- Access tokens: 15 minutes (short-lived for security)
+- Refresh tokens: 7 days (stored in database, SHA-256 hashed)
+- Token rotation on refresh (old refresh token invalidated)
+
+**Backend Components:**
+1. **Database Migration** - `V4__create_refresh_tokens_table.sql` creates refresh tokens table with user foreign key
+2. **RefreshToken Domain** - Immutable record with validation methods (isExpired, isValid, revoke)
+3. **RefreshTokenStorage Port** - Interface for save, findByTokenHash, revokeAllForUser, deleteExpired
+4. **JpaRefreshTokenStorageAdapter** - JPA implementation with Spring Data repository
+5. **TokenGenerator Updates** - Extended to generate both access and refresh tokens
+6. **UserAuthService Updates** - New methods for refreshTokens() and logout() with token rotation
+7. **AuthTokensResponse DTO** - Returns accessToken, refreshToken, and expiresIn
+8. **API Endpoints**:
+   - `POST /api/auth/login` - Returns AuthTokensResponse (was plain string)
+   - `POST /api/auth/register` - Returns AuthTokensResponse (was plain string)
+   - `POST /api/auth/refresh` - New endpoint for token refresh
+   - `POST /api/auth/logout` - New endpoint to revoke all refresh tokens
+
+**Frontend Components:**
+1. **AuthTokens Type** - New interface for API response
+2. **AuthContext Updates**:
+   - Stores both accessToken and refreshToken in localStorage
+   - Schedules automatic refresh 1 minute before expiry
+   - Handles expired tokens on app load
+   - Token refresh with rotation
+3. **API Client Updates**:
+   - Automatic token refresh on 401 responses
+   - Request queuing during refresh to avoid race conditions
+   - Retry original request after successful refresh
+4. **Login/Register Pages** - Updated to handle AuthTokens response
+
+**Security Features:**
+- Refresh tokens stored as SHA-256 hashes (never plain text)
+- Token rotation prevents replay attacks
+- All tokens for user revoked on logout
+- Expired tokens cleaned up periodically
+
 ---
 
 ## Future Work
@@ -335,7 +378,6 @@ Additional features to consider for future releases:
 - Payment integration
 - Auction analytics dashboard
 - Historical price trends and analytics
-- JWT token refresh for sessions longer than 24 hours (current tokens expire after 24h, requiring re-login)
 
 ---
 
@@ -387,8 +429,10 @@ PRODUCTION ARCHITECTURE
 
 | Method | Endpoint | Auth | Request Body | Response |
 |--------|----------|------|--------------|----------|
-| POST | `/api/auth/register` | No | `{ username, password, email }` | `201 Created` JWT string |
-| POST | `/api/auth/login` | No | `{ username, password }` | `200 OK` JWT string |
+| POST | `/api/auth/register` | No | `{ username, password, email }` | `AuthTokensResponse` |
+| POST | `/api/auth/login` | No | `{ username, password }` | `AuthTokensResponse` |
+| POST | `/api/auth/refresh` | No | `{ refreshToken }` | `AuthTokensResponse` |
+| POST | `/api/auth/logout` | Yes | - | `204 No Content` |
 
 ### User Endpoints
 
@@ -450,6 +494,20 @@ PRODUCTION ARCHITECTURE
 }
 ```
 
+### Auth Tokens Response
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+  "refreshToken": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4...",
+  "expiresIn": 900000
+}
+```
+
+- `accessToken`: Short-lived JWT for API authentication (15 minutes)
+- `refreshToken`: Long-lived opaque token for obtaining new access tokens (7 days)
+- `expiresIn`: Access token lifetime in milliseconds
+
 ### Bid History Response
 
 ```json
@@ -507,7 +565,7 @@ PRODUCTION ARCHITECTURE
 
 ### JWT Token Structure
 
-Tokens contain the following claims:
+Access tokens expire in 15 minutes and contain the following claims:
 - `sub` - User UUID (userId)
 - `username` - Username
 - `iat` - Issued at timestamp

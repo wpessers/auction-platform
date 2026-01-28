@@ -50,13 +50,13 @@ export function RegisterPage() {
     setIsSubmitting(true);
 
     try {
-      const token = await authApi.register({
+      const tokens = await authApi.register({
         username: username.trim(),
         password,
         email: email.trim(),
       });
-      // Auto-login with returned token and redirect to auctions
-      login(token);
+      // Auto-login with returned tokens and redirect to auctions
+      login(tokens);
       navigate('/auctions', { replace: true });
     } catch (err) {
       if (err instanceof ApiError) {

@@ -11,6 +11,12 @@ export interface RegisterRequest {
   email: string;
 }
 
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+}
+
 export interface UserProfile {
   userId: string;
   username: string;
@@ -18,11 +24,14 @@ export interface UserProfile {
 }
 
 export const authApi = {
-  login: (data: LoginRequest): Promise<string> =>
+  login: (data: LoginRequest): Promise<AuthTokens> =>
     api.post('/api/auth/login', data),
 
-  register: (data: RegisterRequest): Promise<string> =>
+  register: (data: RegisterRequest): Promise<AuthTokens> =>
     api.post('/api/auth/register', data),
+
+  refresh: (refreshToken: string): Promise<AuthTokens> =>
+    api.post('/api/auth/refresh', { refreshToken }),
 
   getProfile: (): Promise<UserProfile> => api.get('/api/users/me'),
 };
